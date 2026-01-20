@@ -130,6 +130,14 @@ function createCategorySection(category, videos) {
         section.querySelectorAll('.video-card').forEach((card, index) => {
             card.addEventListener('click', () => openVideoModal(videos[index]));
         });
+        
+        // Load video durations dynamically
+        section.querySelectorAll('.video-duration').forEach((durationSpan) => {
+            const videoUrl = durationSpan.getAttribute('data-video-url');
+            if (videoUrl) {
+                loadVideoDuration(videoUrl, durationSpan);
+            }
+        });
     }, 0);
     
     return section;
@@ -148,7 +156,7 @@ function createVideoCard(video) {
                 <div class="video-category-badge-circle">
                     ${categoryIcon}
                 </div>
-                <span class="video-duration">10:24</span>
+                <span class="video-duration" data-video-url="${video.videoUrl}">...</span>
             </div>
             <div class="video-info">
                 <div>
@@ -158,6 +166,26 @@ function createVideoCard(video) {
             </div>
         </div>
     `;
+}
+
+// Load and display actual video duration
+function loadVideoDuration(videoUrl, durationElement) {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    
+    video.addEventListener('loadedmetadata', function() {
+        const duration = video.duration;
+        const minutes = Math.floor(duration / 60);
+        const seconds = Math.floor(duration % 60);
+        const formattedDuration = ${minutes}:;
+        durationElement.textContent = formattedDuration;
+    });
+    
+    video.addEventListener('error', function() {
+        durationElement.textContent = '--:--';
+    });
+    
+    video.src = videoUrl;
 }
 
 // Open video player modal - Ultra-Realistic 4DX Style
