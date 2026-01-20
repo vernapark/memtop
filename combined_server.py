@@ -358,7 +358,7 @@ async def webhook_handler(request, application):
     try:
         data = await request.json()
         update = Update.de_json(data, application.bot)
-        await application.update_queue.put(update)
+        await application.process_update(update)
         return web.Response(status=200)
     except Exception as e:
         logger.error(f"Webhook error: {e}")
@@ -380,8 +380,13 @@ async def main():
     print(f"🌍 Environment: {'Production (Render)' if os.getenv('RENDER') else 'Development'}")
     print("=" * 70)
     
-    # Initialize Telegram bot
-    application = Application.builder().token(BOT_TOKEN).build()
+    # Initialize Telegram bot (updater=False for webhook mode)
+    application = (
+        Application.builder()
+        .token(BOT_TOKEN)
+        .updater(None)
+        .build()
+    )
     
     # Register bot handlers
     application.add_handler(CommandHandler("start", start))
