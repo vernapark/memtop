@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Combined Web Server + Telegram Bot for Render.com
 Runs both the video streaming website and telegram bot in one process
