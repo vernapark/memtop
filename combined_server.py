@@ -29,6 +29,9 @@ WEBHOOK_PATH = "/telegram-webhook"
 KEY_STORAGE_FILE = "key_storage.json"
 ACCESS_CODES_FILE = "access_codes.json"
 
+# Store application globally
+telegram_app = None
+
 # ============================================================================
 # TELEGRAM BOT FUNCTIONS
 # ============================================================================
@@ -299,6 +302,29 @@ async def revoke_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # WEB SERVER HANDLERS
 # ============================================================================
 
+async def webhook_handler(request):
+    """Handle Telegram webhook updates"""
+    global telegram_app
+    
+    # Only accept POST requests
+    if request.method != 'POST':
+        logger.warning(f"Webhook received non-POST request: {request.method}")
+        return web.Response(status=405, text="Method Not Allowed")
+    
+    try:
+        logger.info(f"📨 Received webhook request from {request.remote}")
+        data = await request.json()
+        logger.info(f"📦 Webhook data received: {json.dumps(data, indent=2)}")
+        
+        update = Update.de_json(data, telegram_app.bot)
+        await telegram_app.process_update(update)
+        
+        logger.info("✅ Webhook processed successfully")
+        return web.Response(status=200, text="OK")
+    except Exception as e:
+        logger.error(f"❌ Webhook error: {e}", exc_info=True)
+        return web.Response(status=500, text="Internal Server Error")
+
 async def serve_file(request):
     """Serve static files"""
     try:
@@ -353,23 +379,14 @@ async def health_check(request):
     """Health check endpoint"""
     return web.Response(text="Server is running!")
 
-async def webhook_handler(request, application):
-    """Handle Telegram webhook updates"""
-    try:
-        data = await request.json()
-        update = Update.de_json(data, application.bot)
-        await application.process_update(update)
-        return web.Response(status=200)
-    except Exception as e:
-        logger.error(f"Webhook error: {e}")
-        return web.Response(status=500)
-
 # ============================================================================
 # MAIN APPLICATION
 # ============================================================================
 
 async def main():
     """Start combined server + bot"""
+    global telegram_app
+    
     print("=" * 70)
     print("🚀 Starting Combined Server (Website + Telegram Bot)")
     print("=" * 70)
@@ -380,8 +397,8 @@ async def main():
     print(f"🌍 Environment: {'Production (Render)' if os.getenv('RENDER') else 'Development'}")
     print("=" * 70)
     
-    # Initialize Telegram bot (updater=False for webhook mode)
-    application = (
+    # Initialize Telegram bot (updater=None for webhook mode)
+    telegram_app = (
         Application.builder()
         .token(BOT_TOKEN)
         .updater(None)
@@ -389,30 +406,36 @@ async def main():
     )
     
     # Register bot handlers
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(CommandHandler("createkey", create_key))
-    application.add_handler(CommandHandler("currentkey", current_key))
-    application.add_handler(CommandHandler("generatecode", generate_code))
-    application.add_handler(CommandHandler("listcodes", list_codes))
-    application.add_handler(CommandHandler("revokecode", revoke_code))
+    telegram_app.add_handler(CommandHandler("start", start))
+    telegram_app.add_handler(CommandHandler("help", help_command))
+    telegram_app.add_handler(CommandHandler("createkey", create_key))
+    telegram_app.add_handler(CommandHandler("currentkey", current_key))
+    telegram_app.add_handler(CommandHandler("generatecode", generate_code))
+    telegram_app.add_handler(CommandHandler("listcodes", list_codes))
+    telegram_app.add_handler(CommandHandler("revokecode", revoke_code))
     
     # Initialize bot
-    await application.initialize()
-    await application.start()
+    await telegram_app.initialize()
+    await telegram_app.start()
     
     # Set webhook
     webhook_url = f"{WEBHOOK_URL}{WEBHOOK_PATH}"
-    await application.bot.set_webhook(url=webhook_url)
+    await telegram_app.bot.set_webhook(url=webhook_url)
     logger.info(f"✅ Webhook set to: {webhook_url}")
     
     # Create web application
     app = web.Application()
     
-    # Add routes
-    app.router.add_post(WEBHOOK_PATH, lambda req: webhook_handler(req, application))
+    # Add routes - ORDER MATTERS!
+    # Webhook route MUST be registered before catch-all
+    app.router.add_route('*', WEBHOOK_PATH, webhook_handler)
     app.router.add_get("/health", health_check)
-    app.router.add_get("/{path:.*}", serve_file)
+    app.router.add_route('*', "/{path:.*}", serve_file)
+    
+    logger.info("📍 Routes registered:")
+    logger.info(f"   * {WEBHOOK_PATH} -> webhook_handler")
+    logger.info(f"   GET /health -> health_check")
+    logger.info(f"   * /{{path:.*}} -> serve_file")
     
     # Start web server
     runner = web.AppRunner(app)
