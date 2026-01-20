@@ -1,19 +1,7 @@
 services:
-  # Web Service - Combined Server (Website + Telegram Bot)
   - type: web
     name: memtop-video-site
-    env: python
-    region: oregon
+    runtime: python
     plan: free
-    branch: main
-    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
-    startCommand: bash start.sh
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
-      - key: BOT_TOKEN
-        sync: false
-      - key: AUTHORIZED_CHAT_ID
-        sync: false
-      - key: WEBHOOK_URL
-        sync: false
+    buildCommand: pip install -r requirements.txt
+    startCommand: python combined_server.py
