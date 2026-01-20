@@ -1,21 +1,19 @@
 services:
-  # Static Site - Video Streaming Website
+  # Web Service - Combined Server (Website + Telegram Bot)
   - type: web
     name: memtop-video-site
-    env: static
-    buildCommand: echo "No build needed - pure HTML/CSS/JS"
-    staticPublishPath: .
-    headers:
-      - path: /*
-        name: Cache-Control
-        value: public, max-age=3600
-      - path: /js/*
-        name: Cache-Control
-        value: public, max-age=31536000
-      - path: /css/*
-        name: Cache-Control
-        value: public, max-age=31536000
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: python3 combined_server.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: BOT_TOKEN
+        sync: false
+      - key: AUTHORIZED_CHAT_ID
+        sync: false
+      - key: WEBHOOK_URL
+        sync: false

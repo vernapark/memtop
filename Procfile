@@ -1,2 +1,1 @@
-﻿web: python web_server.py
-bot: python telegram_bot.py
+web: python combined_server.py
