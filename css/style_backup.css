@@ -1,0 +1,1585 @@
+﻿/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Roboto", "Arial", sans-serif;
+    line-height: 1.6;
+    color: #ffffff;
+    background-color: #0f0f0f;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* Header Styles - YouTube Like */
+header {
+    background: #0f0f0f;
+    color: white;
+    padding: 0;
+    box-shadow: none;
+    border-bottom: 1px solid #3f3f3f;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 56px;
+    padding: 0 16px;
+}
+
+.logo h1 {
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.age-badge {
+    background: #ff0000;
+    color: white;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 16px;
+}
+
+nav a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 400;
+    font-size: 14px;
+    transition: all 0.2s;
+    padding: 8px 12px;
+    border-radius: 2px;
+}
+
+nav a:hover {
+    background: #3f3f3f;
+}
+
+/* Hero Section - Minimal like YouTube */
+.hero {
+    background: #0f0f0f;
+    color: white;
+    padding: 24px 0;
+    text-align: left;
+    border-bottom: none;
+}
+
+.hero h2 {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+    color: #ffffff;
+    font-weight: 400;
+}
+
+.hero p {
+    font-size: 0.95rem;
+    color: #aaaaaa;
+}
+
+/* Main Content */
+main {
+    min-height: calc(100vh - 200px);
+    padding: 24px 0;
+    background: #0f0f0f;
+}
+
+/* Category Sections - YouTube Style */
+.category-section {
+    margin-bottom: 48px;
+}
+
+.category-section h3 {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+    color: #ffffff;
+    font-weight: 400;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+/* Video Grid - YouTube Grid Layout */
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+
+.video-info {
+    padding: 0;
+    display: flex;
+    gap: 12px;
+}
+
+.video-info h4 {
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+    color: #ffffff;
+    font-weight: 500;
+    line-height: 1.4;
+    max-height: 2.8em;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.video-info p {
+    color: #aaaaaa;
+    font-size: 0.85rem;
+    margin-bottom: 2px;
+    line-height: 1.4;
+}
+
+.video-category {
+    display: inline-block;
+    background: transparent;
+    color: #aaaaaa;
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.85rem;
+    margin-top: 4px;
+    border: none;
+}
+
+/* Video Player Modal - YouTube Style */
+.video-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.video-modal.active {
+    display: flex;
+}
+
+.video-modal-content {
+    max-width: 1280px;
+    width: 90%;
+    max-height: 90vh;
+    background: #0f0f0f;
+    border-radius: 0;
+    overflow: hidden;
+    position: relative;
+    border: none;
+    box-shadow: none;
+}
+
+.close-modal {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-modal:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#modalVideo {
+    width: 100%;
+    max-height: 80vh;
+    background: #000;
+}
+
+/* Login Page */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0f0f0f;
+}
+
+.login-box {
+    background: #282828;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+    border: 1px solid #3f3f3f;
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-box h2 {
+    text-align: center;
+    margin-bottom: 24px;
+    color: #ffffff;
+    font-weight: 400;
+    font-size: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #aaaaaa;
+    font-weight: 400;
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #3f3f3f;
+    border-radius: 2px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+    background: #121212;
+    color: #ffffff;
+    font-family: "Roboto", sans-serif;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #3ea6ff;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background: #3ea6ff;
+    color: #0f0f0f;
+    border: none;
+    border-radius: 2px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: "Roboto", sans-serif;
+}
+
+.btn-primary:hover {
+    background: #4db2ff;
+}
+
+.btn-danger {
+    background: #ff0000;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    font-family: "Roboto", sans-serif;
+}
+
+.btn-danger:hover {
+    background: #cc0000;
+}
+
+.error-message {
+    color: #ff4444;
+    margin-top: 12px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.status-message {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 2px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.status-message.success {
+    background: #1e4620;
+    color: #7fff7f;
+}
+
+.status-message.error {
+    background: #3d1a1a;
+    color: #ff7f7f;
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 16px;
+    color: #3ea6ff;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.back-link:hover {
+    color: #4db2ff;
+}
+
+/* Admin Dashboard */
+.upload-section {
+    background: #282828;
+    padding: 24px;
+    border-radius: 8px;
+    margin-bottom: 32px;
+    border: 1px solid #3f3f3f;
+}
+
+.video-list {
+    display: grid;
+    gap: 16px;
+}
+
+.admin-video-item {
+    background: #282828;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #3f3f3f;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.video-item-info h4 {
+    color: #ffffff;
+    margin-bottom: 8px;
+    font-weight: 400;
+}
+
+.video-item-info p {
+    color: #aaaaaa;
+    font-size: 0.9rem;
+}
+
+/* Footer */
+footer {
+    background: #0f0f0f;
+    color: #aaaaaa;
+    text-align: center;
+    padding: 24px 0;
+    margin-top: 48px;
+    border-top: 1px solid #3f3f3f;
+    font-size: 0.85rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .video-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    header .container {
+        height: 48px;
+    }
+
+    .logo h1 {
+        font-size: 1.2rem;
+    }
+    
+    .age-badge {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+
+    nav ul {
+        gap: 8px;
+    }
+
+    .hero h2 {
+        font-size: 1.3rem;
+    }
+
+    .video-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .login-box {
+        margin: 16px;
+        padding: 24px;
+    }
+
+    .admin-video-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .category-section {
+        margin-bottom: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 12px;
+    }
+    
+    header .container {
+        padding: 0 12px;
+    }
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 48px;
+    color: #aaaaaa;
+}
+
+.empty-state h3 {
+    margin-bottom: 12px;
+    color: #ffffff;
+    font-weight: 400;
+}
+/* Logo image styling */
+.logo-image {
+    mix-blend-mode: multiply;
+    filter: contrast(1.2) brightness(1.1);
+}
+
+/* For dark mode, use screen blend mode */
+@media (prefers-color-scheme: dark) {
+    .logo-image {
+        mix-blend-mode: screen;
+        filter: contrast(1.2) brightness(0.9);
+    }
+}
+/* Enhanced video management styles */
+.admin-video-item {
+    display: grid;
+    grid-template-columns: 150px 1fr auto;
+    gap: 20px;
+    align-items: center;
+    background: #282828;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #3f3f3f;
+    margin-bottom: 15px;
+    transition: all 0.3s;
+}
+
+.admin-video-item:hover {
+    border-color: #5d5d5d;
+    transform: translateY(-2px);
+}
+
+.admin-video-thumbnail {
+    width: 150px;
+    height: 84px;
+    object-fit: cover;
+    border-radius: 5px;
+    background: #1a1a1a;
+}
+
+.video-item-info {
+    flex: 1;
+}
+
+.admin-video-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .admin-video-item {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-video-actions {
+        flex-direction: row;
+    }
+}
+
+
+/* Enhanced 3D Glass Effect for Video Cards */
+.video-card {
+    background: transparent;
+    border-radius: 16px;
+    overflow: visible;
+    box-shadow: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    border: none;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.video-card:hover {
+    transform: translateY(-15px) rotateX(5deg) scale(1.05);
+    box-shadow: 
+        0 20px 60px rgba(62, 166, 255, 0.3),
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Glass effect overlay on hover */
+.video-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.05) 50%,
+        rgba(0, 0, 0, 0.1) 100%
+    );
+    border-radius: 16px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.video-card:hover::before {
+    opacity: 1;
+}
+
+/* Metallic shine effect */
+.video-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 70%
+    );
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    transition: transform 0.6s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.video-card:hover::after {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+}
+
+/* Thumbnail container with rounded corners */
+.video-thumbnail-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    background: #0f0f0f;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s ease;
+}
+
+.video-card:hover .video-thumbnail-container {
+    border-radius: 16px;
+    box-shadow: 
+        0 8px 30px rgba(62, 166, 255, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: scale(1.02);
+}
+
+/* Thumbnail image */
+.video-thumbnail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #0f0f0f;
+    transition: all 0.4s ease;
+    filter: brightness(0.9);
+}
+
+.video-card:hover .video-thumbnail {
+    filter: brightness(1.1) contrast(1.1) saturate(1.2);
+    transform: scale(1.05);
+}
+
+/* Glass border effect */
+.video-card:hover .video-thumbnail-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* Video duration badge with glass effect */
+.video-duration {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: "Roboto", sans-serif;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    z-index: 4;
+}
+
+.video-card:hover .video-duration {
+    background: rgba(62, 166, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(62, 166, 255, 0.6);
+}
+
+/* Video info with subtle animation */
+.video-info {
+    padding: 0;
+    display: flex;
+    gap: 12px;
+    transition: all 0.4s ease;
+}
+
+.video-card:hover .video-info {
+    transform: translateY(-2px);
+}
+
+.video-info h4 {
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+    color: #ffffff;
+    font-weight: 500;
+    line-height: 1.4;
+    max-height: 2.8em;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    transition: color 0.3s ease;
+}
+
+.video-card:hover .video-info h4 {
+    color: #3ea6ff;
+    text-shadow: 0 0 10px rgba(62, 166, 255, 0.3);
+}
+
+/* Category badge with glass effect */
+.video-category {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    color: #aaaaaa;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    margin-top: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.video-card:hover .video-category {
+    background: rgba(62, 166, 255, 0.2);
+    border-color: rgba(62, 166, 255, 0.5);
+    color: #3ea6ff;
+    box-shadow: 0 4px 10px rgba(62, 166, 255, 0.3);
+}
+
+/* Smooth transitions for all animations */
+* {
+    transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+/* ======================================
+   ULTRA-REALISTIC 4DX VIDEO PLAYER
+   ====================================== */
+
+/* Video Modal - Cinema Experience */
+.video-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.98);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(20px);
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.video-modal.active {
+    display: flex;
+}
+
+/* Cinematic Video Container */
+.video-modal-content {
+    max-width: 95vw;
+    max-height: 95vh;
+    width: 100%;
+    background: #000;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 
+        0 30px 90px rgba(0, 0, 0, 0.9),
+        0 0 60px rgba(62, 166, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(62, 166, 255, 0.3);
+    animation: playerZoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes playerZoomIn {
+    from {
+        transform: scale(0.8) rotateX(10deg);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1) rotateX(0);
+        opacity: 1;
+    }
+}
+
+/* Ambient Glow Effect */
+.video-modal-content::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(62, 166, 255, 0.15) 0%, transparent 70%);
+    animation: ambientPulse 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes ambientPulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+/* Close Button - Premium Design */
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    font-size: 24px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10001;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.close-modal:hover {
+    background: rgba(255, 0, 0, 0.8);
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 6px 30px rgba(255, 0, 0, 0.6);
+}
+
+/* Video Element - Cinema Quality */
+#modalVideo {
+    width: 100%;
+    max-height: 85vh;
+    background: #000;
+    display: block;
+    border-radius: 16px;
+    box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.5);
+}
+
+/* Quality Badge */
+.quality-badge {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    background: rgba(62, 166, 255, 0.9);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 20px rgba(62, 166, 255, 0.4);
+    z-index: 10001;
+    animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% { box-shadow: 0 4px 20px rgba(62, 166, 255, 0.4); }
+    50% { box-shadow: 0 4px 30px rgba(62, 166, 255, 0.8); }
+}
+
+/* Mobile Responsive Video Player */
+@media (max-width: 768px) {
+    .video-modal-content {
+        max-width: 100vw;
+        max-height: 100vh;
+        border-radius: 0;
+        border: none;
+    }
+    
+    .close-modal {
+        top: 10px;
+        right: 10px;
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+    }
+    
+    #modalVideo {
+        max-height: 100vh;
+        border-radius: 0;
+    }
+    
+    .quality-badge {
+        top: 15px;
+        left: 15px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+
+/* ======================================
+   MOBILE RESPONSIVE OPTIMIZATION
+   ====================================== */
+
+/* Mobile First - Base styles already mobile friendly */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .container {
+        padding: 0 20px;
+    }
+    
+    .video-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .hero h2 {
+        font-size: 2rem;
+    }
+    
+    .category-section h3 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Mobile Devices (up to 768px) */
+@media (max-width: 768px) {
+    /* Typography scaling */
+    html {
+        font-size: 14px;
+    }
+    
+    /* Header mobile optimization */
+    header .container {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        height: auto;
+        padding: 12px 16px;
+    }
+    
+    .logo h1 {
+        font-size: 1.2rem;
+    }
+    
+    .logo-image {
+        height: 35px !important;
+        margin-right: 8px !important;
+    }
+    
+    nav ul {
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    
+    nav a {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+    }
+    
+    /* Hero section mobile */
+    .hero {
+        padding: 30px 0;
+    }
+    
+    .hero h2 {
+        font-size: 1.8rem;
+        margin-bottom: 12px;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+    
+    /* Video grid - single column on mobile */
+    .video-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .category-section {
+        margin-bottom: 32px;
+    }
+    
+    .category-section h3 {
+        font-size: 1.4rem;
+        margin-bottom: 16px;
+    }
+    
+    /* Video cards - optimized touch targets */
+    .video-card {
+        transform: none;
+    }
+    
+    .video-card:active {
+        transform: scale(0.98);
+    }
+    
+    .video-thumbnail-container {
+        border-radius: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .video-info h4 {
+        font-size: 0.95rem;
+        -webkit-line-clamp: 2;
+    }
+    
+    .video-info p {
+        font-size: 0.85rem;
+        display: none; /* Hide description on mobile to save space */
+    }
+    
+    .video-category {
+        font-size: 0.8rem;
+        padding: 3px 8px;
+    }
+    
+    /* Footer mobile */
+    footer {
+        padding: 20px 0;
+        font-size: 0.85rem;
+    }
+    
+    /* Admin panel mobile */
+    .upload-section {
+        padding: 20px;
+    }
+    
+    .drop-zones-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .drop-zone {
+        padding: 25px;
+    }
+    
+    .drop-zone-icon {
+        font-size: 2rem;
+    }
+    
+    .drop-zone-text {
+        font-size: 0.9rem;
+    }
+    
+    .form-group label {
+        font-size: 0.9rem;
+    }
+    
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        padding: 10px;
+        font-size: 0.95rem;
+    }
+    
+    .btn-primary {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+    
+    .admin-video-item {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .admin-video-thumbnail {
+        width: 100%;
+        height: auto;
+    }
+    
+    .admin-video-actions {
+        flex-direction: row;
+        gap: 10px;
+    }
+    
+    .admin-video-actions button {
+        flex: 1;
+    }
+    
+    /* Access gate mobile */
+    .access-gate-box {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+    
+    .access-logo img {
+        height: 60px;
+    }
+    
+    .access-title {
+        font-size: 1.6rem;
+    }
+    
+    .access-description {
+        font-size: 1rem;
+    }
+    
+    .access-code-input {
+        padding: 12px;
+        font-size: 1rem;
+    }
+    
+    .access-submit-btn {
+        padding: 12px;
+        font-size: 1rem;
+    }
+    
+    /* Login box mobile */
+    .login-box {
+        margin: 16px;
+        padding: 30px 20px;
+    }
+    
+    .login-box h2 {
+        font-size: 1.4rem;
+    }
+}
+
+/* Small Mobile (up to 480px) */
+@media (max-width: 480px) {
+    html {
+        font-size: 13px;
+    }
+    
+    .container {
+        padding: 0 12px;
+    }
+    
+    header .container {
+        padding: 10px 12px;
+    }
+    
+    .logo h1 {
+        font-size: 1rem;
+    }
+    
+    .logo-image {
+        height: 30px !important;
+    }
+    
+    nav a {
+        font-size: 0.8rem;
+        padding: 5px 8px;
+    }
+    
+    .hero h2 {
+        font-size: 1.5rem;
+    }
+    
+    .hero p {
+        font-size: 0.9rem;
+    }
+    
+    .category-section h3 {
+        font-size: 1.2rem;
+    }
+    
+    .video-grid {
+        gap: 16px;
+    }
+    
+    .video-info h4 {
+        font-size: 0.9rem;
+    }
+    
+    .access-gate-box {
+        padding: 25px 15px;
+    }
+    
+    .access-title {
+        font-size: 1.4rem;
+    }
+}
+
+/* Landscape mode on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero {
+        padding: 20px 0;
+    }
+    
+    .hero h2 {
+        font-size: 1.5rem;
+    }
+    
+    .access-gate-container {
+        padding: 20px 0;
+    }
+    
+    .access-gate-box {
+        max-width: 600px;
+        padding: 20px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Increase touch targets */
+    nav a {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .video-card {
+        transition: none;
+    }
+    
+    .video-card:active {
+        transform: scale(0.98);
+        transition: transform 0.1s;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .video-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .video-card:active {
+        transform: scale(0.98);
+    }
+    
+    /* Make buttons easier to tap */
+    .btn-primary,
+    .btn-danger,
+    button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* High DPI screens (Retina) */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .video-thumbnail {
+        image-rendering: -webkit-optimize-contrast;
+    }
+}
+
+
+
+/* ======================================
+   STRONGER VIDEO DOWNLOAD PROTECTION
+   ====================================== */
+
+/* Force hide download button - all browsers */
+video::-webkit-media-controls-download-button {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    pointer-events: none !important;
+}
+
+video::-internal-media-controls-download-button {
+    display: none !important;
+}
+
+video::-webkit-media-controls-enclosure {
+    overflow: hidden !important;
+}
+
+/* Firefox */
+video::-moz-media-controls-download-button {
+    display: none !important;
+}
+
+/* Hide overflow menu that contains download */
+video::-webkit-media-controls-overflow-button {
+    display: none !important;
+}
+
+video::-webkit-media-controls-overflow-menu-list {
+    display: none !important;
+}
+
+/* Additional protection layer */
+#modalVideo::-webkit-media-controls-panel {
+    display: flex !important;
+}
+
+#modalVideo::-webkit-media-controls {
+    overflow: hidden !important;
+}
+
+/* Completely disable context menu */
+#modalVideo,
+.video-modal-content video {
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+}
+
+
+/* ======================================
+   VIDEO QUALITY SELECTOR
+   ====================================== */
+
+/* Quality Selector Container */
+.quality-selector {
+    position: absolute;
+    bottom: 70px;
+    right: 20px;
+    z-index: 10002;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.video-modal:hover .quality-selector {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Quality Button */
+.quality-btn {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 100px;
+    justify-content: center;
+}
+
+.quality-btn:hover {
+    background: rgba(62, 166, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(62, 166, 255, 0.6);
+}
+
+.quality-btn.active {
+    background: rgba(62, 166, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 20px rgba(62, 166, 255, 0.8);
+}
+
+.quality-btn.active::before {
+    content: '✓ ';
+    font-weight: bold;
+}
+
+/* Quality Menu */
+.quality-menu {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 12px;
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 150px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+}
+
+.quality-menu.active {
+    display: flex;
+}
+
+.quality-option {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.quality-option:hover {
+    background: rgba(62, 166, 255, 0.3);
+    border-color: rgba(62, 166, 255, 0.6);
+    transform: translateX(-5px);
+}
+
+.quality-option.active {
+    background: rgba(62, 166, 255, 0.8);
+    border-color: rgba(62, 166, 255, 1);
+}
+
+.quality-option.active::after {
+    content: '✓';
+    font-weight: bold;
+    color: white;
+}
+
+.quality-label {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.quality-resolution {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.quality-bitrate {
+    font-size: 0.75rem;
+    color: #aaa;
+    font-weight: 400;
+}
+
+/* Mobile Quality Selector */
+@media (max-width: 768px) {
+    .quality-selector {
+        bottom: 60px;
+        right: 10px;
+    }
+    
+    .quality-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        min-width: 80px;
+    }
+    
+    .quality-menu {
+        min-width: 130px;
+        padding: 10px;
+    }
+    
+    .quality-option {
+        padding: 10px 14px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Loading indicator for quality change */
+.quality-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 20px 30px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(62, 166, 255, 0.5);
+    display: none;
+    z-index: 10003;
+}
+
+.quality-loading.active {
+    display: block;
+}
+
+
+/* ======================================
+   VIDEO PREVIEW ON SCRUBBER HOVER
+   ====================================== */
+
+/* Video scrubber preview container */
+.video-preview-container {
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    display: none;
+    pointer-events: none;
+    z-index: 10005;
+    transform: translateX(-50%);
+}
+
+.video-preview-container.active {
+    display: block;
+}
+
+/* Preview thumbnail */
+.video-preview-thumbnail {
+    background: #000;
+    border: 3px solid rgba(62, 166, 255, 0.8);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9);
+    position: relative;
+}
+
+.video-preview-thumbnail canvas {
+    display: block;
+    width: 160px;
+    height: 90px;
+    background: #000;
+}
+
+/* Preview timestamp */
+.video-preview-time {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: monospace;
+}
+
+/* Arrow pointing down */
+.video-preview-arrow {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid rgba(62, 166, 255, 0.8);
+}
+
+/* Custom progress bar wrapper for better hover detection */
+.video-controls-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    z-index: 10004;
+    pointer-events: none;
+}
+
+/* Mobile - smaller preview */
+@media (max-width: 768px) {
+    .video-preview-thumbnail canvas {
+        width: 120px;
+        height: 68px;
+    }
+    
+    .video-preview-time {
+        font-size: 0.7rem;
+        padding: 2px 4px;
+    }
+}

@@ -1,0 +1,28 @@
+﻿services:
+  # Web Service - Your Video Streaming Website
+  - type: web
+    name: video-streaming-site
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt && python init_storage.py
+    startCommand: python web_server.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    
+  # Background Worker - Telegram Bot (runs 24/7)
+  - type: worker
+    name: telegram-bot
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt && python init_storage.py
+    startCommand: python telegram_bot.py
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: AUTHORIZED_CHAT_ID
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.11.0

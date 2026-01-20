@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Required - 18+ Only</title>
+    <script>
+        // IMMEDIATE CHECK - Before anything loads
+        (function() {
+            const isVerified = sessionStorage.getItem('websiteAccessVerified');
+            if (isVerified === 'true') {
+                window.location.replace('home.html');
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .access-gate-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+        }
+        
+        .access-gate-box {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            padding: 50px;
+            border-radius: 12px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
+            border: 2px solid #c0c0c0;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .access-logo {
+            margin-bottom: 30px;
+        }
+        
+        .access-logo img {
+            height: 80px;
+            width: auto;
+        }
+        
+        .access-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(192, 192, 192, 0.5);
+        }
+        
+        .access-description {
+            color: #aaaaaa;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .access-code-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            border: 2px solid #5d5d5d;
+            border-radius: 8px;
+            background: #1a1a1a;
+            color: #ffffff;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .access-code-input:focus {
+            outline: none;
+            border-color: #3ea6ff;
+            box-shadow: 0 0 20px rgba(62, 166, 255, 0.3);
+        }
+        
+        .access-submit-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #3ea6ff 0%, #2d8bcc 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .access-submit-btn:hover {
+            background: linear-gradient(135deg, #4db2ff 0%, #3ea6ff 100%);
+            box-shadow: 0 0 20px rgba(62, 166, 255, 0.5);
+        }
+        
+        .access-error {
+            color: #ff4444;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+        
+        .access-hint {
+            color: #777;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="access-gate-container">
+        <div class="access-gate-box">
+            <div class="access-logo">
+                <img src="https://media.istockphoto.com/id/1432243860/vector/eighteen-or-older-persons-adult-content-18-plus-only-rating.jpg?s=612x612&w=0&k=20&c=XCAaLoMGXteF9CVzXdwqzGArsafVRS5-SWZapLrki8k=" alt="18+" class="logo-image">
+            </div>
+            <h1 class="access-title">Access Restricted</h1>
+            <p class="access-description">
+                This website contains adult content (18+).<br>
+                Please enter your access code to continue.
+            </p>
+            <form id="accessForm">
+                <input 
+                    type="text" 
+                    id="accessCode" 
+                    class="access-code-input" 
+                    placeholder="Enter Access Code"
+                    maxlength="32"
+                    required
+                    autocomplete="off"
+                >
+                <button type="submit" class="access-submit-btn">Verify & Enter</button>
+                <div id="errorMessage" class="access-error"></div>
+            </form>
+            <p class="access-hint">
+                💡 Don't have an access code?<br>
+                Download the app from telegram channel and contact us.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Handle form submission
+        document.getElementById('accessForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const accessCode = document.getElementById('accessCode').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+            
+            errorMessage.textContent = '';
+            
+            if (!accessCode) {
+                errorMessage.textContent = 'Please enter an access code';
+                return;
+            }
+            
+            console.log('Verifying access code...');
+            
+            try {
+                // Fetch valid access codes
+                const response = await fetch('access_codes.json');
+                const data = await response.json();
+                
+                console.log('Total valid codes:', data.access_codes.length);
+                
+                if (data.access_codes.includes(accessCode)) {
+                    console.log('Code valid! Setting session...');
+                    
+                    // Valid code - store in session
+                    sessionStorage.setItem('websiteAccessVerified', 'true');
+                    sessionStorage.setItem('accessCode', accessCode);
+                    sessionStorage.setItem('accessTime', new Date().toISOString());
+                    
+                    console.log('Session stored:', {
+                        verified: sessionStorage.getItem('websiteAccessVerified'),
+                        code: sessionStorage.getItem('accessCode'),
+                        time: sessionStorage.getItem('accessTime')
+                    });
+                    
+                    // Redirect to actual home page
+                    window.location.replace('home.html');
+                } else {
+                    console.log('Invalid code');
+                    errorMessage.textContent = '❌ Invalid access code. Please try again.';
+                }
+            } catch (error) {
+                console.error('Error verifying code:', error);
+                errorMessage.textContent = '❌ Verification failed. Please try again.';
+            }
+        });
+    </script>
+</body>
+</html>

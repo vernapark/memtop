@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Panel</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <img src="https://media.istockphoto.com/id/1432243860/vector/eighteen-or-older-persons-adult-content-18-plus-only-rating.jpg?s=612x612&w=0&k=20&c=XCAaLoMGXteF9CVzXdwqzGArsafVRS5-SWZapLrki8k=" alt="18+" style="height: 40px; width: auto;">
+                Admin Access
+            </h2>
+            <p style="color: #aaaaaa; text-align: center; margin-bottom: 20px; font-size: 0.9rem;">
+                Enter your access key from Telegram bot
+            </p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="accessKey">Access Key</label>
+                    <input type="password" id="accessKey" name="accessKey" placeholder="Enter your 32-character key" required autocomplete="off">
+                </div>
+                <button type="submit" class="btn-primary">Verify Access</button>
+                <div id="errorMessage" class="error-message"></div>
+            </form>
+            <div style="margin-top: 20px; padding: 15px; background: #1a1a1a; border-radius: 5px; border: 1px solid #3f3f3f;">
+                <p style="color: #aaaaaa; font-size: 0.85rem; margin: 0;">
+                    💡 <strong>Don't have a key?</strong><br>
+                    Use your Telegram bot to generate one:<br>
+                    • Send <code>/createkey</code> to your bot<br>
+                    • Copy the generated key<br>
+                    • Paste it above to login
+                </p>
+            </div>
+            <a href="index.html" class="back-link">← Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const accessKey = document.getElementById('accessKey').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Clear previous error
+            errorMessage.textContent = '';
+            
+            if (!accessKey) {
+                errorMessage.textContent = 'Please enter an access key';
+                return;
+            }
+            
+            // Fetch the current key from storage
+            try {
+                const response = await fetch('key_storage.json');
+                const keyData = await response.json();
+                
+                if (accessKey === keyData.current_key && keyData.current_key !== '') {
+                    // Key is valid - store session and redirect
+                    sessionStorage.setItem('adminAuthenticated', 'true');
+                    sessionStorage.setItem('authKey', accessKey);
+                    window.location.href = 'admin/dashboard.html';
+                } else {
+                    errorMessage.textContent = 'Invalid access key. Generate a new one from Telegram bot.';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'Error verifying key. Please try again.';
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
