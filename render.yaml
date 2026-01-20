@@ -13,4 +13,4 @@ services:
       - key: AUTHORIZED_CHAT_ID
         value: 2103408372
       - key: WEBHOOK_URL
-        sync: false
+        value: https://memtop-video-streaming.onrender.com
