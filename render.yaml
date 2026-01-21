@@ -6,7 +6,7 @@
     plan: free
     branch: main
     rootDir: .
-    buildCommand: pip install aiohttp cloudinary python-multipart
+    buildCommand: pip install aiohttp cloudinary
     startCommand: python combined_server_final.py
     envVars:
       - key: BOT_TOKEN
