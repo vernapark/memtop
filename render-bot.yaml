@@ -2,6 +2,7 @@ services:
   - type: worker
     name: telegram-bot-worker
     runtime: python
+    runtimeVersion: "3.11"
     plan: free
     branch: main
     rootDir: .
