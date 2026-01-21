@@ -1,3 +1,4 @@
+﻿pip install python-telegram-bot==13.15
 services:
   - type: worker
     name: telegram-bot-worker
@@ -6,7 +7,7 @@ services:
     plan: free
     branch: main
     rootDir: .
-    buildCommand: pip install python-telegram-bot==20.7
+    buildCommand: pip install python-telegram-bot==13.15
     startCommand: python telegram_bot_clean.py
     envVars:
       - key: BOT_TOKEN
