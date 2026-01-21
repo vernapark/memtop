@@ -131,7 +131,7 @@ async def get_videos_from_cloudinary(request):
         return web.json_response({"error": str(e)}, status=500)
 
 async def delete_video_from_cloudinary(request):
-    """Delete video from Cloudinary and metadata"""
+    """Delete video AND thumbnail from Cloudinary cloud storage + metadata"""
     try:
         import cloudinary
         import cloudinary.uploader
@@ -148,20 +148,47 @@ async def delete_video_from_cloudinary(request):
         if not video_id:
             return web.json_response({"error": "No video ID provided"}, status=400)
         
-        # Delete from Cloudinary
-        cloudinary.uploader.destroy(video_id, resource_type="video")
-        
-        # Remove from metadata
+        # Get video metadata to find thumbnail
         videos_data = load_videos_metadata()
+        video_to_delete = None
+        for v in videos_data['videos']:
+            if v['id'] == video_id:
+                video_to_delete = v
+                break
+        
+        if video_to_delete:
+            # Delete video from Cloudinary cloud
+            try:
+                cloudinary.uploader.destroy(video_id, resource_type="video")
+                logger.info(f"Deleted video from Cloudinary cloud: {video_id}")
+            except Exception as e:
+                logger.warning(f"Failed to delete video: {e}")
+            
+            # Delete thumbnail from Cloudinary cloud
+            if video_to_delete.get('thumbnail'):
+                try:
+                    thumbnail_url = video_to_delete['thumbnail']
+                    if 'cloudinary.com' in thumbnail_url:
+                        parts = thumbnail_url.split('/')
+                        if 'upload' in parts:
+                            idx = parts.index('upload')
+                            public_id_parts = parts[idx+2:]
+                            public_id = '/'.join(public_id_parts).split('.')[0]
+                            cloudinary.uploader.destroy(public_id, resource_type="image")
+                            logger.info(f"Deleted thumbnail from Cloudinary cloud: {public_id}")
+                except Exception as e:
+                    logger.warning(f"Failed to delete thumbnail: {e}")
+        
+        # Remove from local metadata
         videos_data['videos'] = [v for v in videos_data['videos'] if v['id'] != video_id]
         save_videos_metadata(videos_data)
         
-        logger.info(f"Video deleted: {video_id}")
+        logger.info(f"Video permanently deleted from cloud and server: {video_id}")
         
-        return web.json_response({"success": True, "message": "Video deleted"})
+        return web.json_response({"success": True, "message": "Video deleted from cloud storage"})
         
     except Exception as e:
-        logger.error(f"Error deleting video: {e}")
+        logger.error(f"Error deleting video: {e}", exc_info=True)
         return web.json_response({"error": str(e)}, status=500)
 # ============================================================================
 # STORAGE FUNCTIONS (SHARED BY BOT AND WEBSITE)
@@ -432,7 +459,7 @@ def main():
     print(f"Webhook URL: {WEBHOOK_URL}")
     print("=" * 70)
     
-    app = web.Application()
+    app = web.Application(client_max_size=1024**3)  # 1GB max upload size
     
     # Bot webhook
     app.router.add_post('/telegram-webhook', handle_telegram_webhook)
@@ -458,6 +485,9 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
 
 
 
