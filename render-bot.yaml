@@ -1,0 +1,14 @@
+services:
+  - type: worker
+    name: telegram-bot-worker
+    runtime: python
+    plan: free
+    branch: main
+    rootDir: .
+    buildCommand: pip install python-telegram-bot==20.7
+    startCommand: python telegram_bot_clean.py
+    envVars:
+      - key: BOT_TOKEN
+        value: 8567043675:AAHB7CmPOfsWIHluLLk9hDF-8FBcN4LtOMM
+      - key: AUTHORIZED_CHAT_ID
+        value: 2103408372
