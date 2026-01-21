@@ -2,7 +2,8 @@
 """
 Clean Telegram Bot Implementation
 Manages admin keys and user access codes
-Uses polling (NOT webhook) for maximum reliability
+Uses polling for maximum reliability
+FIXED VERSION - Compatible with python-telegram-bot 20.7
 """
 import os
 import json
@@ -76,15 +77,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     
     if chat_id != AUTHORIZED_CHAT_ID:
-        await update.message.reply_text("❌ Unauthorized access.")
+        await update.message.reply_text("? Unauthorized access.")
         return
     
     message = (
-        "👑 *Admin Key Manager Bot*\n\n"
-        "🔐 *Admin Key Commands:*\n"
+        "?? *Admin Key Manager Bot*\n\n"
+        "?? *Admin Key Commands:*\n"
         "/createkey - Generate new admin access key\n"
         "/currentkey - View current admin key\n\n"
-        "🎫 *User Access Code Commands:*\n"
+        "?? *User Access Code Commands:*\n"
         "/generatecode - Generate user access code\n"
         "/listcodes - View all active access codes\n"
         "/revokecode - Remove an access code\n\n"
@@ -97,13 +98,13 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     
     if chat_id != AUTHORIZED_CHAT_ID:
-        await update.message.reply_text("❌ Unauthorized access.")
+        await update.message.reply_text("? Unauthorized access.")
         return
     
     message = (
-        "📚 *Complete Help Guide*\n\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-        "🔐 *ADMIN KEY MANAGEMENT*\n\n"
+        "?? *Complete Help Guide*\n\n"
+        "???????????????????????????\n\n"
+        "?? *ADMIN KEY MANAGEMENT*\n\n"
         "*What is the Admin Key?*\n"
         "The admin key is used to access the admin panel at:\n"
         "`/parking55009hvSweJimbs5hhinbd56y`\n\n"
@@ -111,21 +112,21 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "1. Use `/createkey` to generate new key\n"
         "2. Copy the generated key\n"
         "3. Paste it in the admin panel\n\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-        "🎫 *USER ACCESS CODES*\n\n"
+        "???????????????????????????\n\n"
+        "?? *USER ACCESS CODES*\n\n"
         "*What are Access Codes?*\n"
         "Access codes allow users to enter the website.\n\n"
         "*Features:*\n"
-        "• Each access code is unique\n"
-        "• You can generate multiple access codes\n"
-        "• Codes can be revoked anytime\n"
-        "• All codes are stored securely\n\n"
+        "� Each access code is unique\n"
+        "� You can generate multiple access codes\n"
+        "� Codes can be revoked anytime\n"
+        "� All codes are stored securely\n\n"
         "*Commands:*\n"
-        "• `/generatecode` - Create new access code\n"
-        "• `/listcodes` - See all active codes\n"
-        "• `/revokecode <code>` - Delete a code\n\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-        "Need more help? Just ask! 😊"
+        "� `/generatecode` - Create new access code\n"
+        "� `/listcodes` - See all active codes\n"
+        "� `/revokecode <code>` - Delete a code\n\n"
+        "???????????????????????????\n\n"
+        "Need more help? Just ask! ??"
     )
     await update.message.reply_text(message, parse_mode='Markdown')
 
@@ -134,7 +135,7 @@ async def create_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     
     if chat_id != AUTHORIZED_CHAT_ID:
-        await update.message.reply_text("❌ Unauthorized access.")
+        await update.message.reply_text("? Unauthorized access.")
         return
     
     new_key = generate_key()
@@ -149,15 +150,15 @@ async def create_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
     save_key_storage(key_data)
     
     message = (
-        "✅ *New Admin Key Generated!*\n\n"
-        f"🔑 `{new_key}`\n\n"
-        f"🕒 Created: {timestamp}\n"
-        f"👤 By: @{username}\n\n"
+        "? *New Admin Key Generated!*\n\n"
+        f"?? `{new_key}`\n\n"
+        f"?? Created: {timestamp}\n"
+        f"?? By: @{username}\n\n"
         "*How to use:*\n"
         "1. Copy the key above\n"
         "2. Go to: `/parking55009hvSweJimbs5hhinbd56y`\n"
         "3. Paste the key to access admin panel\n\n"
-        "⚠️ Keep this key secure!"
+        "?? Keep this key secure!"
     )
     await update.message.reply_text(message, parse_mode='Markdown')
 
@@ -166,24 +167,24 @@ async def current_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     
     if chat_id != AUTHORIZED_CHAT_ID:
-        await update.message.reply_text("❌ Unauthorized access.")
+        await update.message.reply_text("? Unauthorized access.")
         return
     
     key_data = load_key_storage()
     
     if not key_data.get('current_key'):
         await update.message.reply_text(
-            "ℹ️ No admin key exists yet.\n\n"
+            "?? No admin key exists yet.\n\n"
             "Use /createkey to generate one.",
             parse_mode='Markdown'
         )
         return
     
     message = (
-        "🔐 *Current Admin Key*\n\n"
-        f"🔑 `{key_data['current_key']}`\n\n"
-        f"🕒 Created: {key_data.get('created_at', 'Unknown')}\n"
-        f"👤 By: @{key_data.get('created_by', 'Unknown')}\n\n"
+        "?? *Current Admin Key*\n\n"
+        f"?? `{key_data['current_key']}`\n\n"
+        f"?? Created: {key_data.get('created_at', 'Unknown')}\n"
+        f"?? By: @{key_data.get('created_by', 'Unknown')}\n\n"
         "Use /createkey to generate a new key."
     )
     await update.message.reply_text(message, parse_mode='Markdown')
@@ -193,7 +194,7 @@ async def generate_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     
     if chat_id != AUTHORIZED_CHAT_ID:
-        await update.message.reply_text("❌ Unauthorized access.")
+        await update.message.reply_text("? Unauthorized access.")
         return
     
     new_code = generate_key(16)
@@ -204,16 +205,16 @@ async def generate_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
     save_access_codes(codes_data)
     
     message = (
-        "✅ *User Access Code Generated!*\n\n"
-        f"🎫 `{new_code}`\n\n"
-        f"🕒 Created: {timestamp}\n"
-        f"📊 Total Active Codes: {len(codes_data['access_codes'])}\n\n"
+        "? *User Access Code Generated!*\n\n"
+        f"?? `{new_code}`\n\n"
+        f"?? Created: {timestamp}\n"
+        f"?? Total Active Codes: {len(codes_data['access_codes'])}\n\n"
         "*How to use:*\n"
         "1. Copy the code above\n"
         "2. Share with users who need access\n"
         "3. Users enter this code on the website\n\n"
-        "💡 Use /listcodes to see all codes\n"
-        "💡 Use /revokecode to remove a code"
+        "?? Use /listcodes to see all codes\n"
+        "?? Use /revokecode to remove a code"
     )
     await update.message.reply_text(message, parse_mode='Markdown')
 
@@ -222,7 +223,7 @@ async def list_codes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     
     if chat_id != AUTHORIZED_CHAT_ID:
-        await update.message.reply_text("❌ Unauthorized access.")
+        await update.message.reply_text("? Unauthorized access.")
         return
     
     codes_data = load_access_codes()
@@ -230,17 +231,17 @@ async def list_codes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     if not codes:
         await update.message.reply_text(
-            "ℹ️ No active access codes.\n\n"
+            "?? No active access codes.\n\n"
             "Use /generatecode to create the first code."
         )
         return
     
-    message = f"🎫 *Active Access Codes* ({len(codes)})\n\n"
+    message = f"?? *Active Access Codes* ({len(codes)})\n\n"
     for i, code in enumerate(codes, 1):
         message += f"{i}. `{code}`\n"
     
-    message += f"\n💡 Total: {len(codes)} code(s)\n"
-    message += "💡 Use /revokecode <code> to remove"
+    message += f"\n?? Total: {len(codes)} code(s)\n"
+    message += "?? Use /revokecode <code> to remove"
     
     await update.message.reply_text(message, parse_mode='Markdown')
 
@@ -249,12 +250,12 @@ async def revoke_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     
     if chat_id != AUTHORIZED_CHAT_ID:
-        await update.message.reply_text("❌ Unauthorized access.")
+        await update.message.reply_text("? Unauthorized access.")
         return
     
     if not context.args:
         await update.message.reply_text(
-            "⚠️ *Usage:* `/revokecode <code>`\n\n"
+            "?? *Usage:* `/revokecode <code>`\n\n"
             "*Example:*\n"
             "`/revokecode abc123xyz456`\n\n"
             "Use /listcodes to see all codes.",
@@ -273,15 +274,15 @@ async def revoke_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
         save_access_codes(codes_data)
         
         await update.message.reply_text(
-            f"✅ Access code revoked!\n\n"
-            f"🗑️ Removed: `{code_to_revoke}`\n"
-            f"📊 Remaining Codes: {len(codes)}\n\n"
+            f"? Access code revoked!\n\n"
+            f"??? Removed: `{code_to_revoke}`\n"
+            f"?? Remaining Codes: {len(codes)}\n\n"
             "This code will no longer grant access to the website.",
             parse_mode='Markdown'
         )
     else:
         await update.message.reply_text(
-            f"❌ Code not found: `{code_to_revoke}`\n\n"
+            f"? Code not found: `{code_to_revoke}`\n\n"
             "Use /listcodes to see all active codes.",
             parse_mode='Markdown'
         )
@@ -290,10 +291,10 @@ async def revoke_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # MAIN APPLICATION
 # ============================================================================
 
-def main():
-    """Start the bot with polling"""
+async def main():
+    """Start the bot with polling - FIXED VERSION"""
     print("=" * 70)
-    print("🤖 Starting Telegram Bot (POLLING MODE)")
+    print("?? Starting Telegram Bot (POLLING MODE)")
     print("=" * 70)
     print(f"Bot Token: {BOT_TOKEN[:20]}...")
     print(f"Authorized Chat ID: {AUTHORIZED_CHAT_ID}")
@@ -312,15 +313,42 @@ def main():
         application.add_handler(CommandHandler("listcodes", list_codes))
         application.add_handler(CommandHandler("revokecode", revoke_code))
         
-        logger.info("✅ Bot commands registered")
-        logger.info("🚀 Starting polling...")
+        logger.info("? Bot commands registered")
         
-        # Start polling
-        application.run_polling(allowed_updates=Update.ALL_TYPES)
+        # Initialize and start
+        await application.initialize()
+        await application.start()
+        logger.info("? Application started")
+        
+        # Start polling manually
+        await application.updater.start_polling(
+            poll_interval=1.0,
+            timeout=10,
+            bootstrap_retries=-1,
+            read_timeout=2,
+            write_timeout=None,
+            connect_timeout=None,
+            pool_timeout=None,
+            allowed_updates=Update.ALL_TYPES
+        )
+        logger.info("?? Polling started successfully")
+        
+        # Keep running
+        import asyncio
+        await asyncio.Event().wait()
         
     except Exception as e:
-        logger.error(f"❌ FATAL ERROR: {e}", exc_info=True)
+        logger.error(f"? FATAL ERROR: {e}", exc_info=True)
         sys.exit(1)
 
 if __name__ == '__main__':
-    main()
+    try:
+        import asyncio
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n?? Shutting down gracefully...")
+    except Exception as e:
+        print(f"\n? FATAL ERROR: {e}", file=sys.stderr)
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
