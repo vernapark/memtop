@@ -2,21 +2,26 @@
 Simple Combined Web Server + Telegram Bot for Render.com
 Runs both the video streaming website and telegram bot in one process
 WITHOUT Cloudinary dependency to ensure it always starts
+FIXED VERSION with better error handling and logging
 """
 import os
 import json
 import secrets
 import string
+import sys
+import traceback
 from datetime import datetime
 from aiohttp import web
 import logging
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-# Setup logging
+# Setup logging with more detail
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
+    level=logging.INFO,
+    stream=sys.stdout,
+    force=True
 )
 logger = logging.getLogger(__name__)
 
@@ -39,17 +44,21 @@ telegram_app = None
 
 def initialize_files():
     """Initialize storage files if they don't exist"""
-    if not os.path.exists(KEY_STORAGE_FILE):
-        initial_data = {"current_key": "", "created_at": "", "created_by": ""}
-        with open(KEY_STORAGE_FILE, 'w') as f:
-            json.dump(initial_data, f, indent=2)
-        logger.info(f"✅ Created {KEY_STORAGE_FILE}")
-    
-    if not os.path.exists(ACCESS_CODES_FILE):
-        initial_data = {"access_codes": []}
-        with open(ACCESS_CODES_FILE, 'w') as f:
-            json.dump(initial_data, f, indent=2)
-        logger.info(f"✅ Created {ACCESS_CODES_FILE}")
+    try:
+        if not os.path.exists(KEY_STORAGE_FILE):
+            initial_data = {"current_key": "", "created_at": "", "created_by": ""}
+            with open(KEY_STORAGE_FILE, 'w') as f:
+                json.dump(initial_data, f, indent=2)
+            logger.info(f"✅ Created {KEY_STORAGE_FILE}")
+        
+        if not os.path.exists(ACCESS_CODES_FILE):
+            initial_data = {"access_codes": []}
+            with open(ACCESS_CODES_FILE, 'w') as f:
+                json.dump(initial_data, f, indent=2)
+            logger.info(f"✅ Created {ACCESS_CODES_FILE}")
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize files: {e}")
+        raise
 
 # ============================================================================
 # STORAGE FUNCTIONS
@@ -66,8 +75,8 @@ def load_key_storage():
         try:
             with open(KEY_STORAGE_FILE, 'r') as f:
                 return json.load(f)
-        except:
-            pass
+        except Exception as e:
+            logger.error(f"Error loading key storage: {e}")
     return {"current_key": "", "created_at": "", "created_by": ""}
 
 def save_key_storage(data):
@@ -81,8 +90,8 @@ def load_access_codes():
         try:
             with open(ACCESS_CODES_FILE, 'r') as f:
                 return json.load(f)
-        except:
-            pass
+        except Exception as e:
+            logger.error(f"Error loading access codes: {e}")
     return {"access_codes": []}
 
 def save_access_codes(data):
@@ -314,10 +323,9 @@ async def revoke_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ============================================================================
 
 async def webhook_handler(request):
-    """Handle Telegram webhook updates - FIXED VERSION"""
+    """Handle Telegram webhook updates"""
     global telegram_app
     
-    # Only accept POST requests
     if request.method != 'POST':
         logger.warning(f"Webhook received non-POST request: {request.method}")
         return web.Response(status=405, text="Method Not Allowed")
@@ -327,10 +335,7 @@ async def webhook_handler(request):
         data = await request.json()
         logger.info(f"📦 Webhook data: {json.dumps(data, indent=2)}")
         
-        # FIXED: Use the correct method to process updates
         update = Update.de_json(data, telegram_app.bot)
-        
-        # Put update in queue instead of direct processing
         await telegram_app.update_queue.put(update)
         
         logger.info("✅ Update queued successfully")
@@ -344,28 +349,22 @@ async def serve_file(request):
     try:
         path = request.path
         
-        # Handle root
         if path == '/':
             path = '/index.html'
         
-        # Handle admin route
         if path == '/parking55009hvSweJimbs5hhinbd56y':
             path = '/parking55009hvSweJimbs5hhinbd56y.html'
             logger.info(f"[ADMIN] Access from {request.remote}")
         
-        # Remove leading slash
         file_path = path.lstrip('/')
         
-        # Security: prevent directory traversal
         if '..' in file_path:
             return web.Response(status=403, text="Forbidden")
         
-        # Check if file exists
         if not os.path.exists(file_path):
             logger.warning(f"File not found: {file_path}")
             return web.Response(status=404, text="Not Found")
         
-        # Determine content type
         content_type = 'text/html'
         if file_path.endswith('.css'):
             content_type = 'text/css'
@@ -384,7 +383,6 @@ async def serve_file(request):
         elif file_path.endswith('.mp4'):
             content_type = 'video/mp4'
         
-        # Read and serve file
         with open(file_path, 'rb') as f:
             content = f.read()
         
@@ -406,69 +404,103 @@ async def main():
     """Start the combined server"""
     global telegram_app
     
-    print("=" * 70)
-    print("🚀 Starting Combined Web Server + Telegram Bot")
-    print("=" * 70)
-    
-    # Initialize storage files
-    initialize_files()
-    
-    # Create Telegram bot application
-    telegram_app = (
-        Application.builder()
-        .token(BOT_TOKEN)
-        .updater(None)  # Required for manual webhook handling
-        .build()
-    )
-    
-    # Register bot commands
-    telegram_app.add_handler(CommandHandler("start", start))
-    telegram_app.add_handler(CommandHandler("help", help_command))
-    telegram_app.add_handler(CommandHandler("createkey", create_key))
-    telegram_app.add_handler(CommandHandler("currentkey", current_key))
-    telegram_app.add_handler(CommandHandler("generatecode", generate_code))
-    telegram_app.add_handler(CommandHandler("listcodes", list_codes))
-    telegram_app.add_handler(CommandHandler("revokecode", revoke_code))
-    
-    # Initialize bot
-    await telegram_app.initialize()
-    await telegram_app.start()
-    
-    # Set webhook
-    webhook_url = f"{WEBHOOK_URL}{WEBHOOK_PATH}"
-    await telegram_app.bot.set_webhook(url=webhook_url)
-    logger.info(f"✅ Webhook set to: {webhook_url}")
-    
-    # Create web application
-    app = web.Application()
-    
-    # Add routes - ORDER MATTERS!
-    # Webhook route MUST be registered before catch-all
-    app.router.add_route('*', WEBHOOK_PATH, webhook_handler)
-    app.router.add_get("/health", health_check)
-    app.router.add_route('*', "/{path:.*}", serve_file)
-    
-    logger.info("📍 Routes registered:")
-    logger.info(f"   * {WEBHOOK_PATH} -> webhook_handler")
-    logger.info(f"   GET /health -> health_check")
-    logger.info(f"   * /{{path:.*}} -> serve_file")
-    
-    # Start web server
-    runner = web.AppRunner(app)
-    await runner.setup()
-    site = web.TCPSite(runner, HOST, PORT)
-    await site.start()
-    
-    print("✅ Server is running!")
-    print(f"🌐 Website: {WEBHOOK_URL}")
-    print(f"🤖 Telegram Bot: Active with webhook")
-    print("=" * 70)
-    
-    # Keep running
-    import asyncio
-    await asyncio.Event().wait()
+    try:
+        print("=" * 70, flush=True)
+        print("🚀 Starting Combined Web Server + Telegram Bot", flush=True)
+        print("=" * 70, flush=True)
+        print(f"Python version: {sys.version}", flush=True)
+        print(f"PORT: {PORT}", flush=True)
+        print(f"HOST: {HOST}", flush=True)
+        print(f"WEBHOOK_URL: {WEBHOOK_URL}", flush=True)
+        print("=" * 70, flush=True)
+        
+        # Initialize storage files
+        logger.info("Initializing storage files...")
+        initialize_files()
+        logger.info("✅ Storage files initialized")
+        
+        # Create Telegram bot application
+        logger.info("Creating Telegram bot application...")
+        telegram_app = (
+            Application.builder()
+            .token(BOT_TOKEN)
+            .updater(None)  # Required for manual webhook handling
+            .build()
+        )
+        logger.info("✅ Telegram bot application created")
+        
+        # Register bot commands
+        logger.info("Registering bot commands...")
+        telegram_app.add_handler(CommandHandler("start", start))
+        telegram_app.add_handler(CommandHandler("help", help_command))
+        telegram_app.add_handler(CommandHandler("createkey", create_key))
+        telegram_app.add_handler(CommandHandler("currentkey", current_key))
+        telegram_app.add_handler(CommandHandler("generatecode", generate_code))
+        telegram_app.add_handler(CommandHandler("listcodes", list_codes))
+        telegram_app.add_handler(CommandHandler("revokecode", revoke_code))
+        logger.info("✅ Bot commands registered")
+        
+        # Initialize bot
+        logger.info("Initializing bot...")
+        await telegram_app.initialize()
+        logger.info("✅ Bot initialized")
+        
+        logger.info("Starting bot...")
+        await telegram_app.start()
+        logger.info("✅ Bot started")
+        
+        # Set webhook
+        webhook_url = f"{WEBHOOK_URL}{WEBHOOK_PATH}"
+        logger.info(f"Setting webhook to: {webhook_url}")
+        await telegram_app.bot.set_webhook(url=webhook_url)
+        logger.info(f"✅ Webhook set to: {webhook_url}")
+        
+        # Create web application
+        logger.info("Creating web application...")
+        app = web.Application()
+        
+        # Add routes
+        app.router.add_route('*', WEBHOOK_PATH, webhook_handler)
+        app.router.add_get("/health", health_check)
+        app.router.add_route('*', "/{path:.*}", serve_file)
+        
+        logger.info("📍 Routes registered:")
+        logger.info(f"   * {WEBHOOK_PATH} -> webhook_handler")
+        logger.info(f"   GET /health -> health_check")
+        logger.info(f"   * /{{path:.*}} -> serve_file")
+        
+        # Start web server
+        logger.info(f"Starting web server on {HOST}:{PORT}...")
+        runner = web.AppRunner(app)
+        await runner.setup()
+        site = web.TCPSite(runner, HOST, PORT)
+        await site.start()
+        
+        print("=" * 70, flush=True)
+        print("✅ Server is running!", flush=True)
+        print(f"🌐 Website: {WEBHOOK_URL}", flush=True)
+        print(f"🤖 Telegram Bot: Active with webhook", flush=True)
+        print("=" * 70, flush=True)
+        logger.info("✅ All systems operational")
+        
+        # Keep running
+        import asyncio
+        logger.info("Entering main event loop...")
+        await asyncio.Event().wait()
+        
+    except Exception as e:
+        logger.error(f"❌ FATAL ERROR in main(): {e}", exc_info=True)
+        print(f"\n❌ FATAL ERROR: {e}", file=sys.stderr, flush=True)
+        traceback.print_exc()
+        sys.exit(1)
 
 if __name__ == '__main__':
-    import asyncio
-    asyncio.run(main())
-
+    try:
+        import asyncio
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n👋 Shutting down gracefully...")
+    except Exception as e:
+        print(f"\n❌ FATAL ERROR: {e}", file=sys.stderr, flush=True)
+        traceback.print_exc()
+        sys.exit(1)
