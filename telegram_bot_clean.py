@@ -197,7 +197,7 @@ def main():
         from telegram.ext import Updater, CommandHandler
         
         # v13 correct syntax: pass token to Updater directly
-        updater = Updater(BOT_TOKEN, use_context=True)
+        updater = Updater(BOT_TOKEN)
         dp = updater.dispatcher
         
         # Register handlers
