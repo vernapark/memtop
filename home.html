@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -47,7 +47,7 @@
     <script src="js/main.js"></script>
     <script>
         // Protection: Check if user has verified access
-        if (!sessionStorage.getItem('websiteAccessVerified')) {
+        if (!localStorage.getItem('websiteAccessVerified')) {
             // Not verified - redirect to access gate
             window.location.href = 'index.html';
         }

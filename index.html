@@ -7,7 +7,7 @@
     <script>
         // IMMEDIATE CHECK - Before anything loads
         (function() {
-            const isVerified = sessionStorage.getItem('websiteAccessVerified');
+            const isVerified = localStorage.getItem('websiteAccessVerified');
             if (isVerified === 'true') {
                 window.location.replace('home.html');
             }
@@ -163,17 +163,17 @@
                 console.log('Total valid codes:', data.access_codes.length);
                 
                 if (data.access_codes.includes(accessCode)) {
-                    console.log('Code valid! Setting session...');
+                    console.log('Code valid! Setting persistent storage...');
                     
-                    // Valid code - store in session
-                    sessionStorage.setItem('websiteAccessVerified', 'true');
-                    sessionStorage.setItem('accessCode', accessCode);
-                    sessionStorage.setItem('accessTime', new Date().toISOString());
+                    // Valid code - store in localStorage (persists across browser restarts)
+                    localStorage.setItem('websiteAccessVerified', 'true');
+                    localStorage.setItem('accessCode', accessCode);
+                    localStorage.setItem('accessTime', new Date().toISOString());
                     
-                    console.log('Session stored:', {
-                        verified: sessionStorage.getItem('websiteAccessVerified'),
-                        code: sessionStorage.getItem('accessCode'),
-                        time: sessionStorage.getItem('accessTime')
+                    console.log('Storage saved:', {
+                        verified: localStorage.getItem('websiteAccessVerified'),
+                        code: localStorage.getItem('accessCode'),
+                        time: localStorage.getItem('accessTime')
                     });
                     
                     // Redirect to actual home page
