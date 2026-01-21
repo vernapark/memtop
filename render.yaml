@@ -5,12 +5,5 @@ services:
     plan: free
     branch: main
     rootDir: .
-    buildCommand: pip install python-telegram-bot==20.7 aiohttp==3.9.1
-    startCommand: python simple_combined_server.py
-    envVars:
-      - key: BOT_TOKEN
-        value: 8567043675:AAHB7CmPOfsWIHluLLk9hDF-8FBcN4LtOMM
-      - key: AUTHORIZED_CHAT_ID
-        value: 2103408372
-      - key: WEBHOOK_URL
-        value: https://memtop-video-streaming.onrender.com
+    buildCommand: pip install aiohttp==3.9.1
+    startCommand: python web_server_only.py
