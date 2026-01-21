@@ -7,7 +7,7 @@ services:
     branch: main
     rootDir: .
     buildCommand: pip install -r requirements.txt
-    startCommand: python combined_server_bulletproof.py
+    startCommand: python combined_server_with_database.py
     envVars:
       - key: BOT_TOKEN
         value: 8567043675:AAHB7CmPOfsWIHluLLk9hDF-8FBcN4LtOMM
@@ -15,9 +15,18 @@ services:
         value: 2103408372
       - key: WEBHOOK_URL
         sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: memtop-videos-db
+          property: connectionString
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
+
+databases:
+  - name: memtop-videos-db
+    databaseName: memtop_videos
+    plan: free
