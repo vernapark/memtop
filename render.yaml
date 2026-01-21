@@ -1,4 +1,4 @@
-﻿services:
+services:
   - type: web
     name: memtop-video-streaming
     runtime: python
@@ -6,8 +6,8 @@
     plan: free
     branch: main
     rootDir: .
-    buildCommand: pip install aiohttp cloudinary
-    startCommand: python combined_server_final.py
+    buildCommand: pip install aiohttp cloudinary python-multipart
+    startCommand: python combined_server_bulletproof.py
     envVars:
       - key: BOT_TOKEN
         value: 8567043675:AAHB7CmPOfsWIHluLLk9hDF-8FBcN4LtOMM
@@ -21,3 +21,4 @@
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
+
