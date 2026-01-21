@@ -1,14 +1,12 @@
 ﻿#!/usr/bin/env python3
 """
-Telegram Bot - RAW API VERSION
-Uses python-telegram-bot v13 which is stable and works with all Python versions
+Telegram Bot - v13 CORRECTED SYNTAX
 """
 import os
 import json
 import secrets
 import string
 import sys
-import time
 from datetime import datetime
 import logging
 
@@ -54,9 +52,10 @@ def save_access_codes(data):
     with open(ACCESS_CODES_FILE, 'w') as f:
         json.dump(data, f, indent=2)
 
-def handle_start(chat_id, bot):
+def start_command(update, context):
+    chat_id = update.effective_chat.id
     if chat_id != AUTHORIZED_CHAT_ID:
-        bot.send_message(chat_id=chat_id, text="Unauthorized access.")
+        update.message.reply_text("Unauthorized access.")
         return
     
     message = (
@@ -70,11 +69,12 @@ def handle_start(chat_id, bot):
         "/revokecode - Remove an access code\n\n"
         "/help - Show detailed help"
     )
-    bot.send_message(chat_id=chat_id, text=message)
+    update.message.reply_text(message)
 
-def handle_help(chat_id, bot):
+def help_command(update, context):
+    chat_id = update.effective_chat.id
     if chat_id != AUTHORIZED_CHAT_ID:
-        bot.send_message(chat_id=chat_id, text="Unauthorized access.")
+        update.message.reply_text("Unauthorized access.")
         return
     
     message = (
@@ -88,43 +88,47 @@ def handle_help(chat_id, bot):
         "/listcodes - See all codes\n"
         "/revokecode <code> - Delete a code"
     )
-    bot.send_message(chat_id=chat_id, text=message)
+    update.message.reply_text(message)
 
-def handle_createkey(chat_id, username, bot):
+def createkey_command(update, context):
+    chat_id = update.effective_chat.id
     if chat_id != AUTHORIZED_CHAT_ID:
-        bot.send_message(chat_id=chat_id, text="Unauthorized access.")
+        update.message.reply_text("Unauthorized access.")
         return
     
     new_key = generate_key()
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    username = update.effective_user.username or "Unknown"
     
     key_data = {
         "current_key": new_key,
         "created_at": timestamp,
-        "created_by": username or "Unknown"
+        "created_by": username
     }
     save_key_storage(key_data)
     
     message = f"New Admin Key Generated!\n\nKey: {new_key}\n\nCreated: {timestamp}\nBy: @{username}\n\nKeep this key secure!"
-    bot.send_message(chat_id=chat_id, text=message)
+    update.message.reply_text(message)
 
-def handle_currentkey(chat_id, bot):
+def currentkey_command(update, context):
+    chat_id = update.effective_chat.id
     if chat_id != AUTHORIZED_CHAT_ID:
-        bot.send_message(chat_id=chat_id, text="Unauthorized access.")
+        update.message.reply_text("Unauthorized access.")
         return
     
     key_data = load_key_storage()
     
     if not key_data.get('current_key'):
-        bot.send_message(chat_id=chat_id, text="No admin key exists yet.\nUse /createkey to generate one.")
+        update.message.reply_text("No admin key exists yet.\nUse /createkey to generate one.")
         return
     
     message = f"Current Admin Key\n\nKey: {key_data['current_key']}\n\nCreated: {key_data.get('created_at', 'Unknown')}\nBy: @{key_data.get('created_by', 'Unknown')}"
-    bot.send_message(chat_id=chat_id, text=message)
+    update.message.reply_text(message)
 
-def handle_generatecode(chat_id, bot):
+def generatecode_command(update, context):
+    chat_id = update.effective_chat.id
     if chat_id != AUTHORIZED_CHAT_ID:
-        bot.send_message(chat_id=chat_id, text="Unauthorized access.")
+        update.message.reply_text("Unauthorized access.")
         return
     
     new_code = generate_key(16)
@@ -135,18 +139,19 @@ def handle_generatecode(chat_id, bot):
     save_access_codes(codes_data)
     
     message = f"User Access Code Generated!\n\nCode: {new_code}\n\nCreated: {timestamp}\nTotal Active Codes: {len(codes_data['access_codes'])}\n\nShare this code with users."
-    bot.send_message(chat_id=chat_id, text=message)
+    update.message.reply_text(message)
 
-def handle_listcodes(chat_id, bot):
+def listcodes_command(update, context):
+    chat_id = update.effective_chat.id
     if chat_id != AUTHORIZED_CHAT_ID:
-        bot.send_message(chat_id=chat_id, text="Unauthorized access.")
+        update.message.reply_text("Unauthorized access.")
         return
     
     codes_data = load_access_codes()
     codes = codes_data.get('access_codes', [])
     
     if not codes:
-        bot.send_message(chat_id=chat_id, text="No active access codes.\nUse /generatecode to create one.")
+        update.message.reply_text("No active access codes.\nUse /generatecode to create one.")
         return
     
     message = f"Active Access Codes ({len(codes)})\n\n"
@@ -154,19 +159,19 @@ def handle_listcodes(chat_id, bot):
         message += f"{i}. {code}\n"
     
     message += f"\nTotal: {len(codes)} code(s)"
-    bot.send_message(chat_id=chat_id, text=message)
+    update.message.reply_text(message)
 
-def handle_revokecode(chat_id, text, bot):
+def revokecode_command(update, context):
+    chat_id = update.effective_chat.id
     if chat_id != AUTHORIZED_CHAT_ID:
-        bot.send_message(chat_id=chat_id, text="Unauthorized access.")
+        update.message.reply_text("Unauthorized access.")
         return
     
-    parts = text.split()
-    if len(parts) < 2:
-        bot.send_message(chat_id=chat_id, text="Usage: /revokecode <code>\n\nExample:\n/revokecode abc123xyz456")
+    if not context.args:
+        update.message.reply_text("Usage: /revokecode <code>\n\nExample:\n/revokecode abc123xyz456")
         return
     
-    code_to_revoke = parts[1]
+    code_to_revoke = context.args[0]
     
     codes_data = load_access_codes()
     codes = codes_data.get('access_codes', [])
@@ -176,13 +181,13 @@ def handle_revokecode(chat_id, text, bot):
         codes_data['access_codes'] = codes
         save_access_codes(codes_data)
         
-        bot.send_message(chat_id=chat_id, text=f"Access code revoked!\n\nRemoved: {code_to_revoke}\nRemaining Codes: {len(codes)}")
+        update.message.reply_text(f"Access code revoked!\n\nRemoved: {code_to_revoke}\nRemaining Codes: {len(codes)}")
     else:
-        bot.send_message(chat_id=chat_id, text=f"Code not found: {code_to_revoke}")
+        update.message.reply_text(f"Code not found: {code_to_revoke}")
 
 def main():
     print("=" * 70)
-    print("Starting Telegram Bot - v13 STABLE VERSION")
+    print("Starting Telegram Bot - v13 STABLE")
     print("=" * 70)
     print(f"Bot Token: {BOT_TOKEN[:20]}...")
     print(f"Authorized Chat ID: {AUTHORIZED_CHAT_ID}")
@@ -191,18 +196,18 @@ def main():
     try:
         from telegram.ext import Updater, CommandHandler
         
-        # Create updater with v13 API (which works!)
-        updater = Updater(token=BOT_TOKEN, use_context=True)
-        dispatcher = updater.dispatcher
+        # v13 correct syntax: pass token to Updater directly
+        updater = Updater(BOT_TOKEN, use_context=True)
+        dp = updater.dispatcher
         
         # Register handlers
-        dispatcher.add_handler(CommandHandler("start", lambda update, context: handle_start(update.effective_chat.id, context.bot)))
-        dispatcher.add_handler(CommandHandler("help", lambda update, context: handle_help(update.effective_chat.id, context.bot)))
-        dispatcher.add_handler(CommandHandler("createkey", lambda update, context: handle_createkey(update.effective_chat.id, update.effective_user.username, context.bot)))
-        dispatcher.add_handler(CommandHandler("currentkey", lambda update, context: handle_currentkey(update.effective_chat.id, context.bot)))
-        dispatcher.add_handler(CommandHandler("generatecode", lambda update, context: handle_generatecode(update.effective_chat.id, context.bot)))
-        dispatcher.add_handler(CommandHandler("listcodes", lambda update, context: handle_listcodes(update.effective_chat.id, context.bot)))
-        dispatcher.add_handler(CommandHandler("revokecode", lambda update, context: handle_revokecode(update.effective_chat.id, update.message.text, context.bot)))
+        dp.add_handler(CommandHandler("start", start_command))
+        dp.add_handler(CommandHandler("help", help_command))
+        dp.add_handler(CommandHandler("createkey", createkey_command))
+        dp.add_handler(CommandHandler("currentkey", currentkey_command))
+        dp.add_handler(CommandHandler("generatecode", generatecode_command))
+        dp.add_handler(CommandHandler("listcodes", listcodes_command))
+        dp.add_handler(CommandHandler("revokecode", revokecode_command))
         
         logger.info("Bot commands registered")
         logger.info("Starting polling...")
