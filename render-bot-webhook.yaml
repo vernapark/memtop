@@ -1,0 +1,17 @@
+﻿services:
+  - type: web
+    name: telegram-bot-webhook
+    runtime: python
+    runtimeVersion: "3.11"
+    plan: free
+    branch: main
+    rootDir: .
+    buildCommand: pip install aiohttp
+    startCommand: python telegram_bot_webhook_simple.py
+    envVars:
+      - key: BOT_TOKEN
+        value: 8567043675:AAHB7CmPOfsWIHluLLk9hDF-8FBcN4LtOMM
+      - key: AUTHORIZED_CHAT_ID
+        value: 2103408372
+      - key: WEBHOOK_URL
+        sync: false
