@@ -414,7 +414,12 @@ async def main():
     initialize_files()
     
     # Create Telegram bot application
-    telegram_app = Application.builder().token(BOT_TOKEN).build()
+    telegram_app = (
+        Application.builder()
+        .token(BOT_TOKEN)
+        .updater(None)  # Required for manual webhook handling
+        .build()
+    )
     
     # Register bot commands
     telegram_app.add_handler(CommandHandler("start", start))
@@ -466,3 +471,4 @@ async def main():
 if __name__ == '__main__':
     import asyncio
     asyncio.run(main())
+
