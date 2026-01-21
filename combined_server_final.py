@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 COMBINED: Web Server + Telegram Bot
 Everything runs in one process, sharing the same storage files
@@ -28,6 +28,141 @@ WEBHOOK_URL = os.getenv("WEBHOOK_URL", "")
 KEY_STORAGE_FILE = "key_storage.json"
 ACCESS_CODES_FILE = "access_codes.json"
 
+# ============================================================================
+# CLOUDINARY VIDEO UPLOAD HANDLERS
+# ============================================================================
+
+# Cloudinary config
+CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME", "")
+CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY", "")
+CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET", "")
+VIDEOS_FILE = "videos.json"
+
+def load_videos_metadata():
+    """Load video metadata from JSON file"""
+    if os.path.exists(VIDEOS_FILE):
+        try:
+            with open(VIDEOS_FILE, 'r') as f:
+                return json.load(f)
+        except:
+            return {"videos": []}
+    return {"videos": []}
+
+def save_videos_metadata(data):
+    """Save video metadata to JSON file"""
+    with open(VIDEOS_FILE, 'w') as f:
+        json.dump(data, f, indent=2)
+
+async def upload_video_to_cloudinary(request):
+    """Handle video upload to Cloudinary"""
+    try:
+        import cloudinary
+        import cloudinary.uploader
+        
+        # Configure Cloudinary
+        cloudinary.config(
+            cloud_name=CLOUDINARY_CLOUD_NAME,
+            api_key=CLOUDINARY_API_KEY,
+            api_secret=CLOUDINARY_API_SECRET
+        )
+        
+        data = await request.json()
+        video_data = data.get('videoData')  # Base64 video
+        thumbnail_data = data.get('thumbnailData')  # Base64 thumbnail
+        title = data.get('title')
+        description = data.get('description')
+        category = data.get('category')
+        
+        logger.info(f"Uploading video to Cloudinary: {title}")
+        
+        # Upload video to Cloudinary
+        video_result = cloudinary.uploader.upload(
+            video_data,
+            resource_type="video",
+            folder="video_streaming_site/videos",
+            public_id=f"video_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        )
+        
+        # Upload thumbnail to Cloudinary
+        thumbnail_result = cloudinary.uploader.upload(
+            thumbnail_data,
+            resource_type="image",
+            folder="video_streaming_site/thumbnails",
+            public_id=f"thumb_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        )
+        
+        # Create video metadata
+        video_metadata = {
+            "id": video_result['public_id'],
+            "title": title,
+            "description": description,
+            "category": category,
+            "videoUrl": video_result['secure_url'],
+            "thumbnail": thumbnail_result['secure_url'],
+            "uploadDate": datetime.now().isoformat(),
+            "duration": video_result.get('duration', 0),
+            "cloudinary_id": video_result['public_id']
+        }
+        
+        # Save metadata
+        videos_data = load_videos_metadata()
+        videos_data['videos'].append(video_metadata)
+        save_videos_metadata(videos_data)
+        
+        logger.info(f"Video uploaded successfully: {video_metadata['id']}")
+        
+        return web.json_response({
+            "success": True,
+            "message": "Video uploaded successfully",
+            "video": video_metadata
+        })
+        
+    except Exception as e:
+        logger.error(f"Upload error: {e}", exc_info=True)
+        return web.json_response({"error": str(e)}, status=500)
+
+async def get_videos_from_cloudinary(request):
+    """Get all videos metadata"""
+    try:
+        videos_data = load_videos_metadata()
+        return web.json_response(videos_data)
+    except Exception as e:
+        logger.error(f"Error getting videos: {e}")
+        return web.json_response({"error": str(e)}, status=500)
+
+async def delete_video_from_cloudinary(request):
+    """Delete video from Cloudinary and metadata"""
+    try:
+        import cloudinary
+        import cloudinary.uploader
+        
+        cloudinary.config(
+            cloud_name=CLOUDINARY_CLOUD_NAME,
+            api_key=CLOUDINARY_API_KEY,
+            api_secret=CLOUDINARY_API_SECRET
+        )
+        
+        data = await request.json()
+        video_id = data.get('id')
+        
+        if not video_id:
+            return web.json_response({"error": "No video ID provided"}, status=400)
+        
+        # Delete from Cloudinary
+        cloudinary.uploader.destroy(video_id, resource_type="video")
+        
+        # Remove from metadata
+        videos_data = load_videos_metadata()
+        videos_data['videos'] = [v for v in videos_data['videos'] if v['id'] != video_id]
+        save_videos_metadata(videos_data)
+        
+        logger.info(f"Video deleted: {video_id}")
+        
+        return web.json_response({"success": True, "message": "Video deleted"})
+        
+    except Exception as e:
+        logger.error(f"Error deleting video: {e}")
+        return web.json_response({"error": str(e)}, status=500)
 # ============================================================================
 # STORAGE FUNCTIONS (SHARED BY BOT AND WEBSITE)
 # ============================================================================
@@ -302,6 +437,16 @@ def main():
     # Bot webhook
     app.router.add_post('/telegram-webhook', handle_telegram_webhook)
     
+    # Cloudinary video API routes
+    app.router.add_post('/api/upload-video', upload_video_to_cloudinary)
+    app.router.add_get('/api/videos', get_videos_from_cloudinary)
+    app.router.add_post('/api/delete-video', delete_video_from_cloudinary)
+    
+    # Cloudinary API routes
+    app.router.add_post('/api/upload-video', upload_video_to_cloudinary)
+    app.router.add_get('/api/videos', get_videos_from_cloudinary)
+    app.router.add_post('/api/delete-video', delete_video_from_cloudinary)
+    
     # Website routes
     app.router.add_get("/health", health_check)
     app.router.add_route('*', "/{path:.*}", serve_file)
@@ -313,3 +458,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+

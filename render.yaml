@@ -1,9 +1,23 @@
-services:
+﻿services:
   - type: web
     name: memtop-video-streaming
     runtime: python
+    runtimeVersion: "3.11"
     plan: free
     branch: main
     rootDir: .
-    buildCommand: pip install aiohttp==3.9.1
-    startCommand: python web_server_only.py
+    buildCommand: pip install aiohttp cloudinary python-multipart
+    startCommand: python combined_server_final.py
+    envVars:
+      - key: BOT_TOKEN
+        value: 8567043675:AAHB7CmPOfsWIHluLLk9hDF-8FBcN4LtOMM
+      - key: AUTHORIZED_CHAT_ID
+        value: 2103408372
+      - key: WEBHOOK_URL
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
