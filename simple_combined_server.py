@@ -34,31 +34,25 @@ ACCESS_CODES_FILE = "access_codes.json"
 telegram_app = None
 
 # ============================================================================
-# STORAGE INITIALIZATION
+# FILE INITIALIZATION
 # ============================================================================
 
-def init_storage_files():
+def initialize_files():
     """Initialize storage files if they don't exist"""
     if not os.path.exists(KEY_STORAGE_FILE):
-        logger.info(f"🔧 Initializing {KEY_STORAGE_FILE}...")
-        initial_data = {
-            "current_key": "",
-            "created_at": "",
-            "created_by": ""
-        }
+        initial_data = {"current_key": "", "created_at": "", "created_by": ""}
         with open(KEY_STORAGE_FILE, 'w') as f:
             json.dump(initial_data, f, indent=2)
         logger.info(f"✅ Created {KEY_STORAGE_FILE}")
     
     if not os.path.exists(ACCESS_CODES_FILE):
-        logger.info(f"🔧 Initializing {ACCESS_CODES_FILE}...")
         initial_data = {"access_codes": []}
         with open(ACCESS_CODES_FILE, 'w') as f:
             json.dump(initial_data, f, indent=2)
         logger.info(f"✅ Created {ACCESS_CODES_FILE}")
 
 # ============================================================================
-# TELEGRAM BOT FUNCTIONS
+# STORAGE FUNCTIONS
 # ============================================================================
 
 def generate_key(length=32):
@@ -97,7 +91,7 @@ def save_access_codes(data):
         json.dump(data, f, indent=2)
 
 # ============================================================================
-# TELEGRAM BOT COMMAND HANDLERS
+# TELEGRAM BOT COMMANDS
 # ============================================================================
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -105,28 +99,20 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     
     if chat_id != AUTHORIZED_CHAT_ID:
-        await update.message.reply_text(
-            "❌ Unauthorized access.\n"
-            "This bot is private and only accessible to authorized users."
-        )
+        await update.message.reply_text("❌ Unauthorized access.")
         return
     
     message = (
-        "🔐 *Admin Key Manager Bot*\n\n"
-        "Welcome! This bot manages access for your video streaming website.\n\n"
-        "*Admin Commands:*\n"
-        "/start - Show this welcome message\n"
-        "/help - Get detailed instructions\n"
-        "/createkey - Generate admin access key\n"
+        "👑 *Admin Key Manager Bot*\n\n"
+        "🔐 *Admin Key Commands:*\n"
+        "/createkey - Generate new admin access key\n"
         "/currentkey - View current admin key\n\n"
-        "*User Access Commands:*\n"
+        "🎫 *User Access Code Commands:*\n"
         "/generatecode - Generate user access code\n"
         "/listcodes - View all active access codes\n"
         "/revokecode - Remove an access code\n\n"
-        "⚠️ *Security Note:*\n"
-        "Creating a new admin key will invalidate the old one."
+        "/help - Show detailed help"
     )
-    
     await update.message.reply_text(message, parse_mode='Markdown')
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -138,25 +124,32 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     message = (
-        "📖 *How to Use This Bot*\n\n"
-        "*For Admin Panel Access:*\n"
-        "1. Use `/createkey` to generate admin access key\n"
-        "2. Copy the key\n"
-        "3. Login at: /parking55009hvSweJimbs5hhinbd56y\n\n"
-        "*For User Homepage Access:*\n"
+        "📚 *Complete Help Guide*\n\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "🔐 *ADMIN KEY MANAGEMENT*\n\n"
+        "*What is the Admin Key?*\n"
+        "The admin key is used to access the admin panel at:\n"
+        "`/parking55009hvSweJimbs5hhinbd56y`\n\n"
+        "*How to use:*\n"
         "1. Use `/generatecode` to create user access code\n"
-        "2. Share the code with users\n"
-        "3. Users enter code on homepage to access videos\n"
-        "4. Use `/listcodes` to see all active codes\n"
-        "5. Use `/revokecode` to disable a code\n\n"
-        "*Important Notes:*\n"
-        "• Admin keys are for dashboard access only\n"
-        "• Access codes are for homepage video viewing\n"
+        "2. Copy the generated code\n"
+        "3. Share it with users\n\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "🎫 *USER ACCESS CODES*\n\n"
+        "*What are Access Codes?*\n"
+        "Access codes allow users to enter the website.\n\n"
+        "*Features:*\n"
         "• Each access code is unique\n"
         "• You can generate multiple access codes\n"
-        "• Codes remain valid until revoked"
+        "• Codes can be revoked anytime\n"
+        "• All codes are stored securely\n\n"
+        "*Commands:*\n"
+        "• `/generatecode` - Create new access code\n"
+        "• `/listcodes` - See all active codes\n"
+        "• `/revokecode <code>` - Delete a code\n\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "Need more help? Just ask! 😊"
     )
-    
     await update.message.reply_text(message, parse_mode='Markdown')
 
 async def create_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -167,36 +160,28 @@ async def create_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("❌ Unauthorized access.")
         return
     
-    new_key = generate_key(32)
+    new_key = generate_key()
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    username = update.effective_user.username or "Unknown"
     
-    storage = load_key_storage()
-    old_key_exists = bool(storage.get("current_key"))
-    
-    storage = {
+    key_data = {
         "current_key": new_key,
         "created_at": timestamp,
-        "created_by": "Telegram Bot"
+        "created_by": username
     }
-    save_key_storage(storage)
+    save_key_storage(key_data)
     
     message = (
-        "✅ *New Admin Access Key Generated!*\n\n"
+        "✅ *New Admin Key Generated!*\n\n"
         f"🔑 `{new_key}`\n\n"
-        f"🕒 Created: {timestamp}\n\n"
-    )
-    
-    if old_key_exists:
-        message += "⚠️ *Previous admin key has been invalidated.*\n\n"
-    
-    message += (
-        "*Next Steps:*\n"
+        f"🕒 Created: {timestamp}\n"
+        f"👤 By: @{username}\n\n"
+        "*How to use:*\n"
         "1. Copy the key above\n"
-        f"2. Go to: {WEBHOOK_URL}/parking55009hvSweJimbs5hhinbd56y\n"
-        "3. Paste and login\n\n"
-        "💡 Use /currentkey anytime to view this key again."
+        "2. Go to: `/parking55009hvSweJimbs5hhinbd56y`\n"
+        "3. Paste the key to access admin panel\n\n"
+        "⚠️ Keep this key secure!"
     )
-    
     await update.message.reply_text(message, parse_mode='Markdown')
 
 async def current_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -207,22 +192,23 @@ async def current_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("❌ Unauthorized access.")
         return
     
-    storage = load_key_storage()
+    key_data = load_key_storage()
     
-    if not storage.get("current_key"):
+    if not key_data.get('current_key'):
         await update.message.reply_text(
-            "ℹ️ No active admin key found.\n\n"
-            "Use /createkey to generate your first access key."
+            "ℹ️ No admin key exists yet.\n\n"
+            "Use /createkey to generate one.",
+            parse_mode='Markdown'
         )
         return
     
     message = (
-        "🔑 *Current Admin Access Key*\n\n"
-        f"`{storage['current_key']}`\n\n"
-        f"🕒 Created: {storage.get('created_at', 'Unknown')}\n\n"
-        "💡 Use /createkey to generate a new one."
+        "🔐 *Current Admin Key*\n\n"
+        f"🔑 `{key_data['current_key']}`\n\n"
+        f"🕒 Created: {key_data.get('created_at', 'Unknown')}\n"
+        f"👤 By: @{key_data.get('created_by', 'Unknown')}\n\n"
+        "Use /createkey to generate a new key."
     )
-    
     await update.message.reply_text(message, parse_mode='Markdown')
 
 async def generate_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -248,12 +234,10 @@ async def generate_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "*How to use:*\n"
         "1. Copy the code above\n"
         "2. Share with users who need access\n"
-        "3. Users enter this code on the homepage\n"
-        "4. Code grants access to view all videos\n\n"
-        "💡 Use /listcodes to see all active codes\n"
-        "🗑️ Use /revokecode to disable a specific code"
+        "3. Users enter this code on the website\n\n"
+        "💡 Use /listcodes to see all codes\n"
+        "💡 Use /revokecode to remove a code"
     )
-    
     await update.message.reply_text(message, parse_mode='Markdown')
 
 async def list_codes(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -274,11 +258,12 @@ async def list_codes(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
     
-    message = f"📋 *Active Access Codes* ({len(codes)})\n\n"
+    message = f"🎫 *Active Access Codes* ({len(codes)})\n\n"
     for i, code in enumerate(codes, 1):
         message += f"{i}. `{code}`\n"
     
-    message += "\n💡 Use /revokecode <code> to disable a code"
+    message += f"\n💡 Total: {len(codes)} code(s)\n"
+    message += "💡 Use /revokecode <code> to remove"
     
     await update.message.reply_text(message, parse_mode='Markdown')
 
@@ -292,10 +277,11 @@ async def revoke_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     if not context.args:
         await update.message.reply_text(
-            "❌ Please provide a code to revoke.\n\n"
-            "Usage: /revokecode <code>\n"
-            "Example: /revokecode abc123xyz\n\n"
-            "Use /listcodes to see all active codes."
+            "⚠️ *Usage:* `/revokecode <code>`\n\n"
+            "*Example:*\n"
+            "`/revokecode abc123xyz456`\n\n"
+            "Use /listcodes to see all codes.",
+            parse_mode='Markdown'
         )
         return
     
@@ -328,7 +314,7 @@ async def revoke_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ============================================================================
 
 async def webhook_handler(request):
-    """Handle Telegram webhook updates"""
+    """Handle Telegram webhook updates - FIXED VERSION"""
     global telegram_app
     
     # Only accept POST requests
@@ -339,12 +325,15 @@ async def webhook_handler(request):
     try:
         logger.info(f"📨 Received webhook request from {request.remote}")
         data = await request.json()
-        logger.info(f"📦 Webhook data received: {json.dumps(data, indent=2)}")
+        logger.info(f"📦 Webhook data: {json.dumps(data, indent=2)}")
         
+        # FIXED: Use the correct method to process updates
         update = Update.de_json(data, telegram_app.bot)
-        await telegram_app.process_update(update)
         
-        logger.info("✅ Webhook processed successfully")
+        # Put update in queue instead of direct processing
+        await telegram_app.update_queue.put(update)
+        
+        logger.info("✅ Update queued successfully")
         return web.Response(status=200, text="OK")
     except Exception as e:
         logger.error(f"❌ Webhook error: {e}", exc_info=True)
@@ -388,6 +377,10 @@ async def serve_file(request):
             content_type = 'image/png'
         elif file_path.endswith('.jpg') or file_path.endswith('.jpeg'):
             content_type = 'image/jpeg'
+        elif file_path.endswith('.gif'):
+            content_type = 'image/gif'
+        elif file_path.endswith('.svg'):
+            content_type = 'image/svg+xml'
         elif file_path.endswith('.mp4'):
             content_type = 'video/mp4'
         
@@ -396,45 +389,34 @@ async def serve_file(request):
             content = f.read()
         
         return web.Response(body=content, content_type=content_type)
-        
+    
     except Exception as e:
         logger.error(f"Error serving file {request.path}: {e}")
         return web.Response(status=500, text="Internal Server Error")
 
 async def health_check(request):
-    """Health check endpoint"""
-    return web.Response(text="Server is running!")
+    """Health check endpoint for Render"""
+    return web.Response(text="OK - Bot & Web Server Running", status=200)
 
 # ============================================================================
 # MAIN APPLICATION
 # ============================================================================
 
 async def main():
-    """Start combined server + bot"""
+    """Start the combined server"""
     global telegram_app
     
     print("=" * 70)
-    print("🚀 Starting Combined Server (Website + Telegram Bot)")
-    print("=" * 70)
-    print(f"🌐 Web Server: http://{HOST}:{PORT}")
-    print(f"🤖 Bot Token: {BOT_TOKEN[:10]}...")
-    print(f"📱 Admin Chat ID: {AUTHORIZED_CHAT_ID}")
-    print(f"🔗 Webhook: {WEBHOOK_URL}{WEBHOOK_PATH}")
-    print(f"🌍 Environment: {'Production (Render)' if os.getenv('RENDER') else 'Development'}")
+    print("🚀 Starting Combined Web Server + Telegram Bot")
     print("=" * 70)
     
     # Initialize storage files
-    init_storage_files()
+    initialize_files()
     
-    # Initialize Telegram bot (updater=None for webhook mode)
-    telegram_app = (
-        Application.builder()
-        .token(BOT_TOKEN)
-        .updater(None)
-        .build()
-    )
+    # Create Telegram bot application
+    telegram_app = Application.builder().token(BOT_TOKEN).build()
     
-    # Register bot handlers
+    # Register bot commands
     telegram_app.add_handler(CommandHandler("start", start))
     telegram_app.add_handler(CommandHandler("help", help_command))
     telegram_app.add_handler(CommandHandler("createkey", create_key))
