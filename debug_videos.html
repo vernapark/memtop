@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Videos</title>
+</head>
+<body>
+    <h1>Video Storage Debug</h1>
+    <button onclick="checkVideos()">Check Videos</button>
+    <button onclick="clearDB()">Clear Database</button>
+    <div id="output"></div>
+
+    <script src="js/storage.js"></script>
+    <script>
+        async function checkVideos() {
+            const output = document.getElementById('output');
+            try {
+                await videoStorage.init();
+                const videos = await videoStorage.getAllVideos();
+                
+                output.innerHTML = `
+                    <h2>Total Videos: ${videos.length}</h2>
+                    <pre>${JSON.stringify(videos, null, 2)}</pre>
+                `;
+                
+                console.log('Videos:', videos);
+            } catch (error) {
+                output.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                console.error(error);
+            }
+        }
+        
+        async function clearDB() {
+            if (confirm('Clear all videos?')) {
+                await videoStorage.init();
+                const videos = await videoStorage.getAllVideos();
+                for (const video of videos) {
+                    await videoStorage.deleteVideo(video.id);
+                }
+                alert('Database cleared');
+                checkVideos();
+            }
+        }
+        
+        // Auto check on load
+        window.onload = checkVideos;
+    </script>
+</body>
+</html>
