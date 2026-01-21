@@ -5,7 +5,7 @@ services:
     plan: free
     branch: main
     rootDir: .
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install python-telegram-bot==20.7 aiohttp==3.9.1
     startCommand: python simple_combined_server.py
     envVars:
       - key: BOT_TOKEN
@@ -14,9 +14,3 @@ services:
         value: 2103408372
       - key: WEBHOOK_URL
         value: https://memtop-video-streaming.onrender.com
-      - key: CLOUDINARY_CLOUD_NAME
-        sync: false
-      - key: CLOUDINARY_API_KEY
-        sync: false
-      - key: CLOUDINARY_API_SECRET
-        sync: false
