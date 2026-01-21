@@ -6,7 +6,6 @@
     <title>Admin Dashboard - VideoStream</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        /* Drag and drop styles */
         .drop-zone {
             border: 3px dashed #5d5d5d;
             border-radius: 8px;
@@ -15,6 +14,7 @@
             transition: all 0.3s;
             background: #1a1a1a;
             cursor: pointer;
+            margin-bottom: 20px;
         }
         
         .drop-zone.drag-over {
@@ -38,19 +38,6 @@
             color: #777;
             font-size: 0.85rem;
         }
-        
-        .drop-zones-container {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        @media (max-width: 768px) {
-            .drop-zones-container {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
 </head>
 <body>
@@ -58,7 +45,7 @@
         <div class="container">
             <div class="logo">
                 <h1>
-                    <img src="https://media.istockphoto.com/id/1432243860/vector/eighteen-or-older-persons-adult-content-18-plus-only-rating.jpg?s=612x612&w=0&k=20&c=XCAaLoMGXteF9CVzXdwqzGArsafVRS5-SWZapLrki8k=" alt="18+" class="logo-image" class="logo-image" style="height: 50px; background: transparent; width: auto; margin-right: 10px; background: transparent;">
+                    <img src="https://media.istockphoto.com/id/1432243860/vector/eighteen-or-older-persons-adult-content-18-plus-only-rating.jpg?s=612x612&w=0&k=20&c=XCAaLoMGXteF9CVzXdwqzGArsafVRS5-SWZapLrki8k=" alt="18+" class="logo-image" style="height: 50px; background: transparent; width: auto; margin-right: 10px;">
                     18+ only Admin
                 </h1>
             </div>
@@ -75,19 +62,11 @@
         <div class="container">
             <h2>Upload New Video</h2>
             <div class="upload-section">
-                <!-- Drag and Drop Zones -->
-                <div class="drop-zones-container">
-                    <div class="drop-zone" id="videoDropZone">
-                        <div class="drop-zone-icon">🎬</div>
-                        <div class="drop-zone-text">Drag & Drop Video Here</div>
-                        <div class="drop-zone-hint">or click to browse</div>
-                    </div>
-                    
-                    <div class="drop-zone" id="thumbnailDropZone">
-                        <div class="drop-zone-icon">🖼️</div>
-                        <div class="drop-zone-text">Drag & Drop Thumbnail</div>
-                        <div class="drop-zone-hint">optional</div>
-                    </div>
+                <!-- Single Drag and Drop Zone for Video -->
+                <div class="drop-zone" id="videoDropZone">
+                    <div class="drop-zone-icon">🎬</div>
+                    <div class="drop-zone-text">Drag & Drop Video Here</div>
+                    <div class="drop-zone-hint">Thumbnail will be auto-generated from video</div>
                 </div>
                 
                 <form id="uploadForm">
@@ -119,13 +98,6 @@
                             Selected: <span id="selectedFileName">None</span>
                         </small>
                     </div>
-                    <div class="form-group">
-                        <label for="thumbnailFile">Thumbnail Image (Optional)</label>
-                        <input type="file" id="thumbnailFile" name="thumbnailFile" accept="image/*" style="display: none;">
-                        <small style="color: #aaaaaa; display: block; margin-top: 5px;">
-                            Selected: <span id="selectedThumbnailName">None</span>
-                        </small>
-                    </div>
                     <button type="submit" class="btn-primary">Upload Video</button>
                     <div id="uploadStatus" class="status-message"></div>
                 </form>
@@ -144,6 +116,7 @@
         </div>
     </footer>
 
-    <script src="../js/storage.js"></script>`n    <script src="../js/admin.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/admin.js"></script>
 </body>
 </html>
