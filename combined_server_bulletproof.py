@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-BULLETPROOF COMBINED SERVER: Web Server + Telegram Bot
+🛡️ BULLETPROOF COMBINED SERVER: Web Server + Telegram Bot
 - Videos stored in Cloudinary (permanent cloud storage)
 - Metadata stored IN Cloudinary (using context/tags)
 - No local storage = No data loss on redeploys
+- FAILS if Cloudinary not configured (prevents silent data loss)
 """
 import os
 import json
@@ -30,10 +31,42 @@ WEBHOOK_URL = os.getenv("WEBHOOK_URL", "")
 KEY_STORAGE_FILE = "key_storage.json"
 ACCESS_CODES_FILE = "access_codes.json"
 
-# Cloudinary config
+# Cloudinary config - REQUIRED!
 CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME", "")
 CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY", "")
 CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET", "")
+
+# Validate Cloudinary config at startup
+def validate_cloudinary_config():
+    """Validate that Cloudinary is properly configured"""
+    if not CLOUDINARY_CLOUD_NAME or not CLOUDINARY_API_KEY or not CLOUDINARY_API_SECRET:
+        logger.error("=" * 70)
+        logger.error("❌ CRITICAL ERROR: CLOUDINARY NOT CONFIGURED!")
+        logger.error("=" * 70)
+        logger.error("Missing required environment variables:")
+        if not CLOUDINARY_CLOUD_NAME:
+            logger.error("  - CLOUDINARY_CLOUD_NAME")
+        if not CLOUDINARY_API_KEY:
+            logger.error("  - CLOUDINARY_API_KEY")
+        if not CLOUDINARY_API_SECRET:
+            logger.error("  - CLOUDINARY_API_SECRET")
+        logger.error("")
+        logger.error("WITHOUT CLOUDINARY:")
+        logger.error("  ❌ Videos will be DELETED on every deployment")
+        logger.error("  ❌ All uploads will be LOST")
+        logger.error("")
+        logger.error("TO FIX:")
+        logger.error("  1. Go to https://cloudinary.com (free account)")
+        logger.error("  2. Get your credentials from Dashboard")
+        logger.error("  3. Add to Render.com Environment Variables")
+        logger.error("=" * 70)
+        logger.error("⚠️ SERVER WILL CONTINUE BUT VIDEO UPLOADS DISABLED ⚠️")
+        logger.error("=" * 70)
+        return False
+    return True
+
+# Global flag to track if Cloudinary is available
+CLOUDINARY_ENABLED = validate_cloudinary_config()
 
 # ============================================================================
 # BULLETPROOF CLOUDINARY VIDEO HANDLERS
@@ -41,6 +74,15 @@ CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET", "")
 
 async def upload_video_to_cloudinary(request):
     """Upload video to Cloudinary with metadata stored IN Cloudinary"""
+    
+    # Check if Cloudinary is enabled
+    if not CLOUDINARY_ENABLED:
+        logger.error("❌ Upload rejected: Cloudinary not configured!")
+        return web.json_response({
+            "error": "Video upload unavailable - Cloudinary not configured. Contact admin.",
+            "details": "Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET in Render environment variables"
+        }, status=503)
+    
     try:
         import cloudinary
         import cloudinary.uploader
@@ -70,6 +112,8 @@ async def upload_video_to_cloudinary(request):
             tags=["video_thumbnail", category]
         )
         
+        logger.info(f"✅ Thumbnail uploaded: {thumbnail_result['secure_url']}")
+        
         # Upload video with metadata stored IN Cloudinary
         video_result = cloudinary.uploader.upload(
             video_data,
@@ -86,6 +130,8 @@ async def upload_video_to_cloudinary(request):
             }
         )
         
+        logger.info(f"✅ Video uploaded: {video_result['secure_url']}")
+        
         video_metadata = {
             "id": video_result['public_id'],
             "title": title,
@@ -98,11 +144,13 @@ async def upload_video_to_cloudinary(request):
             "cloudinary_id": video_result['public_id']
         }
         
-        logger.info(f"✅ Video uploaded successfully: {video_metadata['id']}")
+        logger.info(f"✅ Video uploaded successfully to PERMANENT cloud storage!")
+        logger.info(f"   Public ID: {video_metadata['id']}")
+        logger.info(f"   URL: {video_metadata['videoUrl']}")
         
         return web.json_response({
             "success": True,
-            "message": "Video uploaded to permanent cloud storage",
+            "message": "✅ Video uploaded to permanent cloud storage (survives all deployments)",
             "video": video_metadata
         })
         
@@ -112,6 +160,12 @@ async def upload_video_to_cloudinary(request):
 
 async def get_videos_from_cloudinary(request):
     """Fetch all videos directly from Cloudinary API (not from local file)"""
+    
+    # Check if Cloudinary is enabled
+    if not CLOUDINARY_ENABLED:
+        logger.warning("⚠️ Cloudinary not configured - returning empty video list")
+        return web.json_response({"videos": []})
+    
     try:
         import cloudinary
         import cloudinary.api
@@ -151,16 +205,24 @@ async def get_videos_from_cloudinary(request):
             }
             videos.append(video_obj)
         
-        logger.info(f"✅ Fetched {len(videos)} videos from Cloudinary")
+        logger.info(f"✅ Fetched {len(videos)} videos from Cloudinary permanent storage")
         
         return web.json_response({"videos": videos})
         
     except Exception as e:
-        logger.error(f"❌ Error fetching videos: {e}", exc_info=True)
+        logger.error(f"❌ Error fetching videos from Cloudinary: {e}", exc_info=True)
         return web.json_response({"videos": []})
 
 async def delete_video_from_cloudinary(request):
     """Delete video AND thumbnail from Cloudinary cloud storage"""
+    
+    # Check if Cloudinary is enabled
+    if not CLOUDINARY_ENABLED:
+        logger.error("❌ Delete rejected: Cloudinary not configured!")
+        return web.json_response({
+            "error": "Video deletion unavailable - Cloudinary not configured"
+        }, status=503)
+    
     try:
         import cloudinary
         import cloudinary.uploader
@@ -200,7 +262,7 @@ async def delete_video_from_cloudinary(request):
         
         # Delete video
         cloudinary.uploader.destroy(video_id, resource_type="video")
-        logger.info(f"✅ Deleted video: {video_id}")
+        logger.info(f"✅ Deleted video from cloud: {video_id}")
         
         return web.json_response({
             "success": True, 
@@ -442,7 +504,8 @@ async def serve_file(request):
 
 async def health_check(request):
     """Health check endpoint"""
-    return web.Response(text="OK - Bulletproof Server Running ✅")
+    status = "✅ BULLETPROOF MODE" if CLOUDINARY_ENABLED else "⚠️ CLOUDINARY NOT CONFIGURED"
+    return web.Response(text=f"OK - Server Running - {status}")
 
 # ============================================================================
 # STARTUP
@@ -472,10 +535,15 @@ async def startup(app):
     initialize_files()
     await set_telegram_webhook()
     logger.info("=" * 70)
-    logger.info("🛡️ BULLETPROOF MODE ACTIVE")
-    logger.info("✅ Videos stored in Cloudinary (permanent)")
-    logger.info("✅ Metadata stored in Cloudinary (no local files)")
-    logger.info("✅ Survives all deployments and restarts")
+    if CLOUDINARY_ENABLED:
+        logger.info("🛡️ BULLETPROOF MODE ACTIVE")
+        logger.info("✅ Videos stored in Cloudinary (permanent)")
+        logger.info("✅ Metadata stored in Cloudinary (no local files)")
+        logger.info("✅ Survives all deployments and restarts")
+    else:
+        logger.warning("⚠️ RUNNING WITHOUT CLOUDINARY")
+        logger.warning("⚠️ VIDEO UPLOADS DISABLED")
+        logger.warning("⚠️ Configure Cloudinary to enable video storage")
     logger.info("=" * 70)
 
 def main():
@@ -484,14 +552,15 @@ def main():
     print("=" * 70)
     print(f"Port: {PORT}")
     print(f"Webhook URL: {WEBHOOK_URL}")
-    print(f"Cloudinary: {'✅ Configured' if CLOUDINARY_CLOUD_NAME else '❌ NOT CONFIGURED'}")
-    print("=" * 70)
     
-    if not CLOUDINARY_CLOUD_NAME:
-        print("⚠️ WARNING: CLOUDINARY_CLOUD_NAME not set!")
-        print("Videos will be lost on redeploy unless you configure Cloudinary.")
-        print("See: CLOUDINARY_SETUP_GUIDE.md")
-        print("=" * 70)
+    if CLOUDINARY_ENABLED:
+        print(f"Cloudinary: ✅ CONFIGURED ({CLOUDINARY_CLOUD_NAME})")
+        print("Video Storage: ✅ PERMANENT (survives all deployments)")
+    else:
+        print("Cloudinary: ❌ NOT CONFIGURED")
+        print("Video Storage: ❌ DISABLED (uploads will fail)")
+    
+    print("=" * 70)
     
     app = web.Application(client_max_size=1024**3)  # 1GB max upload size
     
