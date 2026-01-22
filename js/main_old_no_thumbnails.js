@@ -1,5 +1,5 @@
 // Premium Video Streaming - YouTube Style with Mobile Fix
-// THUMBNAIL FIX: Better thumbnail handling from Cloudinary
+// Cloudinary-based storage
 
 const categoryIcons = {
     '18+': '🔞',
@@ -37,12 +37,6 @@ async function loadVideos() {
         allVideos = data.videos || [];
         
         console.log('✅ Loaded videos from cloud:', allVideos.length);
-        
-        // Debug: Log first video to see thumbnail structure
-        if (allVideos.length > 0) {
-            console.log('📊 Sample video data:', allVideos[0]);
-            console.log('🖼️ Thumbnail field:', allVideos[0].thumbnail);
-        }
         
         if (allVideos.length === 0) {
             showEmptyState();
@@ -96,27 +90,9 @@ function displayVideos(videos) {
     }, 0);
 }
 
-// Create video card HTML - FIXED THUMBNAIL HANDLING
+// Create video card HTML
 function createVideoCard(video) {
-    // Enhanced thumbnail detection
-    let thumbnailSrc = '';
-    
-    // Try multiple possible thumbnail sources
-    if (video.thumbnail && video.thumbnail.trim() !== '') {
-        thumbnailSrc = video.thumbnail;
-        console.log('✅ Using video.thumbnail:', thumbnailSrc);
-    } else if (video.thumbnailUrl && video.thumbnailUrl.trim() !== '') {
-        thumbnailSrc = video.thumbnailUrl;
-        console.log('✅ Using video.thumbnailUrl:', thumbnailSrc);
-    } else if (video.videoUrl) {
-        // Generate thumbnail from video URL (Cloudinary can do this)
-        thumbnailSrc = generateCloudinaryThumbnail(video.videoUrl);
-        console.log('⚙️ Generated thumbnail from video URL:', thumbnailSrc);
-    } else {
-        thumbnailSrc = generateDefaultThumbnail();
-        console.log('⚠️ Using default thumbnail for:', video.title);
-    }
-    
+    const thumbnailSrc = video.thumbnail || generateDefaultThumbnail();
     const categoryIcon = categoryIcons[video.category?.toLowerCase()] || categoryIcons['default'];
     
     return `
@@ -126,9 +102,8 @@ function createVideoCard(video) {
                     src="${thumbnailSrc}" 
                     alt="${escapeHtml(video.title)}" 
                     class="video-thumbnail"
-                    onerror="console.error('Thumbnail failed:', this.src); this.src='${generateDefaultThumbnail()}'; this.onerror=null;"
+                    onerror="this.src='${generateDefaultThumbnail()}'"
                     loading="lazy"
-                    crossorigin="anonymous"
                 >
                 <span class="video-duration" data-video-url="${video.videoUrl}">...</span>
                 <span class="video-category-badge">${categoryIcon} ${escapeHtml(video.category || 'Video')}</span>
@@ -147,31 +122,6 @@ function createVideoCard(video) {
     `;
 }
 
-// Generate thumbnail from Cloudinary video URL
-function generateCloudinaryThumbnail(videoUrl) {
-    try {
-        // Cloudinary URLs can be converted to thumbnails
-        // e.g., video.mp4 -> video.jpg at a specific time
-        if (videoUrl.includes('cloudinary.com')) {
-            // Replace the video extension with jpg and add transformation for thumbnail
-            let thumbUrl = videoUrl.replace(/\.(mp4|mov|avi|mkv|webm)$/i, '.jpg');
-            
-            // Add video thumbnail transformation if not already present
-            if (!thumbUrl.includes('so_')) {
-                // Insert transformation parameter to get frame at 2 seconds
-                thumbUrl = thumbUrl.replace('/upload/', '/upload/so_2.0,f_jpg,q_auto/');
-            }
-            
-            console.log('🎬 Cloudinary thumbnail generated:', thumbUrl);
-            return thumbUrl;
-        }
-    } catch (e) {
-        console.error('Error generating Cloudinary thumbnail:', e);
-    }
-    
-    return generateDefaultThumbnail();
-}
-
 // Load video durations asynchronously
 function loadVideoDurations() {
     document.querySelectorAll('.video-duration').forEach(element => {
@@ -185,7 +135,6 @@ function loadVideoDurations() {
 function loadSingleDuration(videoUrl, element) {
     const video = document.createElement('video');
     video.preload = 'metadata';
-    video.crossOrigin = 'anonymous';
     
     video.addEventListener('loadedmetadata', function() {
         const duration = video.duration;
@@ -202,7 +151,6 @@ function loadSingleDuration(videoUrl, element) {
 
 // Format duration (seconds to mm:ss)
 function formatDuration(seconds) {
-    if (!seconds || isNaN(seconds)) return '--:--';
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
@@ -516,6 +464,6 @@ window.addEventListener('orientationchange', function() {
 });
 
 // Console log for debugging
-console.log('🎬 Premium Video Streaming Initialized (Thumbnail Fix)');
+console.log('🎬 Premium Video Streaming Initialized');
 console.log('📱 Mobile Device:', isMobileDevice());
 console.log('🌐 User Agent:', navigator.userAgent);
