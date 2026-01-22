@@ -1,5 +1,5 @@
-// Admin JavaScript - BULLETPROOF VERSION
-// Fixed: Robust thumbnail generation with multiple fallbacks
+// Admin JavaScript - CLOUDINARY VERSION (MULTIPART FIX)
+// Fixed: Now uses multipart/form-data instead of JSON
 
 let uploadInProgress = false;
 
@@ -119,198 +119,43 @@ function handleLogout(e) {
     window.location.href = '../parking55009hvSweJimbs5hhinbd56y.html';
 }
 
-// BULLETPROOF THUMBNAIL GENERATION
 function generateThumbnailFromVideo(videoFile) {
     return new Promise((resolve, reject) => {
         const video = document.createElement('video');
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         
-        let hasResolved = false;
-        let seekAttempts = 0;
-        const maxSeekAttempts = 3;
-        const timeoutDuration = 10000; // 10 seconds
-        
-        // Timeout fallback - generate blank thumbnail
-        const timeoutId = setTimeout(() => {
-            if (!hasResolved) {
-                console.warn('Thumbnail generation timeout - creating blank thumbnail');
-                hasResolved = true;
-                cleanup();
-                resolve(createBlankThumbnail());
-            }
-        }, timeoutDuration);
-        
-        function cleanup() {
-            clearTimeout(timeoutId);
-            try {
-                video.pause();
-                video.src = '';
-                video.load();
-                URL.revokeObjectURL(video.src);
-            } catch (e) {
-                console.warn('Cleanup warning:', e);
-            }
-        }
-        
-        function trySeekToTime(time) {
-            seekAttempts++;
-            console.log(`Attempting thumbnail at ${time}s (attempt ${seekAttempts}/${maxSeekAttempts})`);
-            
-            try {
-                video.currentTime = time;
-            } catch (e) {
-                console.error('Seek error:', e);
-                if (seekAttempts >= maxSeekAttempts && !hasResolved) {
-                    hasResolved = true;
-                    cleanup();
-                    resolve(createBlankThumbnail());
-                }
-            }
-        }
-        
         video.preload = 'metadata';
         video.muted = true;
         video.playsInline = true;
-        video.crossOrigin = 'anonymous';
         
-        // Handle successful metadata load
         video.onloadedmetadata = function() {
-            console.log('Video metadata loaded:', {
-                duration: video.duration,
-                width: video.videoWidth,
-                height: video.videoHeight
-            });
-            
-            if (!video.duration || video.duration === Infinity || isNaN(video.duration)) {
-                console.warn('Invalid video duration, trying to load first frame');
-                trySeekToTime(0);
-            } else {
-                // Try multiple seek positions
-                const seekTime = Math.min(2, video.duration * 0.1);
-                trySeekToTime(seekTime);
-            }
+            const seekTime = Math.min(2, video.duration * 0.1);
+            video.currentTime = seekTime;
         };
         
-        // Handle successful seek
         video.onseeked = function() {
-            if (hasResolved) return;
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             
-            console.log('Video seeked successfully');
-            
-            try {
-                // Set canvas size (handle 0 dimensions)
-                const width = video.videoWidth || 1280;
-                const height = video.videoHeight || 720;
-                canvas.width = width;
-                canvas.height = height;
-                
-                // Draw video frame (or blank if video is black)
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                if (video.videoWidth > 0 && video.videoHeight > 0) {
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            // Convert to blob instead of data URL for better multipart handling
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    resolve(blob);
                 } else {
-                    console.warn('Video has no dimensions, creating blank thumbnail');
+                    reject(new Error('Failed to generate thumbnail blob'));
                 }
-                
-                // Add text overlay for blank videos
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '48px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('🎬', canvas.width / 2, canvas.height / 2);
-                
-                // Convert to blob
-                canvas.toBlob((blob) => {
-                    if (blob && !hasResolved) {
-                        hasResolved = true;
-                        cleanup();
-                        console.log('Thumbnail generated successfully');
-                        resolve(blob);
-                    } else if (!hasResolved) {
-                        // Try another seek position
-                        if (seekAttempts < maxSeekAttempts && video.duration > 0) {
-                            const nextTime = Math.min(video.duration * 0.5, 5);
-                            trySeekToTime(nextTime);
-                        } else {
-                            hasResolved = true;
-                            cleanup();
-                            resolve(createBlankThumbnail());
-                        }
-                    }
-                }, 'image/jpeg', 0.8);
-                
-            } catch (e) {
-                console.error('Canvas error:', e);
-                if (!hasResolved) {
-                    hasResolved = true;
-                    cleanup();
-                    resolve(createBlankThumbnail());
-                }
-            }
+            }, 'image/jpeg', 0.8);
+            
+            video.src = '';
         };
         
-        // Handle video errors
-        video.onerror = function(e) {
-            console.error('Video load error:', e, video.error);
-            if (!hasResolved) {
-                hasResolved = true;
-                cleanup();
-                // Don't reject - use blank thumbnail as fallback
-                resolve(createBlankThumbnail());
-            }
+        video.onerror = function() {
+            reject(new Error('Failed to load video for thumbnail generation'));
         };
         
-        // Handle loadeddata event as additional trigger
-        video.onloadeddata = function() {
-            console.log('Video data loaded');
-        };
-        
-        // Start loading video
-        try {
-            const videoURL = URL.createObjectURL(videoFile);
-            video.src = videoURL;
-            video.load();
-        } catch (e) {
-            console.error('Error creating object URL:', e);
-            if (!hasResolved) {
-                hasResolved = true;
-                cleanup();
-                resolve(createBlankThumbnail());
-            }
-        }
-    });
-}
-
-// Create blank thumbnail as fallback
-function createBlankThumbnail() {
-    console.log('Creating blank thumbnail');
-    const canvas = document.createElement('canvas');
-    canvas.width = 1280;
-    canvas.height = 720;
-    const ctx = canvas.getContext('2d');
-    
-    // Black background
-    ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Add icon
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 120px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('🎬', canvas.width / 2, canvas.height / 2);
-    
-    // Add text
-    ctx.font = '36px Arial';
-    ctx.fillText('Video Thumbnail', canvas.width / 2, canvas.height / 2 + 100);
-    
-    return new Promise((resolve) => {
-        canvas.toBlob((blob) => {
-            resolve(blob || new Blob([''], { type: 'image/jpeg' }));
-        }, 'image/jpeg', 0.8);
+        video.src = URL.createObjectURL(videoFile);
     });
 }
 
@@ -336,16 +181,14 @@ async function handleVideoUpload(e) {
     submitBtn.disabled = true;
     submitBtn.textContent = 'Processing...';
     
-    showStatus(statusMessage, '⏳ Generating thumbnail (this may take a moment)...', 'success');
+    showStatus(statusMessage, '⏳ Generating thumbnail...', 'success');
     
     try {
-        // Generate thumbnail with bulletproof fallback
+        // Generate thumbnail
         const thumbnailBlob = await generateThumbnailFromVideo(videoFile);
-        console.log('Thumbnail blob size:', thumbnailBlob.size);
-        
         showStatus(statusMessage, `⏳ Uploading ${sizeMB}MB to cloud...`, 'success');
         
-        // Use FormData for multipart/form-data
+        // FIXED: Use FormData for multipart/form-data
         const formData = new FormData();
         formData.append('videoFile', videoFile);
         formData.append('thumbnail', thumbnailBlob, 'thumbnail.jpg');
@@ -353,6 +196,7 @@ async function handleVideoUpload(e) {
         formData.append('videoDescription', description);
         formData.append('videoCategory', category);
         
+        // FIXED: Don't set Content-Type header - browser will set it with boundary
         const response = await fetch('/api/upload-video', {
             method: 'POST',
             body: formData
@@ -436,7 +280,7 @@ async function loadAdminVideos() {
                     </div>
                 </div>
             `;
-            videoList.innerHTML = statsHtml;
+            videoList.innerHTML = statsHtml + videoList.innerHTML;
         }
         
         videoList.innerHTML += videos.map(video => `
