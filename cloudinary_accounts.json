@@ -1,0 +1,32 @@
+{
+  "accounts": [
+    {
+      "name": "Primary Account",
+      "cloud_name": "dnoq4ajwl",
+      "api_key": "926496797893327",
+      "api_secret": "gTYjc-jmp13E4oUGM6VECw80V0A",
+      "active": true
+    },
+    {
+      "name": "Secondary Account",
+      "cloud_name": "dkhdy0stn",
+      "api_key": "834926626973269",
+      "api_secret": "jQWc8zdBp_BojMilz9BNgn50ylE",
+      "active": true
+    },
+    {
+      "name": "Tertiary Account",
+      "cloud_name": "dhga1jmpu",
+      "api_key": "374459739289493",
+      "api_secret": "NXQtaJbGY8Q7EKLFAG25mvC-TAw",
+      "active": true
+    },
+    {
+      "name": "Backup Account",
+      "cloud_name": "dq1tgks75",
+      "api_key": "716971212362229",
+      "api_secret": "fUILqftFI8vypoa6c_4936Ro2v8",
+      "active": true
+    }
+  ]
+}
