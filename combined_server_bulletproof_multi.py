@@ -87,7 +87,14 @@ def select_account_for_upload():
     logger.info(f"📤 Selected account: {selected.get('name', 'Unnamed')} for upload")
     return selected
 
-def configure_cloudinary(account):
+
+def generate_cloudinary_thumbnail(public_id, cloud_name):
+    """Generate Cloudinary thumbnail URL for video"""
+    thumbnail_url = f"https://res.cloudinary.com/{cloud_name}/video/upload/so_1.0,w_640,h_360,c_fill,q_auto,f_jpg/{public_id}.jpg"
+    logger.info(f"??? Generated thumbnail: {thumbnail_url}")
+    return thumbnail_url
+
+def configure_cloudinary\(account\):
     """Configure Cloudinary with specific account credentials"""
     import cloudinary
     cloudinary.config(
@@ -388,7 +395,7 @@ async def upload_video_to_cloudinary(request):
             "description": video_data.get('videoDescription', ''),
             "category": video_data.get('videoCategory', 'General'),
             "videoUrl": video_result['secure_url'],
-            "thumbnail": thumbnail_url or video_result.get('thumbnail_url', ''),
+            "thumbnail": thumbnail_url or generate_cloudinary_thumbnail(video_result['public_id'], account['cloud_name']),
             "uploadDate": datetime.now().isoformat(),
             "duration": video_result.get('duration', 0),
             "cloudinary_id": video_result['public_id'],
@@ -447,7 +454,7 @@ async def get_videos_from_cloudinary(request):
                         "description": context.get('description', ''),
                         "category": context.get('category', 'General'),
                         "videoUrl": resource['secure_url'],
-                        "thumbnail": context.get('thumbnail', resource.get('thumbnail_url', '')),
+                        "thumbnail": generate_cloudinary_thumbnail(resource['public_id'], account['cloud_name']),
                         "uploadDate": context.get('uploadDate', resource.get('created_at', '')),
                         "duration": resource.get('duration', 0),
                         "cloudinary_id": resource['public_id'],
@@ -705,3 +712,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
