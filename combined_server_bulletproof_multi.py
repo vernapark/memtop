@@ -94,7 +94,7 @@ def generate_cloudinary_thumbnail(public_id, cloud_name):
     logger.info(f"??? Generated thumbnail: {thumbnail_url}")
     return thumbnail_url
 
-def configure_cloudinary\(account\):
+def configure_cloudinary(account):
     """Configure Cloudinary with specific account credentials"""
     import cloudinary
     cloudinary.config(
