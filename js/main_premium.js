@@ -236,12 +236,8 @@ function openVideoModal(video) {
         }
     }, 100);
     
-    // Mobile-specific: Prevent scroll behind modal
-    if (isMobileDevice()) {
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-        document.body.style.top = `-${window.scrollY}px`;
-    }
+    // Mobile-specific: Prevent scroll behind modal (simplified)
+    document.body.style.touchAction = 'none';
 }
 
 function closeVideoModal() {
@@ -260,15 +256,8 @@ function closeVideoModal() {
     modal.classList.remove('active');
     
     // Restore body scroll
-    if (isMobileDevice()) {
-        const scrollY = document.body.style.top;
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.top = '';
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
-    } else {
-        document.body.style.overflow = '';
-    }
+    document.body.style.overflow = '';
+    document.body.style.touchAction = '';
 }
 
 // Setup modal event listeners
@@ -467,3 +456,4 @@ window.addEventListener('orientationchange', function() {
 console.log('🎬 Premium Video Streaming Initialized');
 console.log('📱 Mobile Device:', isMobileDevice());
 console.log('🌐 User Agent:', navigator.userAgent);
+
