@@ -16,6 +16,14 @@ from datetime import datetime
 from aiohttp import web
 import logging
 
+# Visitor tracking imports
+from visitor_tracking import (
+    visitor_connect,
+    visitor_heartbeat,
+    visitor_disconnect,
+    get_active_visitors
+)
+
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO,
