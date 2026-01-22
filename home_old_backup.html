@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Streaming Site</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>
+                    <img src="https://media.istockphoto.com/id/1432243860/vector/eighteen-or-older-persons-adult-content-18-plus-only-rating.jpg?s=612x612&w=0&k=20&c=XCAaLoMGXteF9CVzXdwqzGArsafVRS5-SWZapLrki8k=" alt="18+" class="logo-image" style="height: 50px; width: auto; margin-right: 10px; background: transparent;">
+                    18+ only
+                </h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="home.html">Home</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Videos will be dynamically loaded here by category -->
+            <div id="videoCategories"></div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 VideoStream. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/storage.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Protection: Check if user has verified access
+        if (!localStorage.getItem('websiteAccessVerified')) {
+            // Not verified - redirect to access gate
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
