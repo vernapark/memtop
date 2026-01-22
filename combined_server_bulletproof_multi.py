@@ -700,6 +700,12 @@ def main():
     
     # Account management
     app.router.add_get('/api/cloudinary-accounts', get_accounts_info)
+
+    # Visitor tracking API routes
+    app.router.add_post('/api/visitor/connect', visitor_connect)
+    app.router.add_post('/api/visitor/heartbeat', visitor_heartbeat)
+    app.router.add_post('/api/visitor/disconnect', visitor_disconnect)
+    app.router.add_get('/api/visitors/active', get_active_visitors)
     
     # Website routes
     app.router.add_get("/health", health_check)
