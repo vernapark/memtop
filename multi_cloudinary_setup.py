@@ -1,4 +1,4 @@
-"""
+﻿"""
 Multi-Cloudinary Account Manager
 Supports multiple Cloudinary accounts for increased storage and load balancing
 """
@@ -30,7 +30,7 @@ def load_cloudinary_accounts():
                 data = json.load(f)
                 accounts = data.get('accounts', [])
                 if accounts:
-                    logger.info(f"✅ Loaded {len(accounts)} Cloudinary accounts from file")
+                    logger.info(f"âœ… Loaded {len(accounts)} Cloudinary accounts from file")
                     return accounts
         except Exception as e:
             logger.warning(f"Could not load accounts file: {e}")
@@ -41,7 +41,7 @@ def load_cloudinary_accounts():
     api_secret = os.getenv('CLOUDINARY_API_SECRET')
     
     if cloud_name and api_key and api_secret:
-        logger.info("✅ Using single Cloudinary account from environment variables")
+        logger.info("âœ… Using single Cloudinary account from environment variables")
         return [{
             "name": "Primary Account",
             "cloud_name": cloud_name,
@@ -50,14 +50,14 @@ def load_cloudinary_accounts():
             "active": True
         }]
     
-    logger.warning("⚠️ No Cloudinary accounts configured!")
+    logger.warning("âš ï¸ No Cloudinary accounts configured!")
     return []
 
 def save_cloudinary_accounts(accounts):
     """Save Cloudinary accounts to file"""
     with open(CLOUDINARY_ACCOUNTS_FILE, 'w') as f:
         json.dump({"accounts": accounts}, f, indent=2)
-    logger.info(f"💾 Saved {len(accounts)} Cloudinary accounts")
+    logger.info(f"ðŸ’¾ Saved {len(accounts)} Cloudinary accounts")
 
 def get_active_accounts():
     """Get only active Cloudinary accounts"""
@@ -77,7 +77,7 @@ def select_account_for_upload():
     
     # Random selection for load balancing
     selected = random.choice(accounts)
-    logger.info(f"📤 Selected account: {selected.get('name', 'Unnamed')} for upload")
+    logger.info(f"ðŸ“¤ Selected account: {selected.get('name', 'Unnamed')} for upload")
     return selected
 
 def configure_cloudinary(account):
@@ -87,7 +87,18 @@ def configure_cloudinary(account):
         api_key=account['api_key'],
         api_secret=account['api_secret']
     )
-    return account
+
+def generate_cloudinary_thumbnail(public_id, cloud_name):
+    """
+    Generate Cloudinary thumbnail URL for video
+    Uses Cloudinary's transformation API to create a thumbnail from the video
+    """
+    # Generate thumbnail URL using Cloudinary transformation API
+    # This creates a thumbnail at 1 second into the video, scaled to fit
+    thumbnail_url = f"https://res.cloudinary.com/{cloud_name}/video/upload/so_1.0,w_640,h_360,c_fill,q_auto,f_jpg/{public_id}.jpg"
+    
+    logger.info(f"🖼️ Generated thumbnail URL: {thumbnail_url}")
+    return thumbnail_url
 
 # ============================================================================
 # VIDEO METADATA MANAGEMENT
@@ -137,7 +148,7 @@ async def upload_video(request):
         configure_cloudinary(account)
         
         # Upload to Cloudinary
-        logger.info(f"📤 Uploading video to Cloudinary ({account.get('name')}): {video_data.get('videoTitle', 'Untitled')}")
+        logger.info(f"ðŸ“¤ Uploading video to Cloudinary ({account.get('name')}): {video_data.get('videoTitle', 'Untitled')}")
         
         # Save to temp file first (Cloudinary needs a file path)
         temp_file = f"/tmp/temp_video_{os.urandom(8).hex()}.mp4"
@@ -165,7 +176,7 @@ async def upload_video(request):
             "description": video_data.get('videoDescription', ''),
             "category": video_data.get('videoCategory', 'General'),
             "videoUrl": upload_result['secure_url'],
-            "thumbnail": upload_result.get('thumbnail_url', upload_result['secure_url'].replace('.mp4', '.jpg')),
+            "thumbnail": generate_cloudinary_thumbnail(upload_result['public_id'], account['cloud_name']),
             "uploadDate": upload_result['created_at'],
             "duration": upload_result.get('duration', 0),
             "cloudinary_id": upload_result['public_id'],
@@ -178,7 +189,7 @@ async def upload_video(request):
         videos_data['videos'].append(video_metadata)
         save_videos_metadata(videos_data)
         
-        logger.info(f"✅ Video uploaded successfully to {account.get('name')}: {video_metadata['id']}")
+        logger.info(f"âœ… Video uploaded successfully to {account.get('name')}: {video_metadata['id']}")
         
         return web.json_response({
             "success": True,
@@ -187,7 +198,7 @@ async def upload_video(request):
         })
         
     except Exception as e:
-        logger.error(f"❌ Upload error: {e}", exc_info=True)
+        logger.error(f"âŒ Upload error: {e}", exc_info=True)
         return web.json_response({"error": str(e)}, status=500)
 
 async def get_videos(request):
@@ -245,9 +256,9 @@ async def delete_video(request):
             
             if account:
                 configure_cloudinary(account)
-                logger.info(f"🗑️ Deleting from account: {account.get('name')}")
+                logger.info(f"ðŸ—‘ï¸ Deleting from account: {account.get('name')}")
             else:
-                logger.warning(f"⚠️ Account not found for cloud_name: {cloud_name}, using first available")
+                logger.warning(f"âš ï¸ Account not found for cloud_name: {cloud_name}, using first available")
                 accounts = get_active_accounts()
                 if accounts:
                     configure_cloudinary(accounts[0])
@@ -259,7 +270,7 @@ async def delete_video(request):
         videos_data['videos'] = [v for v in videos_data['videos'] if v['id'] != video_id]
         save_videos_metadata(videos_data)
         
-        logger.info(f"✅ Video deleted: {video_id}")
+        logger.info(f"âœ… Video deleted: {video_id}")
         
         return web.json_response({"success": True, "message": "Video deleted"})
         
@@ -331,7 +342,7 @@ async def add_account(request):
         accounts.append(new_account)
         save_cloudinary_accounts(accounts)
         
-        logger.info(f"✅ Added new Cloudinary account: {new_account['name']}")
+        logger.info(f"âœ… Added new Cloudinary account: {new_account['name']}")
         
         return web.json_response({
             "success": True,
@@ -359,7 +370,7 @@ async def toggle_account(request):
             if acc['cloud_name'] == cloud_name:
                 acc['active'] = not acc.get('active', True)
                 account_found = True
-                logger.info(f"🔄 Account '{acc.get('name')}' is now {'active' if acc['active'] else 'inactive'}")
+                logger.info(f"ðŸ”„ Account '{acc.get('name')}' is now {'active' if acc['active'] else 'inactive'}")
                 break
         
         if not account_found:
@@ -375,3 +386,5 @@ async def toggle_account(request):
     except Exception as e:
         logger.error(f"Error toggling account: {e}")
         return web.json_response({"error": str(e)}, status=500)
+
+
