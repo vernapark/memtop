@@ -1,5 +1,5 @@
-// Admin JavaScript - CLOUDINARY VERSION (MULTIPART FIX)
-// Fixed: Now uses multipart/form-data instead of JSON
+// Admin JavaScript - CLOUDINARY VERSION
+// All features preserved, now uploads to cloud storage
 
 let uploadInProgress = false;
 
@@ -138,17 +138,9 @@ function generateThumbnailFromVideo(videoFile) {
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Convert to blob instead of data URL for better multipart handling
-            canvas.toBlob((blob) => {
-                if (blob) {
-                    resolve(blob);
-                } else {
-                    reject(new Error('Failed to generate thumbnail blob'));
-                }
-            }, 'image/jpeg', 0.8);
-            
+            const thumbnailDataUrl = canvas.toDataURL('image/jpeg', 0.8);
             video.src = '';
+            resolve(thumbnailDataUrl);
         };
         
         video.onerror = function() {
@@ -184,56 +176,73 @@ async function handleVideoUpload(e) {
     showStatus(statusMessage, '⏳ Generating thumbnail...', 'success');
     
     try {
-        // Generate thumbnail
-        const thumbnailBlob = await generateThumbnailFromVideo(videoFile);
+        const thumbnailData = await generateThumbnailFromVideo(videoFile);
         showStatus(statusMessage, `⏳ Uploading ${sizeMB}MB to cloud...`, 'success');
         
-        // FIXED: Use FormData for multipart/form-data
-        const formData = new FormData();
-        formData.append('videoFile', videoFile);
-        formData.append('thumbnail', thumbnailBlob, 'thumbnail.jpg');
-        formData.append('videoTitle', title);
-        formData.append('videoDescription', description);
-        formData.append('videoCategory', category);
-        
-        // FIXED: Don't set Content-Type header - browser will set it with boundary
-        const response = await fetch('/api/upload-video', {
-            method: 'POST',
-            body: formData
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showStatus(statusMessage, '✅ Video uploaded to cloud successfully!', 'success');
-            document.getElementById('uploadForm').reset();
-            document.getElementById('selectedFileName').textContent = 'None';
-            
-            const videoDropZone = document.getElementById('videoDropZone');
-            if (videoDropZone) {
-                videoDropZone.innerHTML = `
-                    <div class="drop-zone-icon">🎬</div>
-                    <div class="drop-zone-text">Drag & Drop Video Here</div>
-                    <div class="drop-zone-hint">Thumbnail will be auto-generated from video</div>
-                `;
+        const videoReader = new FileReader();
+        videoReader.onload = async function(e) {
+            try {
+                const response = await fetch('/api/upload-video', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        videoData: e.target.result,
+                        thumbnailData: thumbnailData,
+                        title: title,
+                        description: description,
+                        category: category
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showStatus(statusMessage, '✅ Video uploaded to cloud successfully!', 'success');
+                    document.getElementById('uploadForm').reset();
+                    document.getElementById('selectedFileName').textContent = 'None';
+                    
+                    const videoDropZone = document.getElementById('videoDropZone');
+                    if (videoDropZone) {
+                        videoDropZone.innerHTML = `
+                            <div class="drop-zone-icon">🎬</div>
+                            <div class="drop-zone-text">Drag & Drop Video Here</div>
+                            <div class="drop-zone-hint">Thumbnail will be auto-generated from video</div>
+                        `;
+                    }
+                    
+                    setTimeout(() => {
+                        loadAdminVideos();
+                        statusMessage.textContent = '';
+                        statusMessage.className = 'status-message';
+                    }, 2000);
+                } else {
+                    throw new Error(result.error || 'Upload failed');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                showStatus(statusMessage, '❌ Upload failed: ' + error.message, 'error');
+            } finally {
+                uploadInProgress = false;
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Upload Video';
             }
-            
-            setTimeout(() => {
-                loadAdminVideos();
-                statusMessage.textContent = '';
-                statusMessage.className = 'status-message';
-            }, 2000);
-        } else {
-            throw new Error(result.error || 'Upload failed');
-        }
+        };
+        
+        videoReader.onerror = function() {
+            uploadInProgress = false;
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Upload Video';
+            showStatus(statusMessage, '❌ Error reading video file', 'error');
+        };
+        
+        videoReader.readAsDataURL(videoFile);
         
     } catch (error) {
-        console.error('Upload error:', error);
-        showStatus(statusMessage, '❌ Upload failed: ' + error.message, 'error');
-    } finally {
+        console.error('Error:', error);
         uploadInProgress = false;
         submitBtn.disabled = false;
         submitBtn.textContent = 'Upload Video';
+        showStatus(statusMessage, '❌ Failed: ' + error.message, 'error');
     }
 }
 
@@ -256,43 +265,15 @@ async function loadAdminVideos() {
             return;
         }
         
-        // Show statistics if available
-        if (data.statistics) {
-            const stats = data.statistics;
-            const statsHtml = `
-                <div style="background: #1a1a1a; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #3f3f3f;">
-                    <h3 style="margin: 0 0 12px 0; color: #3ea6ff;">📊 Storage Statistics</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
-                        <div>
-                            <div style="color: #aaa; font-size: 0.9rem;">Total Videos</div>
-                            <div style="font-size: 1.5rem; font-weight: 600; color: #fff;">${stats.total_videos}</div>
-                        </div>
-                        <div>
-                            <div style="color: #aaa; font-size: 0.9rem;">Active Accounts</div>
-                            <div style="font-size: 1.5rem; font-weight: 600; color: #7fff7f;">${stats.active_accounts} / ${stats.total_accounts}</div>
-                        </div>
-                        ${Object.entries(stats.videos_per_account || {}).map(([account, count]) => `
-                            <div>
-                                <div style="color: #aaa; font-size: 0.9rem;">${account}</div>
-                                <div style="font-size: 1.5rem; font-weight: 600; color: #3ea6ff;">${count} videos</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-            videoList.innerHTML = statsHtml + videoList.innerHTML;
-        }
-        
-        videoList.innerHTML += videos.map(video => `
+        videoList.innerHTML = videos.map(video => `
             <div class="admin-video-item">
                 <div class="video-item-info">
                     <h4>${video.title}</h4>
                     <p><strong>Category:</strong> ${video.category}</p>
-                    ${video.cloudinary_account ? `<p><strong>Storage:</strong> ${video.cloudinary_account}</p>` : ''}
                     <p>${video.description || 'No description'}</p>
                     <p><small>Uploaded: ${new Date(video.uploadDate).toLocaleDateString()}</small></p>
                 </div>
-                <button class="btn-danger" onclick="deleteVideo('${video.id}', '${video.cloudinary_cloud_name || ''}')">Delete</button>
+                <button class="btn-danger" onclick="deleteVideo('${video.id}')">Delete</button>
             </div>
         `).join('');
     } catch (error) {
@@ -300,7 +281,7 @@ async function loadAdminVideos() {
     }
 }
 
-async function deleteVideo(videoId, cloudName = '') {
+async function deleteVideo(videoId) {
     if (!confirm('Are you sure you want to delete this video?')) {
         return;
     }
@@ -309,10 +290,7 @@ async function deleteVideo(videoId, cloudName = '') {
         const response = await fetch('/api/delete-video', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ 
-                id: videoId,
-                cloudinary_cloud_name: cloudName 
-            })
+            body: JSON.stringify({ id: videoId })
         });
         
         const result = await response.json();
