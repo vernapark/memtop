@@ -625,7 +625,7 @@ async def serve_file(request):
         return web.Response(status=500, text="Internal Server Error")
 
 async def get_app_info(request):
-    `"`"`"Get APK file information for download`"`"`"
+    """Get APK file information for download"""
     try:
         apk_file = 'app.apk'
         
@@ -647,7 +647,7 @@ async def get_app_info(request):
         return web.json_response({'available': False, 'error': str(e)}, status=500)
 
 async def download_app(request):
-    `"`"`"Serve APK file for download`"`"`"
+    """Serve APK file for download"""
     try:
         apk_file = 'app.apk'
         
