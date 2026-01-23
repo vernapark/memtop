@@ -95,15 +95,25 @@
             </div>
             
             <div class="yt-header-end">
-                <!-- Download App Button - Professional Design -->
+                <!-- Download App Button - 3D Red Prism Design -->
                 <div class="download-app-container">
-                    <button class="download-app-btn" onclick="downloadApp()">
+                    <button class="download-app-btn" id="downloadBtn" onclick="initiateDownload()">
+                        <div class="prism-layer prism-black"></div>
+                        <div class="prism-layer prism-dark-red"></div>
+                        <div class="prism-layer prism-red"></div>
                         <div class="download-btn-content">
-                            <div class="download-icon-wrapper">
-                                <svg class="download-icon" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/>
-                                </svg>
-                            </div>
+                            <svg class="download-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/>
+                            </svg>
+                            <span class="download-text">Download App</span>
+                        </div>
+                        <div class="loading-spinner" id="loadingSpinner">
+                            <div class="spinner-ring"></div>
+                            <div class="spinner-ring"></div>
+                            <div class="spinner-ring"></div>
+                        </div>
+                    </button>
+                </div>
                             <div class="download-text-wrapper">
                                 <span class="download-main-text">Download App</span>
                                 <span class="download-sub-text">Get Premium Experience</span>

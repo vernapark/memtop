@@ -1,4 +1,4 @@
-﻿/* ===================================
+/* ===================================
    PREMIUM YOUTUBE-STYLE VIDEO STREAMING
    =================================== */
 
@@ -335,7 +335,7 @@ body {
 }
 
 .video-metadata span:not(:last-child)::after {
-    content: "â€¢";
+    content: "•";
     margin: 0 4px;
 }
 
