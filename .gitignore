@@ -57,3 +57,6 @@ cloudinary_accounts.json
 key_storage.json
 access_codes.json
 videos.json
+
+# APK files
+*.apk

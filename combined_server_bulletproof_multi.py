@@ -624,6 +624,49 @@ async def serve_file(request):
         logger.error(f"Error serving file {request.path}: {e}")
         return web.Response(status=500, text="Internal Server Error")
 
+async def get_app_info(request):
+    `"`"`"Get APK file information for download`"`"`"
+    try:
+        apk_file = 'app.apk'
+        
+        if os.path.exists(apk_file):
+            file_size = os.path.getsize(apk_file)
+            return web.json_response({
+                'apkUrl': '/download-app',
+                'filename': 'PremiumApp.apk',
+                'size': file_size,
+                'available': True
+            })
+        else:
+            return web.json_response({
+                'available': False,
+                'message': 'App not available'
+            })
+    except Exception as e:
+        logger.error(f"Error getting app info: {e}")
+        return web.json_response({'available': False, 'error': str(e)}, status=500)
+
+async def download_app(request):
+    `"`"`"Serve APK file for download`"`"`"
+    try:
+        apk_file = 'app.apk'
+        
+        if not os.path.exists(apk_file):
+            return web.Response(status=404, text='App not found')
+        
+        with open(apk_file, 'rb') as f:
+            content = f.read()
+        
+        return web.Response(
+            body=content,
+            content_type='application/vnd.android.package-archive',
+            headers={
+                'Content-Disposition': 'attachment; filename="PremiumApp.apk"'
+            }
+        )
+    except Exception as e:
+        logger.error(f"Error downloading app: {e}")
+        return web.Response(status=500, text='Download failed')
 async def health_check(request):
     """Health check endpoint"""
     accounts = get_active_accounts()
@@ -715,7 +758,10 @@ def main():
     app.router.add_post('/api/visitor/disconnect', visitor_disconnect)
     app.router.add_get('/api/visitors/active', get_active_visitors)
     
-    # Website routes
+    # APK download routes
+    app.router.add_get('/api/get-app-info', get_app_info)
+    app.router.add_get('/download-app', download_app)
+        # Website routes
     app.router.add_get("/health", health_check)
     app.router.add_route('*', "/{path:.*}", serve_file)
     
