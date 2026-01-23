@@ -1,8 +1,9 @@
-// Admin JavaScript - Multiple Upload with Auto-Generated Titles
-console.log('🚀 Admin Multi-Upload Module Loaded');
+// Admin JavaScript - Multiple Upload with Auto-Generated Titles - FIXED VERSION
+console.log('🚀 Admin Multi-Upload Module Loaded - FIXED');
 
 // Selected files array
 let selectedFiles = [];
+let isUploading = false;
 
 // Generate random alphanumeric title (7-8 words)
 function generateAlphanumericTitle() {
@@ -42,7 +43,7 @@ function generateAlphanumericTitle() {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🎬 Admin Panel Initialized - Multi-Upload Mode');
+    console.log('🎬 Admin Panel Initialized - Multi-Upload Mode - FIXED');
     
     const videoDropZone = document.getElementById('videoDropZone');
     const videoFileInput = document.getElementById('videoFile');
@@ -54,62 +55,101 @@ document.addEventListener('DOMContentLoaded', function() {
     const uploadProgressContainer = document.getElementById('uploadProgressContainer');
     const uploadProgressList = document.getElementById('uploadProgressList');
     
-    // Make drop zone clickable
-    videoDropZone.addEventListener('click', () => {
-        videoFileInput.click();
-    });
-    
-    // Drag and drop handlers
-    videoDropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        videoDropZone.classList.add('drag-over');
-    });
-    
-    videoDropZone.addEventListener('dragleave', () => {
-        videoDropZone.classList.remove('drag-over');
-    });
-    
-    videoDropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        videoDropZone.classList.remove('drag-over');
+    // FIX: Make drop zone clickable with better event handling
+    if (videoDropZone) {
+        videoDropZone.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Drop zone clicked - opening file selector');
+            if (videoFileInput) {
+                videoFileInput.click();
+            }
+        });
         
-        const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('video/'));
-        if (files.length > 0) {
-            addFiles(files);
-        }
-    });
+        // Add pointer cursor to indicate clickability
+        videoDropZone.style.cursor = 'pointer';
+    }
     
-    // File input change handler
-    videoFileInput.addEventListener('change', (e) => {
-        const files = Array.from(e.target.files);
-        if (files.length > 0) {
-            addFiles(files);
-        }
-    });
+    // FIX: Better drag and drop handlers with visual feedback
+    if (videoDropZone) {
+        videoDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            videoDropZone.classList.add('drag-over');
+        });
+        
+        videoDropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            videoDropZone.classList.remove('drag-over');
+        });
+        
+        videoDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            videoDropZone.classList.remove('drag-over');
+            
+            const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('video/'));
+            if (files.length > 0) {
+                console.log(`📁 Dropped ${files.length} video file(s)`);
+                addFiles(files);
+            } else {
+                showStatus('⚠️ Please drop video files only', 'error');
+            }
+        });
+    }
+    
+    // FIX: File input change handler with better feedback
+    if (videoFileInput) {
+        videoFileInput.addEventListener('change', (e) => {
+            e.preventDefault();
+            const files = Array.from(e.target.files);
+            console.log(`📁 Selected ${files.length} file(s) from browser`);
+            if (files.length > 0) {
+                addFiles(files);
+            }
+        });
+    }
     
     // Add files to selection
     function addFiles(files) {
-        selectedFiles = [...selectedFiles, ...files];
+        const videoFiles = files.filter(file => file.type.startsWith('video/'));
+        
+        if (videoFiles.length === 0) {
+            showStatus('⚠️ No valid video files selected', 'error');
+            return;
+        }
+        
+        selectedFiles = [...selectedFiles, ...videoFiles];
         updateSelectedFilesList();
-        console.log(`📁 ${files.length} file(s) added. Total: ${selectedFiles.length}`);
+        console.log(`📁 ${videoFiles.length} file(s) added. Total: ${selectedFiles.length}`);
+        showStatus(`✅ ${videoFiles.length} video(s) added`, 'success');
     }
     
     // Update selected files display
     function updateSelectedFilesList() {
         if (selectedFiles.length === 0) {
-            selectedFilesContainer.style.display = 'none';
+            if (selectedFilesContainer) {
+                selectedFilesContainer.style.display = 'none';
+            }
             return;
         }
         
-        selectedFilesContainer.style.display = 'block';
-        fileCount.textContent = selectedFiles.length;
+        if (selectedFilesContainer) {
+            selectedFilesContainer.style.display = 'block';
+        }
+        if (fileCount) {
+            fileCount.textContent = selectedFiles.length;
+        }
         
-        selectedFilesList.innerHTML = selectedFiles.map((file, index) => `
-            <div class="file-item">
-                <span class="file-item-name">📹 ${file.name} (${formatFileSize(file.size)})</span>
-                <button type="button" class="file-item-remove" onclick="removeFile(${index})">Remove</button>
-            </div>
-        `).join('');
+        if (selectedFilesList) {
+            selectedFilesList.innerHTML = selectedFiles.map((file, index) => `
+                <div class="file-item">
+                    <span class="file-item-name">📹 ${file.name} (${formatFileSize(file.size)})</span>
+                    <button type="button" class="file-item-remove" onclick="removeFile(${index})">Remove</button>
+                </div>
+            `).join('');
+        }
     }
     
     // Remove file from selection
@@ -117,6 +157,9 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedFiles.splice(index, 1);
         updateSelectedFilesList();
         console.log(`🗑️ File removed. Remaining: ${selectedFiles.length}`);
+        if (selectedFiles.length === 0) {
+            showStatus('All files removed', 'info');
+        }
     };
     
     // Format file size
@@ -128,71 +171,95 @@ document.addEventListener('DOMContentLoaded', function() {
         return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
     }
     
-    // Upload form submission
-    uploadForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        if (selectedFiles.length === 0) {
-            showStatus('⚠️ Please select at least one video file', 'error');
-            return;
-        }
-        
-        const category = document.getElementById('videoCategory').value;
-        
-        if (!category) {
-            showStatus('⚠️ Please select a category', 'error');
-            return;
-        }
-        
-        // Disable upload button during upload
-        uploadBtn.disabled = true;
-        uploadBtn.textContent = `Uploading ${selectedFiles.length} video(s)...`;
-        
-        // Show progress container
-        uploadProgressContainer.style.display = 'block';
-        uploadProgressList.innerHTML = '';
-        
-        console.log(`🚀 Starting parallel upload of ${selectedFiles.length} videos`);
-        
-        // Upload all files in parallel for maximum speed
-        const uploadPromises = selectedFiles.map((file, index) => 
-            uploadSingleVideo(file, category, index)
-        );
-        
-        try {
-            const results = await Promise.all(uploadPromises);
-            const successCount = results.filter(r => r.success).length;
-            const failCount = results.length - successCount;
+    // FIX: Upload form submission with better validation and error handling
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             
-            if (failCount === 0) {
-                showStatus(`✅ All ${successCount} videos uploaded successfully!`, 'success');
-            } else {
-                showStatus(`⚠️ ${successCount} succeeded, ${failCount} failed`, 'warning');
+            // Prevent multiple simultaneous uploads
+            if (isUploading) {
+                showStatus('⚠️ Upload already in progress', 'warning');
+                return;
             }
             
-            // Clear selection
-            selectedFiles = [];
-            updateSelectedFilesList();
-            videoFileInput.value = '';
+            if (selectedFiles.length === 0) {
+                showStatus('⚠️ Please select at least one video file', 'error');
+                return;
+            }
             
-            // Reload video list
-            setTimeout(() => {
-                loadVideos();
-            }, 1000);
+            const category = document.getElementById('videoCategory').value;
             
-        } catch (error) {
-            console.error('Upload error:', error);
-            showStatus('❌ Upload failed: ' + error.message, 'error');
-        } finally {
-            uploadBtn.disabled = false;
-            uploadBtn.textContent = 'Upload All Videos';
-        }
-    });
+            if (!category) {
+                showStatus('⚠️ Please select a category', 'error');
+                return;
+            }
+            
+            // Set uploading flag
+            isUploading = true;
+            
+            // Disable upload button during upload
+            if (uploadBtn) {
+                uploadBtn.disabled = true;
+                uploadBtn.textContent = `Uploading ${selectedFiles.length} video(s)...`;
+            }
+            
+            // Show progress container
+            if (uploadProgressContainer) {
+                uploadProgressContainer.style.display = 'block';
+            }
+            if (uploadProgressList) {
+                uploadProgressList.innerHTML = '';
+            }
+            
+            console.log(`🚀 Starting parallel upload of ${selectedFiles.length} videos`);
+            showStatus(`🚀 Uploading ${selectedFiles.length} video(s)...`, 'info');
+            
+            // Upload all files in parallel for maximum speed
+            const uploadPromises = selectedFiles.map((file, index) => 
+                uploadSingleVideo(file, category, index)
+            );
+            
+            try {
+                const results = await Promise.all(uploadPromises);
+                const successCount = results.filter(r => r.success).length;
+                const failCount = results.length - successCount;
+                
+                if (failCount === 0) {
+                    showStatus(`✅ All ${successCount} videos uploaded successfully!`, 'success');
+                } else {
+                    showStatus(`⚠️ ${successCount} succeeded, ${failCount} failed`, 'warning');
+                }
+                
+                // Clear selection
+                selectedFiles = [];
+                updateSelectedFilesList();
+                if (videoFileInput) {
+                    videoFileInput.value = '';
+                }
+                
+                // Reload video list
+                setTimeout(() => {
+                    loadVideos();
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                showStatus('❌ Upload failed: ' + error.message, 'error');
+            } finally {
+                isUploading = false;
+                if (uploadBtn) {
+                    uploadBtn.disabled = false;
+                    uploadBtn.textContent = 'Upload All Videos';
+                }
+            }
+        });
+    }
     
     // Upload single video with optimizations
     async function uploadSingleVideo(file, category, index) {
         const generatedTitle = generateAlphanumericTitle();
-        const progressItem = createProgressItem(file.name, index);
+        createProgressItem(file.name, index);
         
         console.log(`📤 Uploading: ${file.name} → Title: "${generatedTitle}"`);
         
@@ -237,6 +304,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Create progress item UI
     function createProgressItem(filename, index) {
+        if (!uploadProgressList) return;
+        
         const progressHtml = `
             <div class="upload-progress-item" id="progress-${index}">
                 <div class="progress-header">
@@ -256,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const bar = document.getElementById(`bar-${index}`);
         const statusEl = document.getElementById(`status-${index}`);
         
-        if (bar) bar.style.width = `${percent}%`;
+        if (bar) bar.style.width = `${Math.min(100, Math.max(0, percent))}%`;
         if (statusEl) statusEl.textContent = status;
     }
     
@@ -280,6 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 
                 canvas.toBlob((blob) => {
+                    URL.revokeObjectURL(video.src);
                     if (blob) {
                         const thumbnailFile = new File([blob], 'thumbnail.jpg', { type: 'image/jpeg' });
                         resolve(thumbnailFile);
@@ -290,6 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             video.addEventListener('error', (e) => {
+                URL.revokeObjectURL(video.src);
                 reject(new Error('Failed to load video for thumbnail'));
             });
             
@@ -314,33 +385,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('fetch_format', 'auto');
                 formData.append('chunk_size', '20000000'); // 20MB chunks for faster upload
             }
-            
-            const xhr = new XMLHttpRequest();
-            
-            // Track upload progress
-            xhr.upload.addEventListener('progress', (e) => {
-                if (e.lengthComputable && progressCallback) {
-                    const progress = (e.loaded / e.total) * 100;
-                    progressCallback(progress);
-                }
-            });
-            
-            xhr.addEventListener('load', () => {
-                if (xhr.status === 200) {
-                    const response = JSON.parse(xhr.responseText);
-                    resolve(response.secure_url || response.url);
-                } else {
-                    reject(new Error(`Upload failed: ${xhr.statusText}`));
-                }
-            });
-            
-            xhr.addEventListener('error', () => {
-                reject(new Error('Network error during upload'));
-            });
-            
-            xhr.addEventListener('timeout', () => {
-                reject(new Error('Upload timeout'));
-            });
             
             // For now, simulate upload since we don't have Cloudinary credentials in browser
             // In production, replace with actual Cloudinary endpoint
@@ -380,8 +424,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Get existing videos
             const videos = await getAllVideos();
             
-            // Add new video
-            videoData.id = Date.now().toString();
+            // Add new video with unique ID
+            videoData.id = Date.now().toString() + '_' + Math.random().toString(36).substr(2, 9);
             videos.push(videoData);
             
             // Save to localStorage
@@ -408,9 +452,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show status message
     function showStatus(message, type = 'info') {
         const statusDiv = document.getElementById('uploadStatus');
+        if (!statusDiv) return;
+        
         statusDiv.textContent = message;
         statusDiv.className = 'status-message ' + type;
         statusDiv.style.display = 'block';
+        
+        console.log(`[${type.toUpperCase()}] ${message}`);
         
         if (type === 'success' || type === 'error') {
             setTimeout(() => {
@@ -422,6 +470,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load and display videos
     async function loadVideos() {
         const videoList = document.getElementById('adminVideoList');
+        if (!videoList) return;
+        
         const videos = await getAllVideos();
         
         if (videos.length === 0) {
@@ -464,14 +514,19 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     // Logout handler
-    document.getElementById('logoutBtn')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (confirm('Are you sure you want to logout?')) {
-            localStorage.removeItem('adminLoggedIn');
-            window.location.href = 'login.html';
-        }
-    });
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('adminLoggedIn');
+                window.location.href = 'login.html';
+            }
+        });
+    }
     
     // Initial load
     loadVideos();
+    
+    console.log('✅ Admin Panel Ready - Click drop zone to select videos');
 });
