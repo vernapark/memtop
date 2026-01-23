@@ -27,16 +27,16 @@ function initializeApp() {
     setupModalEventListeners();
 }
 
-// Load videos from localStorage
+// Load videos from Cloudinary
 async function loadVideos() {
     try {
         showLoading();
         
-        // Get videos from localStorage (same storage as admin panel)
-        const videosJson = localStorage.getItem('videos');
-        allVideos = videosJson ? JSON.parse(videosJson) : [];
+        const response = await fetch('/api/videos');
+        const data = await response.json();
+        allVideos = data.videos || [];
         
-        console.log('? Loaded videos from localStorage:', allVideos.length);
+        console.log('✅ Loaded videos from cloud:', allVideos.length);
         
         if (allVideos.length === 0) {
             showEmptyState();
@@ -92,7 +92,7 @@ function displayVideos(videos) {
 
 // Create video card HTML
 function createVideoCard(video) {
-    const thumbnailSrc = video.thumbnailUrl || video.thumbnail || generateDefaultThumbnail();
+    const thumbnailSrc = video.thumbnail || generateDefaultThumbnail();
     const categoryIcon = categoryIcons[video.category?.toLowerCase()] || categoryIcons['default'];
     
     return `
