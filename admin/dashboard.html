@@ -239,6 +239,40 @@
                 </div>
             </div>
 
+            
+            <h2>App Management</h2>
+            <div class="upload-section">
+                <h3>Upload App (APK File)</h3>
+                <form id="appUploadForm">
+                    <div class="form-group">
+                        <label for="appFile">Select APK File</label>
+                        <input type="file" id="appFile" name="appFile" accept=".apk" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="appVersion">App Version (e.g., 1.0.0)</label>
+                        <input type="text" id="appVersion" name="appVersion" placeholder="1.0.0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="appDescription">Description (optional)</label>
+                        <textarea id="appDescription" name="appDescription" rows="3" placeholder="What's new in this version..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary" id="appUploadBtn">Upload App</button>
+                    <div id="appUploadStatus" class="status-message"></div>
+                </form>
+
+                <div id="currentAppInfo" style="margin-top: 30px; padding: 20px; background: #0a0a0a; border-radius: 10px; display: none;">
+                    <h4 style="color: #3ea6ff; margin-bottom: 15px;">Current App</h4>
+                    <p><strong>Version:</strong> <span id="currentAppVersion">-</span></p>
+                    <p><strong>Size:</strong> <span id="currentAppSize">-</span></p>
+                    <p><strong>Uploaded:</strong> <span id="currentAppDate">-</span></p>
+                    <p><strong>Description:</strong> <span id="currentAppDesc">-</span></p>
+                    <button onclick="deleteApp()" class="btn-delete" style="margin-top: 15px;">Delete App</button>
+                </div>
+            </div>
+
             <h2>Manage Videos</h2>
             <div class="video-list" id="adminVideoList">
                 <!-- Videos will be dynamically loaded here -->

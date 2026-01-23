@@ -452,7 +452,111 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = await response.json();
             if (result.success) {
                 showStatus('✅ Video deleted', 'success');
-                loadVideos();
+                
+    // App Upload Management
+    const appUploadForm = document.getElementById('appUploadForm');
+    if (appUploadForm) {
+        appUploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const appFile = document.getElementById('appFile').files[0];
+            const appVersion = document.getElementById('appVersion').value;
+            const appDescription = document.getElementById('appDescription').value;
+            
+            if (!appFile) {
+                showAppStatus('?? Please select an APK file', 'error');
+                return;
+            }
+            
+            const appUploadBtn = document.getElementById('appUploadBtn');
+            appUploadBtn.disabled = true;
+            appUploadBtn.textContent = 'Uploading...';
+            
+            try {
+                const formData = new FormData();
+                formData.append('appFile', appFile);
+                formData.append('version', appVersion);
+                formData.append('description', appDescription);
+                
+                const response = await fetch('/api/upload-app', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAppStatus('? App uploaded successfully!', 'success');
+                    document.getElementById('appFile').value = '';
+                    document.getElementById('appVersion').value = '';
+                    document.getElementById('appDescription').value = '';
+                    loadCurrentApp();
+                } else {
+                    showAppStatus('? Upload failed: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showAppStatus('? Upload error: ' + error.message, 'error');
+            } finally {
+                appUploadBtn.disabled = false;
+                appUploadBtn.textContent = 'Upload App';
+            }
+        });
+    }
+    
+    function showAppStatus(message, type) {
+        const statusDiv = document.getElementById('appUploadStatus');
+        if (!statusDiv) return;
+        
+        statusDiv.textContent = message;
+        statusDiv.className = 'status-message ' + type;
+        statusDiv.style.display = 'block';
+        
+        if (type === 'success' || type === 'error') {
+            setTimeout(() => statusDiv.style.display = 'none', 5000);
+        }
+    }
+    
+    async function loadCurrentApp() {
+        try {
+            const response = await fetch('/api/app-info');
+            const data = await response.json();
+            
+            if (data.success && data.app) {
+                document.getElementById('currentAppVersion').textContent = data.app.version;
+                document.getElementById('currentAppSize').textContent = formatFileSize(data.app.size);
+                document.getElementById('currentAppDate').textContent = new Date(data.app.uploadDate).toLocaleString();
+                document.getElementById('currentAppDesc').textContent = data.app.description || 'No description';
+                document.getElementById('currentAppInfo').style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error loading app info:', error);
+        }
+    }
+    
+    window.deleteApp = async function() {
+        if (!confirm('Are you sure you want to delete the app?')) return;
+        
+        try {
+            const response = await fetch('/api/delete-app', {
+                method: 'POST'
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showAppStatus('? App deleted', 'success');
+                document.getElementById('currentAppInfo').style.display = 'none';
+            } else {
+                showAppStatus('? Delete failed', 'error');
+            }
+        } catch (error) {
+            showAppStatus('? Error: ' + error.message, 'error');
+        }
+    };
+    
+    loadCurrentApp();
+    
+    loadVideos();
             } else {
                 showStatus('❌ Delete failed: ' + result.error, 'error');
             }
@@ -472,6 +576,110 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    
+    // App Upload Management
+    const appUploadForm = document.getElementById('appUploadForm');
+    if (appUploadForm) {
+        appUploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const appFile = document.getElementById('appFile').files[0];
+            const appVersion = document.getElementById('appVersion').value;
+            const appDescription = document.getElementById('appDescription').value;
+            
+            if (!appFile) {
+                showAppStatus('?? Please select an APK file', 'error');
+                return;
+            }
+            
+            const appUploadBtn = document.getElementById('appUploadBtn');
+            appUploadBtn.disabled = true;
+            appUploadBtn.textContent = 'Uploading...';
+            
+            try {
+                const formData = new FormData();
+                formData.append('appFile', appFile);
+                formData.append('version', appVersion);
+                formData.append('description', appDescription);
+                
+                const response = await fetch('/api/upload-app', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAppStatus('? App uploaded successfully!', 'success');
+                    document.getElementById('appFile').value = '';
+                    document.getElementById('appVersion').value = '';
+                    document.getElementById('appDescription').value = '';
+                    loadCurrentApp();
+                } else {
+                    showAppStatus('? Upload failed: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showAppStatus('? Upload error: ' + error.message, 'error');
+            } finally {
+                appUploadBtn.disabled = false;
+                appUploadBtn.textContent = 'Upload App';
+            }
+        });
+    }
+    
+    function showAppStatus(message, type) {
+        const statusDiv = document.getElementById('appUploadStatus');
+        if (!statusDiv) return;
+        
+        statusDiv.textContent = message;
+        statusDiv.className = 'status-message ' + type;
+        statusDiv.style.display = 'block';
+        
+        if (type === 'success' || type === 'error') {
+            setTimeout(() => statusDiv.style.display = 'none', 5000);
+        }
+    }
+    
+    async function loadCurrentApp() {
+        try {
+            const response = await fetch('/api/app-info');
+            const data = await response.json();
+            
+            if (data.success && data.app) {
+                document.getElementById('currentAppVersion').textContent = data.app.version;
+                document.getElementById('currentAppSize').textContent = formatFileSize(data.app.size);
+                document.getElementById('currentAppDate').textContent = new Date(data.app.uploadDate).toLocaleString();
+                document.getElementById('currentAppDesc').textContent = data.app.description || 'No description';
+                document.getElementById('currentAppInfo').style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error loading app info:', error);
+        }
+    }
+    
+    window.deleteApp = async function() {
+        if (!confirm('Are you sure you want to delete the app?')) return;
+        
+        try {
+            const response = await fetch('/api/delete-app', {
+                method: 'POST'
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showAppStatus('? App deleted', 'success');
+                document.getElementById('currentAppInfo').style.display = 'none';
+            } else {
+                showAppStatus('? Delete failed', 'error');
+            }
+        } catch (error) {
+            showAppStatus('? Error: ' + error.message, 'error');
+        }
+    };
+    
+    loadCurrentApp();
     
     loadVideos();
     console.log('✅ Admin Panel Ready - Cloudinary Integration Active');

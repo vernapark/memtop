@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Our App - VideoStream</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .download-container {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+            border: 2px solid #3ea6ff;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            background: #3ea6ff;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #3ea6ff;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #aaaaaa;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .features {
+            background: #0a0a0a;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 1rem;
+        }
+
+        .feature-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            min-width: 30px;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #3ea6ff 0%, #2d8bcc 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 5px 20px rgba(62, 166, 255, 0.4);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(62, 166, 255, 0.6);
+        }
+
+        .download-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .skip-btn {
+            background: transparent;
+            color: #aaaaaa;
+            border: 2px solid #555;
+            padding: 12px 30px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .skip-btn:hover {
+            border-color: #3ea6ff;
+            color: #3ea6ff;
+        }
+
+        .info-text {
+            color: #777;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #333;
+            border-top: 4px solid #3ea6ff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #ff4444;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .download-container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="download-container">
+        <div class="logo">📱</div>
+        <h1>Download Our App</h1>
+        <p class="subtitle">Get the best experience with our mobile app. Enjoy unlimited 18+ videos on the go!</p>
+
+        <div class="features">
+            <div class="feature-item">
+                <span class="feature-icon">⚡</span>
+                <span>Faster video loading</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📹</span>
+                <span>HD video streaming</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🔒</span>
+                <span>Private & secure</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📲</span>
+                <span>Offline download support</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🎬</span>
+                <span>Exclusive content</span>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px; color: #aaa;">Preparing download...</p>
+        </div>
+
+        <div class="error-message" id="errorMessage">
+            App file not available. Please contact administrator.
+        </div>
+
+        <button class="download-btn" id="downloadBtn" onclick="downloadApp()">
+            📥 Download App (APK)
+        </button>
+
+        <button class="skip-btn" onclick="skipToWebsite()">
+            Continue to Website →
+        </button>
+
+        <p class="info-text">
+            📱 Android 5.0 or higher required<br>
+            📦 File size: <span id="fileSize">Loading...</span><br>
+            🔐 100% Safe & Secure
+        </p>
+    </div>
+
+    <script>
+        let appInfo = null;
+
+        // Check if app info exists
+        async function checkAppAvailability() {
+            try {
+                const response = await fetch('/api/app-info');
+                const data = await response.json();
+                
+                if (data.success && data.app) {
+                    appInfo = data.app;
+                    document.getElementById('fileSize').textContent = formatFileSize(data.app.size || 0);
+                    document.getElementById('downloadBtn').disabled = false;
+                } else {
+                    document.getElementById('errorMessage').classList.add('active');
+                    document.getElementById('downloadBtn').disabled = true;
+                    document.getElementById('fileSize').textContent = 'N/A';
+                }
+            } catch (error) {
+                console.error('Error checking app:', error);
+                document.getElementById('errorMessage').classList.add('active');
+                document.getElementById('downloadBtn').disabled = true;
+                document.getElementById('fileSize').textContent = 'N/A';
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        async function downloadApp() {
+            const btn = document.getElementById('downloadBtn');
+            const loading = document.getElementById('loading');
+            
+            btn.disabled = true;
+            loading.classList.add('active');
+
+            try {
+                // Trigger download
+                window.location.href = '/api/download-app';
+                
+                // Mark as downloaded in localStorage
+                setTimeout(() => {
+                    localStorage.setItem('appDownloaded', 'true');
+                    loading.classList.remove('active');
+                    btn.textContent = '✅ Downloaded! Opening website...';
+                    
+                    // Redirect to home after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = '/home.html';
+                    }, 2000);
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Download error:', error);
+                loading.classList.remove('active');
+                btn.disabled = false;
+                document.getElementById('errorMessage').textContent = 'Download failed. Please try again.';
+                document.getElementById('errorMessage').classList.add('active');
+            }
+        }
+
+        function skipToWebsite() {
+            localStorage.setItem('appDownloadSkipped', 'true');
+            window.location.href = '/home.html';
+        }
+
+        // Check app availability on page load
+        checkAppAvailability();
+    </script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Access Code - VideoStream</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .access-container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+            border: 2px solid #3ea6ff;
+        }
+
+        .logo {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #3ea6ff;
+        }
+
+        .subtitle {
+            color: #aaaaaa;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            background: #0a0a0a;
+            border: 2px solid #555;
+            border-radius: 10px;
+            color: #fff;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3ea6ff;
+        }
+
+        button {
+            background: linear-gradient(135deg, #3ea6ff 0%, #2d8bcc 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            box-shadow: 0 5px 20px rgba(62, 166, 255, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(62, 166, 255, 0.6);
+        }
+
+        .error {
+            background: #ff4444;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .info {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="access-container">
+        <div class="logo">🔐</div>
+        <h1>Access Code Required</h1>
+        <p class="subtitle">Enter your access code to continue</p>
+
+        <input type="text" id="accessCode" placeholder="ENTER CODE" maxlength="20" />
+        <button onclick="verifyAccess()">Enter</button>
+
+        <div class="error" id="errorMsg">Invalid access code</div>
+
+        <div class="info">
+            Don't have an access code?<br>
+            Contact admin on Telegram: <strong>@pluseight_bot</strong>
+        </div>
+    </div>
+
+    <script>
+        async function verifyAccess() {
+            const code = document.getElementById('accessCode').value.trim().toUpperCase();
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (!code) {
+                errorMsg.textContent = 'Please enter an access code';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/verify-access', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({code: code})
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    localStorage.setItem('hasAccess', 'true');
+                    localStorage.setItem('userAccessCode', code);
+                    window.location.href = '/home.html';
+                } else {
+                    errorMsg.textContent = result.error || 'Invalid access code';
+                    errorMsg.style.display = 'block';
+                }
+            } catch (error) {
+                errorMsg.textContent = 'Error verifying code. Please try again.';
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        // Enter key support
+        document.getElementById('accessCode').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verifyAccess();
+        });
+    </script>
+</body>
+</html>
