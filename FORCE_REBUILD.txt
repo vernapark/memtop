@@ -1,2 +1,0 @@
-Force rebuild trigger - timestamp: 2026-01-23 05:48:00
-This file forces Render.com to rebuild the deployment.

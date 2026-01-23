@@ -5,25 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VideoStream - 18+ Content</title>
     <script>
-        // Check if user has downloaded app or skipped
-        const appDownloaded = localStorage.getItem('appDownloaded');
-        const appSkipped = localStorage.getItem('appDownloadSkipped');
+        // Check if user has access code
+        const hasAccess = localStorage.getItem('hasAccess');
+        const accessCode = localStorage.getItem('userAccessCode');
         
-        if (!appDownloaded && !appSkipped) {
-            // First time visitor - redirect to download page
-            window.location.href = '/download.html';
+        if (hasAccess === 'true' && accessCode) {
+            // Has access - go to home page
+            window.location.href = '/home.html';
         } else {
-            // Returning visitor - check if has access code
-            const hasAccess = localStorage.getItem('hasAccess');
-            const accessCode = localStorage.getItem('userAccessCode');
-            
-            if (hasAccess === 'true' && accessCode) {
-                // Has access - go to home page
-                window.location.href = '/home.html';
-            } else {
-                // Show access code entry page
-                window.location.href = '/access.html';
-            }
+            // Show access code entry page
+            window.location.href = '/access.html';
         }
     </script>
 </head>
