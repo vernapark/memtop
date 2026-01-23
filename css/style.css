@@ -1,4 +1,4 @@
-/* ===================================
+﻿/* ===================================
    PREMIUM YOUTUBE-STYLE VIDEO STREAMING
    =================================== */
 
@@ -335,7 +335,7 @@ body {
 }
 
 .video-metadata span:not(:last-child)::after {
-    content: "•";
+    content: "â€¢";
     margin: 0 4px;
 }
 
@@ -693,135 +693,221 @@ html {
     }
 }
 /* ===================================
-   DOWNLOAD APP BUTTON STYLING
+   PROFESSIONAL DOWNLOAD APP BUTTON
    =================================== */
 
-/* Download App Button */
+.download-app-container {
+    position: relative;
+    display: inline-block;
+}
+
 .download-app-btn {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, #3ea6ff 0%, #2d8bcc 100%);
+    gap: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
-    border-radius: 20px;
-    padding: 8px 16px;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
+    border-radius: 50px;
+    padding: 0;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(62, 166, 255, 0.3);
-    position: relative;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     overflow: hidden;
+    min-width: 180px;
 }
 
-.download-app-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
+.download-btn-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    position: relative;
+    z-index: 2;
 }
 
-.download-app-btn:hover::before {
-    left: 100%;
-}
-
-.download-app-btn:hover {
-    background: linear-gradient(135deg, #4db6ff 0%, #3ea6ff 100%);
-    box-shadow: 0 4px 16px rgba(62, 166, 255, 0.5);
-    transform: translateY(-2px);
-}
-
-.download-app-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(62, 166, 255, 0.4);
+.download-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transition: all 0.3s ease;
 }
 
 .download-icon {
     width: 20px;
     height: 20px;
-    animation: bounce 2s infinite;
+    color: #fff;
+    animation: downloadBounce 2s ease-in-out infinite;
 }
 
-@keyframes bounce {
+@keyframes downloadBounce {
     0%, 100% {
         transform: translateY(0);
     }
     50% {
-        transform: translateY(-4px);
+        transform: translateY(-5px);
     }
+}
+
+.download-text-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.download-main-text {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    line-height: 1;
+}
+
+.download-sub-text {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    line-height: 1;
+}
+
+.download-btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s;
+    z-index: 1;
+}
+
+.download-app-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.download-app-btn:hover .download-btn-shine {
+    left: 100%;
+}
+
+.download-app-btn:hover .download-icon-wrapper {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
 }
 
 .download-app-btn:hover .download-icon {
-    animation: bounce 0.6s infinite;
+    animation: downloadBounce 0.6s ease-in-out infinite;
 }
 
-.btn-text-mobile {
-    display: none;
+.download-app-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
 }
 
 /* Pulse effect for attention */
-@keyframes pulse {
+@keyframes downloadPulse {
     0%, 100% {
-        box-shadow: 0 2px 8px rgba(62, 166, 255, 0.3);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
     50% {
-        box-shadow: 0 4px 20px rgba(62, 166, 255, 0.6);
+        box-shadow: 0 4px 25px rgba(102, 126, 234, 0.7), 0 0 0 8px rgba(102, 126, 234, 0.1);
     }
 }
 
 .download-app-btn.pulse {
-    animation: pulse 2s infinite;
+    animation: downloadPulse 2s ease-in-out infinite;
 }
 
 /* ===================================
-   RESPONSIVE - DOWNLOAD BUTTON
+   RESPONSIVE DESIGN
    =================================== */
 
-/* Mobile optimization */
-@media (max-width: 768px) {
+/* Tablet */
+@media (max-width: 1024px) {
     .download-app-btn {
-        padding: 6px 12px;
-        font-size: 13px;
-        border-radius: 18px;
-        gap: 6px;
+        min-width: 160px;
     }
     
-    .btn-text {
-        display: none;
+    .download-btn-content {
+        padding: 10px 18px;
+        gap: 10px;
     }
     
-    .btn-text-mobile {
-        display: inline;
+    .download-icon-wrapper {
+        width: 32px;
+        height: 32px;
     }
     
-    .download-icon {
-        width: 18px;
-        height: 18px;
+    .download-main-text {
+        font-size: 14px;
+    }
+    
+    .download-sub-text {
+        font-size: 10px;
     }
 }
 
-/* Small mobile - compact button */
-@media (max-width: 480px) {
+/* Mobile */
+@media (max-width: 768px) {
     .download-app-btn {
-        padding: 6px 10px;
-        font-size: 12px;
+        min-width: 140px;
+    }
+    
+    .download-btn-content {
+        padding: 8px 14px;
+        gap: 8px;
+    }
+    
+    .download-icon-wrapper {
+        width: 28px;
+        height: 28px;
     }
     
     .download-icon {
         width: 16px;
         height: 16px;
     }
-}
-
-/* Tablet optimization */
-@media (min-width: 769px) and (max-width: 1024px) {
-    .download-app-btn {
-        padding: 7px 14px;
+    
+    .download-main-text {
         font-size: 13px;
     }
+    
+    .download-sub-text {
+        font-size: 9px;
+    }
 }
+
+/* Small mobile - Compact version */
+@media (max-width: 480px) {
+    .download-app-btn {
+        min-width: 50px;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .download-btn-content {
+        padding: 0;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+    
+    .download-text-wrapper {
+        display: none;
+    }
+    
+    .download-icon-wrapper {
+        width: 30px;
+        height: 30px;
+        background: transparent;
+    }
+}
+
