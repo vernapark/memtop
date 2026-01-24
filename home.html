@@ -125,35 +125,60 @@
             window.location.href = 'index.html';
         }
 
-        // Download App Function
-        async function downloadApp() {
+        // Download App Function - UPDATED to directly download APK
+        function initiateDownload() {
+            const downloadBtn = document.getElementById('downloadBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const btnContent = downloadBtn.querySelector('.download-btn-content');
+            
             try {
-                // Fetch the APK file info from the server
-                const response = await fetch('/api/get-app-info');
+                // Show loading state
+                btnContent.style.opacity = '0';
+                loadingSpinner.style.display = 'flex';
+                downloadBtn.disabled = true;
                 
-                if (response.ok) {
-                    const appInfo = await response.json();
+                console.log('📱 Starting APK download...');
+                
+                // Create a direct download link
+                const link = document.createElement('a');
+                link.href = '/app.apk';
+                link.download = 'Premium18Plus.apk';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                
+                // Trigger download
+                link.click();
+                
+                // Clean up
+                document.body.removeChild(link);
+                
+                // Show success feedback
+                setTimeout(() => {
+                    btnContent.style.opacity = '1';
+                    loadingSpinner.style.display = 'none';
+                    downloadBtn.disabled = false;
                     
-                    if (appInfo.apkUrl) {
-                        // Create a temporary link and trigger download
-                        const link = document.createElement('a');
-                        link.href = appInfo.apkUrl;
-                        link.download = appInfo.filename || 'PremiumApp.apk';
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        
-                        // Show success message (optional)
-                        console.log('APK download started');
-                    } else {
-                        alert('App is not available for download at the moment. Please contact admin.');
-                    }
-                } else {
-                    alert('App is not available for download at the moment. Please contact admin.');
-                }
+                    // Optional: Show success message
+                    const originalText = btnContent.querySelector('.download-text').textContent;
+                    btnContent.querySelector('.download-text').textContent = '✓ Downloaded!';
+                    
+                    setTimeout(() => {
+                        btnContent.querySelector('.download-text').textContent = originalText;
+                    }, 2000);
+                }, 1000);
+                
+                console.log('✅ APK download initiated successfully');
+                
             } catch (error) {
-                console.error('Error downloading app:', error);
-                alert('Failed to download app. Please try again later.');
+                console.error('❌ Error downloading app:', error);
+                
+                // Reset button state
+                btnContent.style.opacity = '1';
+                loadingSpinner.style.display = 'none';
+                downloadBtn.disabled = false;
+                
+                // Show error message
+                alert('Failed to download app. Please try again or contact support.');
             }
         }
     </script>

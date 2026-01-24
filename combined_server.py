@@ -365,12 +365,20 @@ async def serve_file(request):
             content_type = 'image/jpeg'
         elif file_path.endswith('.mp4'):
             content_type = 'video/mp4'
+        elif file_path.endswith('.apk'):
+            content_type = 'application/vnd.android.package-archive'
         
         # Read and serve file
         with open(file_path, 'rb') as f:
             content = f.read()
         
-        return web.Response(body=content, content_type=content_type)
+        # Add download header for APK files
+        headers = {}
+        if file_path.endswith('.apk'):
+            headers['Content-Disposition'] = 'attachment; filename="Premium18Plus.apk"'
+            logger.info(f"📱 APK download requested from {request.remote}")
+        
+        return web.Response(body=content, content_type=content_type, headers=headers)
         
     except Exception as e:
         logger.error(f"Error serving file: {e}")
@@ -447,6 +455,7 @@ async def main():
     print("✅ Server is running!")
     print(f"🌐 Website: {WEBHOOK_URL}")
     print(f"🤖 Telegram Bot: Active with webhook")
+    print(f"📱 APK Download: {WEBHOOK_URL}/app.apk")
     print("=" * 70)
     
     # Keep running
