@@ -1,155 +1,321 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - VideoStream</title>
+    <title>Admin Dashboard - Video Upload</title>
     <link rel="stylesheet" href="../css/admin.css">
     <style>
-        .drop-zone {
-            border: 3px dashed #5d5d5d;
-            border-radius: 8px;
+        /* APK Management Section Styles */
+        .apk-management-section {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+            border: 2px solid #ff0000;
+            border-radius: 15px;
             padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 40px rgba(255, 0, 0, 0.2);
+        }
+        
+        .apk-section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 0, 0, 0.3);
+        }
+        
+        .apk-section-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ff0000, #cc0000);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            box-shadow: 0 5px 20px rgba(255, 0, 0, 0.4);
+        }
+        
+        .apk-section-icon svg {
+            width: 28px;
+            height: 28px;
+            color: white;
+        }
+        
+        .apk-section-title {
+            flex: 1;
+        }
+        
+        .apk-section-title h2 {
+            color: #ff0000;
+            margin: 0 0 5px 0;
+            font-size: 24px;
+        }
+        
+        .apk-section-title p {
+            color: #aaa;
+            margin: 0;
+            font-size: 14px;
+        }
+        
+        .apk-current-info {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid #3ea6ff;
+        }
+        
+        .apk-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .apk-info-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .apk-info-label {
+            color: #aaa;
+            font-size: 14px;
+        }
+        
+        .apk-info-value {
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .apk-status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .apk-status-active {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+        }
+        
+        .apk-upload-zone {
+            background: rgba(255, 255, 255, 0.02);
+            border: 3px dashed rgba(255, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 40px 20px;
             text-align: center;
-            transition: all 0.3s;
-            background: #1a1a1a;
             cursor: pointer;
+            transition: all 0.3s ease;
             margin-bottom: 20px;
         }
         
-        .drop-zone.drag-over {
-            border-color: #3ea6ff;
-            background: #2a2a2a;
-            transform: scale(1.02);
+        .apk-upload-zone:hover {
+            background: rgba(255, 0, 0, 0.05);
+            border-color: #ff0000;
+            transform: translateY(-2px);
         }
         
-        .drop-zone-icon {
-            font-size: 2.5rem;
-            margin-bottom: 8px;
+        .apk-upload-zone.dragging {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: #ff0000;
+            border-style: solid;
         }
         
-        .drop-zone-text {
-            color: #aaaaaa;
-            font-size: 1rem;
-            margin-bottom: 5px;
-        }
-        
-        .drop-zone-hint {
-            color: #777;
-            font-size: 0.85rem;
-        }
-
-        .selected-files-list {
-            max-height: 200px;
-            overflow-y: auto;
-            margin: 15px 0;
-            background: #0a0a0a;
-            border-radius: 8px;
-            padding: 10px;
-        }
-
-        .file-item {
+        .apk-upload-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(204, 0, 0, 0.1));
+            border-radius: 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 8px 12px;
-            margin: 5px 0;
-            background: #1a1a1a;
-            border-radius: 5px;
-            border-left: 3px solid #3ea6ff;
+            justify-content: center;
         }
-
-        .file-item-name {
-            color: #aaaaaa;
-            font-size: 0.9rem;
-            flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        
+        .apk-upload-icon svg {
+            width: 45px;
+            height: 45px;
+            color: #ff0000;
         }
-
-        .file-item-remove {
-            background: #ff4444;
+        
+        .apk-upload-text {
             color: white;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            margin-left: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
         }
-
-        .file-item-remove:hover {
-            background: #cc0000;
+        
+        .apk-upload-hint {
+            color: #aaa;
+            font-size: 14px;
         }
-
-        .upload-progress-container {
-            margin-top: 20px;
+        
+        .apk-selected-file {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
             display: none;
         }
-
-        .upload-progress-item {
-            background: #1a1a1a;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-left: 3px solid #3ea6ff;
+        
+        .apk-selected-file.active {
+            display: block;
         }
-
-        .progress-header {
+        
+        .apk-file-info {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .progress-filename {
-            color: #ffffff;
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-
-        .progress-status {
-            color: #aaaaaa;
-            font-size: 0.85rem;
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 8px;
-            background: #0a0a0a;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #3ea6ff, #2d8bcc);
-            border-radius: 4px;
-            transition: width 0.3s;
-        }
-
-        .batch-info {
-            background: #2a2a2a;
-            padding: 12px;
-            border-radius: 8px;
             margin-bottom: 15px;
+        }
+        
+        .apk-file-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3ea6ff, #0066cc);
+            border-radius: 10px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: center;
+            margin-right: 15px;
         }
-
-        .batch-info-text {
-            color: #3ea6ff;
+        
+        .apk-file-icon svg {
+            width: 28px;
+            height: 28px;
+            color: white;
+        }
+        
+        .apk-file-details {
+            flex: 1;
+        }
+        
+        .apk-file-name {
+            color: white;
             font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 5px;
+            word-break: break-all;
         }
-
-        .batch-info-count {
-            background: #3ea6ff;
-            color: #000;
-            padding: 4px 12px;
+        
+        .apk-file-size {
+            color: #aaa;
+            font-size: 14px;
+        }
+        
+        .apk-remove-btn {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid #ff0000;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .apk-remove-btn:hover {
+            background: #ff0000;
+            color: white;
+        }
+        
+        .apk-upload-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #ff0000, #cc0000);
+            color: white;
+            border: none;
             border-radius: 12px;
-            font-weight: bold;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.3);
+            display: none;
+        }
+        
+        .apk-upload-btn.active {
+            display: block;
+        }
+        
+        .apk-upload-btn:hover {
+            background: linear-gradient(135deg, #ff3333, #ff0000);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(255, 0, 0, 0.4);
+        }
+        
+        .apk-upload-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .apk-upload-progress {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .apk-upload-progress.active {
+            display: block;
+        }
+        
+        .apk-progress-bar {
+            width: 100%;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 10px;
+        }
+        
+        .apk-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ff6666);
+            width: 0%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        .apk-progress-text {
+            color: #aaa;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .apk-status-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .apk-status-message.active {
+            display: block;
+        }
+        
+        .apk-status-success {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+        
+        .apk-status-error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff0000;
+            color: #ff0000;
         }
     </style>
 </head>
@@ -157,7 +323,7 @@
     <!-- Live Visitors Display (Top Right) -->
     <div id="liveVisitorsWidget" style="position: fixed; top: 70px; right: 20px; background: #1a1a1a; border: 2px solid #3ea6ff; border-radius: 8px; padding: 15px; max-width: 350px; max-height: 500px; overflow-y: auto; z-index: 9999; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #3ea6ff; padding-bottom: 8px;">
-            <h3 style="margin: 0; font-size: 14px; color: #3ea6ff; font-weight: 600;">ðŸ”´ LIVE VISITORS</h3>
+            <h3 style="margin: 0; font-size: 14px; color: #3ea6ff; font-weight: 600;">🔴 LIVE VISITORS</h3>
             <span id="visitorCount" style="background: #3ea6ff; color: #000; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: bold;">0</span>
         </div>
         <div id="visitorsList" style="font-size: 12px;">
@@ -186,13 +352,102 @@
 
     <main>
         <div class="container">
+            <!-- APK Management Section -->
+            <div class="apk-management-section">
+                <div class="apk-section-header">
+                    <div class="apk-section-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                    </div>
+                    <div class="apk-section-title">
+                        <h2>📱 APK Management</h2>
+                        <p>Upload and manage the Android app (APK) for users to download</p>
+                    </div>
+                </div>
+                
+                <!-- Current APK Info -->
+                <div class="apk-current-info">
+                    <h3 style="color: #3ea6ff; margin: 0 0 15px 0; font-size: 16px;">Current APK Status</h3>
+                    <div class="apk-info-row">
+                        <span class="apk-info-label">Status:</span>
+                        <span class="apk-info-value">
+                            <span class="apk-status-badge apk-status-active" id="apkStatus">● Active</span>
+                        </span>
+                    </div>
+                    <div class="apk-info-row">
+                        <span class="apk-info-label">File Name:</span>
+                        <span class="apk-info-value" id="apkFileName">app.apk</span>
+                    </div>
+                    <div class="apk-info-row">
+                        <span class="apk-info-label">File Size:</span>
+                        <span class="apk-info-value" id="apkFileSize">Loading...</span>
+                    </div>
+                    <div class="apk-info-row">
+                        <span class="apk-info-label">Last Updated:</span>
+                        <span class="apk-info-value" id="apkLastUpdated">Loading...</span>
+                    </div>
+                    <div class="apk-info-row">
+                        <span class="apk-info-label">Download URL:</span>
+                        <span class="apk-info-value" style="color: #3ea6ff; word-break: break-all;" id="apkDownloadUrl">/app.apk</span>
+                    </div>
+                </div>
+                
+                <!-- Upload New APK -->
+                <h3 style="color: white; margin: 25px 0 15px 0; font-size: 18px;">🔄 Upload New APK (Update App)</h3>
+                
+                <div class="apk-upload-zone" id="apkDropZone">
+                    <div class="apk-upload-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+                        </svg>
+                    </div>
+                    <div class="apk-upload-text">Drag & Drop APK File Here</div>
+                    <div class="apk-upload-hint">Or click to browse • Only .apk files accepted • Max 100MB</div>
+                </div>
+                
+                <input type="file" id="apkFileInput" accept=".apk" style="display: none;">
+                
+                <!-- Selected APK File Display -->
+                <div class="apk-selected-file" id="apkSelectedFile">
+                    <div class="apk-file-info">
+                        <div class="apk-file-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                        </div>
+                        <div class="apk-file-details">
+                            <div class="apk-file-name" id="selectedApkName">app.apk</div>
+                            <div class="apk-file-size" id="selectedApkSize">0 MB</div>
+                        </div>
+                        <button class="apk-remove-btn" id="removeApkBtn">✕ Remove</button>
+                    </div>
+                </div>
+                
+                <!-- Upload Button -->
+                <button class="apk-upload-btn" id="uploadApkBtn">
+                    🚀 Upload & Replace Current APK
+                </button>
+                
+                <!-- Upload Progress -->
+                <div class="apk-upload-progress" id="apkUploadProgress">
+                    <div class="apk-progress-bar">
+                        <div class="apk-progress-fill" id="apkProgressFill">0%</div>
+                    </div>
+                    <div class="apk-progress-text" id="apkProgressText">Uploading...</div>
+                </div>
+                
+                <!-- Status Message -->
+                <div class="apk-status-message" id="apkStatusMessage"></div>
+            </div>
+
             <h2>Upload Multiple Videos</h2>
             <div class="upload-section">
                 <!-- Multiple File Drag and Drop Zone -->
                 <div class="drop-zone" id="videoDropZone">
-                    <div class="drop-zone-icon">ðŸ“</div>
+                    <div class="drop-zone-icon">📹</div>
                     <div class="drop-zone-text">Drag & Drop Multiple Videos Here</div>
-                    <div class="drop-zone-hint">Or click to browse â€¢ Auto-generated titles â€¢ Optimized upload speed</div>
+                    <div class="drop-zone-hint">Or click to browse • Auto-generated titles • Optimized upload speed</div>
                 </div>
                 
                 <form id="uploadForm">
@@ -204,7 +459,7 @@
                     <!-- Selected Files Display -->
                     <div id="selectedFilesContainer" style="display: none;">
                         <div class="batch-info">
-                            <span class="batch-info-text">ðŸ“¹ Selected Videos</span>
+                            <span class="batch-info-text">🎬 Selected Videos</span>
                             <span class="batch-info-count" id="fileCount">0</span>
                         </div>
                         <div class="selected-files-list" id="selectedFilesList">
@@ -232,7 +487,7 @@
 
                 <!-- Upload Progress Container -->
                 <div class="upload-progress-container" id="uploadProgressContainer">
-                    <h3 style="color: #3ea6ff; margin-bottom: 15px;">âš¡ Upload Progress</h3>
+                    <h3 style="color: #3ea6ff; margin-bottom: 15px;">⚡ Upload Progress</h3>
                     <div id="uploadProgressList">
                         <!-- Progress bars will be added here -->
                     </div>
@@ -254,5 +509,175 @@
 
     <script src="../js/admin.js"></script>
     <script src="../js/admin_visitors.js"></script>
+    <script>
+        // APK Management JavaScript
+        let selectedApkFile = null;
+        
+        // Load current APK info
+        async function loadApkInfo() {
+            try {
+                const response = await fetch('/app.apk', { method: 'HEAD' });
+                if (response.ok) {
+                    const size = response.headers.get('Content-Length');
+                    const lastModified = response.headers.get('Last-Modified');
+                    
+                    document.getElementById('apkFileSize').textContent = size ? 
+                        (size / 1024 / 1024).toFixed(2) + ' MB' : 'Unknown';
+                    
+                    document.getElementById('apkLastUpdated').textContent = lastModified ? 
+                        new Date(lastModified).toLocaleString() : 'Unknown';
+                } else {
+                    document.getElementById('apkStatus').textContent = '● Not Found';
+                    document.getElementById('apkStatus').className = 'apk-status-badge';
+                    document.getElementById('apkStatus').style.background = 'rgba(255,0,0,0.2)';
+                    document.getElementById('apkStatus').style.color = '#ff0000';
+                }
+            } catch (error) {
+                console.error('Error loading APK info:', error);
+            }
+        }
+        
+        // Initialize on page load
+        loadApkInfo();
+        
+        // APK Drop Zone
+        const apkDropZone = document.getElementById('apkDropZone');
+        const apkFileInput = document.getElementById('apkFileInput');
+        const apkSelectedFile = document.getElementById('apkSelectedFile');
+        const uploadApkBtn = document.getElementById('uploadApkBtn');
+        const removeApkBtn = document.getElementById('removeApkBtn');
+        
+        // Click to open file dialog
+        apkDropZone.addEventListener('click', () => {
+            apkFileInput.click();
+        });
+        
+        // File input change
+        apkFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && file.name.endsWith('.apk')) {
+                handleApkFile(file);
+            } else {
+                alert('Please select a valid .apk file');
+            }
+        });
+        
+        // Drag and drop handlers
+        apkDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            apkDropZone.classList.add('dragging');
+        });
+        
+        apkDropZone.addEventListener('dragleave', () => {
+            apkDropZone.classList.remove('dragging');
+        });
+        
+        apkDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            apkDropZone.classList.remove('dragging');
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.apk')) {
+                handleApkFile(file);
+            } else {
+                alert('Please drop a valid .apk file');
+            }
+        });
+        
+        // Handle APK file selection
+        function handleApkFile(file) {
+            if (file.size > 100 * 1024 * 1024) {
+                alert('File too large! Maximum size is 100MB');
+                return;
+            }
+            
+            selectedApkFile = file;
+            document.getElementById('selectedApkName').textContent = file.name;
+            document.getElementById('selectedApkSize').textContent = 
+                (file.size / 1024 / 1024).toFixed(2) + ' MB';
+            
+            apkSelectedFile.classList.add('active');
+            uploadApkBtn.classList.add('active');
+        }
+        
+        // Remove selected APK
+        removeApkBtn.addEventListener('click', () => {
+            selectedApkFile = null;
+            apkFileInput.value = '';
+            apkSelectedFile.classList.remove('active');
+            uploadApkBtn.classList.remove('active');
+        });
+        
+        // Upload APK
+        uploadApkBtn.addEventListener('click', async () => {
+            if (!selectedApkFile) return;
+            
+            const formData = new FormData();
+            formData.append('apk', selectedApkFile);
+            
+            // Show progress
+            const progressDiv = document.getElementById('apkUploadProgress');
+            const progressFill = document.getElementById('apkProgressFill');
+            const progressText = document.getElementById('apkProgressText');
+            const statusMessage = document.getElementById('apkStatusMessage');
+            
+            progressDiv.classList.add('active');
+            uploadApkBtn.disabled = true;
+            statusMessage.classList.remove('active');
+            
+            try {
+                const xhr = new XMLHttpRequest();
+                
+                // Upload progress
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        const percent = Math.round((e.loaded / e.total) * 100);
+                        progressFill.style.width = percent + '%';
+                        progressFill.textContent = percent + '%';
+                        progressText.textContent = `Uploading... ${percent}%`;
+                    }
+                });
+                
+                // Upload complete
+                xhr.addEventListener('load', () => {
+                    if (xhr.status === 200) {
+                        progressText.textContent = 'Upload complete! ✓';
+                        statusMessage.textContent = '✅ APK uploaded successfully! Users can now download the new version.';
+                        statusMessage.className = 'apk-status-message apk-status-success active';
+                        
+                        // Reset form
+                        setTimeout(() => {
+                            selectedApkFile = null;
+                            apkFileInput.value = '';
+                            apkSelectedFile.classList.remove('active');
+                            uploadApkBtn.classList.remove('active');
+                            progressDiv.classList.remove('active');
+                            uploadApkBtn.disabled = false;
+                            
+                            // Reload APK info
+                            loadApkInfo();
+                        }, 3000);
+                    } else {
+                        throw new Error('Upload failed');
+                    }
+                });
+                
+                // Upload error
+                xhr.addEventListener('error', () => {
+                    throw new Error('Network error');
+                });
+                
+                xhr.open('POST', '/api/upload-apk', true);
+                xhr.send(formData);
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                statusMessage.textContent = '❌ Upload failed! Please try again.';
+                statusMessage.className = 'apk-status-message apk-status-error active';
+                progressDiv.classList.remove('active');
+                uploadApkBtn.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>

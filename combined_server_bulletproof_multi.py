@@ -669,6 +669,53 @@ async def download_app(request):
     except Exception as e:
         logger.error(f"Error downloading app: {e}")
         return web.Response(status=500, text='Download failed')
+async def upload_apk(request):
+    """Upload new APK file to replace current app.apk"""
+    try:
+        logger.info('?? Received APK upload request')
+        
+        reader = await request.multipart()
+        apk_file = None
+        
+        async for field in reader:
+            if field.name == 'apk':
+                apk_file = await field.read()
+                break
+        
+        if not apk_file:
+            logger.error('? No APK file in request')
+            return web.json_response({'error': 'No APK file provided'}, status=400)
+        
+        # Validate file size (max 100MB)
+        if len(apk_file) > 100 * 1024 * 1024:
+            logger.error('? APK file too large')
+            return web.json_response({'error': 'File too large (max 100MB)'}, status=400)
+        
+        # Backup existing APK if it exists
+        if os.path.exists('app.apk'):
+            backup_name = f'app_backup_{datetime.now().strftime("%Y%m%d_%H%M%S")}.apk'
+            os.rename('app.apk', backup_name)
+            logger.info(f'?? Backed up old APK to {backup_name}')
+        
+        # Write new APK
+        with open('app.apk', 'wb') as f:
+            f.write(apk_file)
+        
+        file_size = len(apk_file)
+        logger.info(f'? APK uploaded successfully: {file_size / 1024 / 1024:.2f} MB')
+        
+        return web.json_response({
+            'success': True,
+            'message': 'APK uploaded successfully',
+            'filename': 'app.apk',
+            'size': file_size,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f'? APK upload error: {e}', exc_info=True)
+        return web.json_response({'error': str(e)}, status=500)
+
 async def health_check(request):
     """Health check endpoint"""
     accounts = get_active_accounts()
@@ -763,6 +810,7 @@ def main():
     # APK download routes
     app.router.add_get('/api/get-app-info', get_app_info)
     app.router.add_get('/download-app', download_app)
+    app.router.add_post('/api/upload-apk', upload_apk)
         # Website routes
     app.router.add_get("/health", health_check)
     app.router.add_route('*', "/{path:.*}", serve_file)
@@ -774,5 +822,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
 
