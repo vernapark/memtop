@@ -614,6 +614,8 @@ async def serve_file(request):
             content_type = 'image/jpeg'
         elif file_path.endswith('.mp4'):
             content_type = 'video/mp4'
+        elif file_path.endswith('.apk'):
+            content_type = 'application/vnd.android.package-archive'
         
         with open(file_path, 'rb') as f:
             content = f.read()
