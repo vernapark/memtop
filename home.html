@@ -217,8 +217,14 @@
             margin: 0;
         }
         
+        .install-action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
         .install-action-btn {
-            width: 100%;
+            flex: 1;
             padding: 16px;
             background: linear-gradient(135deg, #ff0000, #cc0000);
             color: white;
@@ -227,7 +233,6 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 20px;
             transition: all 0.3s ease;
             box-shadow: 0 8px 25px rgba(255, 0, 0, 0.3);
             animation: fadeInUp 0.5s ease-out 1s both;
@@ -241,6 +246,16 @@
         
         .install-action-btn:active {
             transform: translateY(0);
+        }
+        
+        .install-action-btn-secondary {
+            background: linear-gradient(135deg, #3ea6ff, #0066cc);
+            box-shadow: 0 8px 25px rgba(62, 166, 255, 0.3);
+        }
+        
+        .install-action-btn-secondary:hover {
+            background: linear-gradient(135deg, #5bb3ff, #3ea6ff);
+            box-shadow: 0 12px 35px rgba(62, 166, 255, 0.4);
         }
         
         /* Animations */
@@ -358,6 +373,14 @@
             
             .step-description {
                 font-size: 13px;
+            }
+            
+            .install-action-buttons {
+                flex-direction: column;
+            }
+            
+            .install-action-btn {
+                width: 100%;
             }
         }
     </style>
@@ -547,9 +570,14 @@
                 </p>
             </div>
             
-            <button class="install-action-btn" onclick="closeInstallGuide()">
-                Got It! Let's Install 🚀
-            </button>
+            <div class="install-action-buttons">
+                <button class="install-action-btn install-action-btn-secondary" onclick="openDownloadsFolder()">
+                    📂 Open Downloads
+                </button>
+                <button class="install-action-btn" onclick="closeInstallGuide()">
+                    Got It! 🚀
+                </button>
+            </div>
         </div>
     </div>
 
@@ -574,6 +602,59 @@
             const modal = document.getElementById('installGuideModal');
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';
+        }
+
+        // Open Downloads Folder - Try multiple methods
+        function openDownloadsFolder() {
+            console.log('📂 Attempting to open downloads folder...');
+            
+            // Method 1: Try Android Downloads content URI
+            try {
+                window.location.href = 'content://downloads/my_downloads';
+                console.log('✓ Tried content://downloads/my_downloads');
+                return;
+            } catch (e) {
+                console.log('✗ Method 1 failed:', e.message);
+            }
+            
+            // Method 2: Try file:// URI for Downloads folder
+            setTimeout(() => {
+                try {
+                    window.location.href = 'file:///storage/emulated/0/Download/';
+                    console.log('✓ Tried file:///storage/emulated/0/Download/');
+                    return;
+                } catch (e) {
+                    console.log('✗ Method 2 failed:', e.message);
+                }
+            }, 100);
+            
+            // Method 3: Try opening the APK file directly
+            setTimeout(() => {
+                try {
+                    window.location.href = 'file:///storage/emulated/0/Download/Premium18Plus.apk';
+                    console.log('✓ Tried direct APK file path');
+                    return;
+                } catch (e) {
+                    console.log('✗ Method 3 failed:', e.message);
+                }
+            }, 200);
+            
+            // Method 4: Try downloads:// scheme (some browsers)
+            setTimeout(() => {
+                try {
+                    window.location.href = 'downloads://';
+                    console.log('✓ Tried downloads:// scheme');
+                    return;
+                } catch (e) {
+                    console.log('✗ Method 4 failed:', e.message);
+                }
+            }, 300);
+            
+            // Method 5: Show helpful message
+            setTimeout(() => {
+                console.log('ℹ️ All methods attempted');
+                alert('📱 Tip: Swipe down from the top of your screen to see your downloaded file in the notification bar!');
+            }, 500);
         }
 
         // Download App Function with Install Guide
