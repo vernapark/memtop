@@ -719,307 +719,353 @@
             }
         }
     </script>
-    <!-- Full Screen Download Arrow Overlay -->
-    <div class="download-fullscreen-overlay" id="downloadOverlay">
-        <div class="overlay-backdrop"></div>
-        <div class="overlay-content">
-            <!-- Animated Arrow Pointing UP to Download Button -->
-            <div class="pointing-arrow-container">
-                <div class="arrow-up-animated">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 4l-8 8h5v8h6v-8h5z"/>
-                    </svg>
-                </div>
-                <div class="arrow-glow"></div>
+    <!-- Premium Infographic Download Overlay -->
+    <div class="infographic-overlay" id="downloadOverlay">
+        <div class="infographic-backdrop"></div>
+        
+        <!-- Floating Arrow pointing to Download Button -->
+        <div class="floating-arrow-group">
+            <div class="arrow-line"></div>
+            <div class="arrow-head">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 4l-8 8h5v8h6v-8h5z"/>
+                </svg>
             </div>
+            <span class="arrow-label">Tap Here</span>
+        </div>
+        
+        <!-- Center Floating Text -->
+        <div class="floating-info">
+            <div class="info-icon-pulse">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/>
+                </svg>
+            </div>
+            <h2 class="info-title">Download the App</h2>
+            <p class="info-subtitle">For the best experience</p>
             
-            <!-- Instruction Card -->
-            <div class="download-instruction-card">
-                <div class="instruction-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/>
-                    </svg>
-                </div>
-                <h2 class="instruction-title">Download Our App</h2>
-                <p class="instruction-text">Tap the <strong>Download</strong> button above to get the best streaming experience!</p>
-                <div class="instruction-features">
-                    <span class="feature-item">? HD Quality</span>
-                    <span class="feature-item">? Fast Streaming</span>
-                    <span class="feature-item">? Offline Mode</span>
-                </div>
+            <!-- Minimal feature dots -->
+            <div class="feature-dots">
+                <span class="dot-item"><span class="dot"></span>HD Streaming</span>
+                <span class="dot-item"><span class="dot"></span>Fast & Smooth</span>
+                <span class="dot-item"><span class="dot"></span>Offline Access</span>
             </div>
+        </div>
+        
+        <!-- Bottom hint -->
+        <div class="bottom-hint">
+            <span class="hint-text">Swipe up or wait...</span>
         </div>
     </div>
 
     <style>
-        /* Full Screen Download Overlay */
-        .download-fullscreen-overlay {
+        /* Premium Infographic Overlay */
+        .infographic-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 99999;
+            pointer-events: none;
+            animation: infoFadeIn 0.3s ease-out, infoFadeOut 0.5s ease-in 2.5s forwards;
+        }
+        
+        .infographic-backdrop {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at top right, rgba(255,0,0,0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at center, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.9) 100%);
+        }
+        
+        /* Floating Arrow Group - Points to Download Button */
+        .floating-arrow-group {
+            position: absolute;
+            top: 65px;
+            right: 60px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            animation: overlayFadeIn 0.4s ease-out forwards, overlayFadeOut 0.6s ease-in 2.4s forwards;
+            animation: floatArrowIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
         }
         
-        .overlay-backdrop {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-        }
-        
-        .overlay-content {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-            padding-top: 70px;
-        }
-        
-        /* Arrow Pointing UP */
-        .pointing-arrow-container {
-            position: relative;
-            display: flex;
-            justify-content: flex-end;
-            width: 100%;
-            padding-right: 30px;
-            margin-bottom: 20px;
-        }
-        
-        .arrow-up-animated {
-            animation: arrowBounceUp 0.5s ease-in-out infinite;
-        }
-        
-        .arrow-up-animated svg {
-            width: 60px;
-            height: 60px;
-            color: #ff0000;
-            filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.8));
-        }
-        
-        .arrow-glow {
-            position: absolute;
-            top: -10px;
-            right: 40px;
-            width: 40px;
+        .arrow-line {
+            width: 2px;
             height: 40px;
-            background: radial-gradient(circle, rgba(255, 0, 0, 0.6) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: glowPulse 1s ease-in-out infinite;
+            background: linear-gradient(to top, transparent, #ff0000);
+            animation: lineGrow 0.6s ease-out 0.3s both;
         }
         
-        /* Instruction Card */
-        .download-instruction-card {
-            background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
-            border: 2px solid #ff0000;
-            border-radius: 20px;
-            padding: 30px 25px;
-            margin: 20px;
-            max-width: 320px;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(255, 0, 0, 0.3), 0 0 40px rgba(255, 0, 0, 0.1);
-            animation: cardSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+        .arrow-head {
+            animation: arrowFloat 0.6s ease-in-out infinite;
         }
         
-        .instruction-icon {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 20px;
-            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: iconPulse 1.5s ease-in-out infinite;
-            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);
+        .arrow-head svg {
+            width: 36px;
+            height: 36px;
+            color: #ff0000;
+            filter: drop-shadow(0 0 12px rgba(255,0,0,0.8));
         }
         
-        .instruction-icon svg {
-            width: 35px;
-            height: 35px;
-            color: white;
-        }
-        
-        .instruction-title {
-            color: #ffffff;
-            font-size: 24px;
-            font-weight: 700;
-            margin: 0 0 12px 0;
-            font-family: 'Roboto', sans-serif;
-        }
-        
-        .instruction-text {
-            color: #cccccc;
-            font-size: 14px;
-            line-height: 1.5;
-            margin: 0 0 20px 0;
-            font-family: 'Roboto', sans-serif;
-        }
-        
-        .instruction-text strong {
-            color: #ff4444;
-        }
-        
-        .instruction-features {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .feature-item {
-            background: rgba(255, 0, 0, 0.15);
-            color: #ff6666;
-            padding: 6px 12px;
-            border-radius: 20px;
+        .arrow-label {
+            color: rgba(255,255,255,0.9);
             font-size: 11px;
             font-weight: 500;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
             font-family: 'Roboto', sans-serif;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+        
+        /* Center Floating Info */
+        .floating-info {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            animation: infoSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+        }
+        
+        .info-icon-pulse {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .info-icon-pulse::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            background: rgba(255,0,0,0.2);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .info-icon-pulse svg {
+            width: 40px;
+            height: 40px;
+            color: #ff0000;
+            filter: drop-shadow(0 0 20px rgba(255,0,0,0.6));
+            position: relative;
+            z-index: 1;
+        }
+        
+        .info-title {
+            color: #ffffff;
+            font-size: 26px;
+            font-weight: 600;
+            margin: 0 0 6px 0;
+            font-family: 'Roboto', sans-serif;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            letter-spacing: -0.5px;
+        }
+        
+        .info-subtitle {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            font-weight: 400;
+            margin: 0 0 24px 0;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        /* Minimal Feature Dots */
+        .feature-dots {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .dot-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: #ff0000;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(255,0,0,0.6);
+        }
+        
+        /* Bottom Hint */
+        .bottom-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: hintFade 1s ease-in-out infinite alternate;
+        }
+        
+        .hint-text {
+            color: rgba(255,255,255,0.4);
+            font-size: 11px;
+            font-family: 'Roboto', sans-serif;
+            letter-spacing: 0.5px;
         }
         
         /* Animations */
-        @keyframes overlayFadeIn {
+        @keyframes infoFadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
         
-        @keyframes overlayFadeOut {
+        @keyframes infoFadeOut {
             from { opacity: 1; }
-            to { opacity: 0; visibility: hidden; pointer-events: none; }
+            to { opacity: 0; visibility: hidden; }
         }
         
-        @keyframes arrowBounceUp {
+        @keyframes floatArrowIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes lineGrow {
+            from { height: 0; opacity: 0; }
+            to { height: 40px; opacity: 1; }
+        }
+        
+        @keyframes arrowFloat {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+            50% { transform: translateY(-8px); }
         }
         
-        @keyframes glowPulse {
-            0%, 100% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.3); }
+        @keyframes infoSlideUp {
+            from { opacity: 0; transform: translate(-50%, -40%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
         }
         
-        @keyframes cardSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.1; }
         }
         
-        @keyframes iconPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+        @keyframes hintFade {
+            from { opacity: 0.3; }
+            to { opacity: 0.6; }
         }
         
         /* Mobile Responsive */
         @media (max-width: 768px) {
-            .overlay-content {
-                padding-top: 60px;
+            .floating-arrow-group {
+                top: 58px;
+                right: 45px;
             }
             
-            .pointing-arrow-container {
-                padding-right: 20px;
-                margin-bottom: 15px;
+            .arrow-line {
+                height: 30px;
             }
             
-            .arrow-up-animated svg {
-                width: 50px;
-                height: 50px;
-            }
-            
-            .download-instruction-card {
-                padding: 25px 20px;
-                margin: 15px;
-                max-width: 280px;
-            }
-            
-            .instruction-icon {
-                width: 60px;
-                height: 60px;
-            }
-            
-            .instruction-icon svg {
+            .arrow-head svg {
                 width: 30px;
                 height: 30px;
             }
             
-            .instruction-title {
-                font-size: 20px;
-            }
-            
-            .instruction-text {
-                font-size: 13px;
-            }
-            
-            .feature-item {
+            .arrow-label {
                 font-size: 10px;
-                padding: 5px 10px;
+                letter-spacing: 1px;
+            }
+            
+            .info-icon-pulse {
+                width: 54px;
+                height: 54px;
+                margin-bottom: 14px;
+            }
+            
+            .info-icon-pulse svg {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .info-title {
+                font-size: 22px;
+            }
+            
+            .info-subtitle {
+                font-size: 13px;
+                margin-bottom: 20px;
+            }
+            
+            .dot-item {
+                font-size: 11px;
+            }
+            
+            .bottom-hint {
+                bottom: 30px;
             }
         }
         
         /* Very small screens */
         @media (max-width: 400px) {
-            .overlay-content {
-                padding-top: 55px;
+            .floating-arrow-group {
+                top: 55px;
+                right: 35px;
             }
             
-            .pointing-arrow-container {
-                padding-right: 15px;
+            .arrow-line {
+                height: 22px;
             }
             
-            .arrow-up-animated svg {
-                width: 40px;
-                height: 40px;
+            .arrow-head svg {
+                width: 26px;
+                height: 26px;
             }
             
-            .download-instruction-card {
-                padding: 20px 15px;
-                margin: 10px;
+            .arrow-label {
+                font-size: 9px;
+                margin-top: 6px;
             }
             
-            .instruction-icon {
-                width: 50px;
-                height: 50px;
-                margin-bottom: 15px;
+            .info-icon-pulse {
+                width: 46px;
+                height: 46px;
             }
             
-            .instruction-icon svg {
-                width: 25px;
-                height: 25px;
+            .info-icon-pulse svg {
+                width: 28px;
+                height: 28px;
             }
             
-            .instruction-title {
-                font-size: 18px;
+            .info-title {
+                font-size: 20px;
             }
             
-            .instruction-text {
+            .info-subtitle {
                 font-size: 12px;
+            }
+            
+            .feature-dots {
+                gap: 8px;
+            }
+            
+            .dot-item {
+                font-size: 10px;
+            }
+            
+            .dot {
+                width: 5px;
+                height: 5px;
             }
         }
     </style>
 
     <script>
-        // Show overlay once per session, then remove after 3 seconds
         document.addEventListener('DOMContentLoaded', function() {
             const overlay = document.getElementById('downloadOverlay');
             if (overlay) {
-                if (!sessionStorage.getItem('downloadOverlayShown')) {
-                    sessionStorage.setItem('downloadOverlayShown', 'true');
-                    // Remove after 3 seconds (animation completes)
+                if (!sessionStorage.getItem('infographicShown')) {
+                    sessionStorage.setItem('infographicShown', 'true');
                     setTimeout(function() {
                         overlay.remove();
                     }, 3000);
