@@ -513,25 +513,23 @@ body {
         display: none;
     }
     
-    /* Improved Mobile Header Layout */
+    /* Fixed Mobile Header Layout - Elements pushed to opposite sides */
     .yt-header-container {
-        padding: 0 8px;
-        gap: 8px;
+        padding: 0 12px;
+        justify-content: space-between;
     }
     
     .yt-header-start {
-        gap: 8px;
-        flex: 0 1 auto;
-        min-width: 0;
+        gap: 6px;
+        flex: 0 0 auto;
     }
     
     .yt-header-end {
-        gap: 6px;
+        gap: 8px;
         flex: 0 0 auto;
-        justify-content: flex-end;
+        margin-left: auto;
     }
     
-    /* Hide menu button on very small screens to save space */
     .menu-button {
         width: 36px;
         height: 36px;
