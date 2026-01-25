@@ -719,5 +719,234 @@
             }
         }
     </script>
+    <!-- Animated Download Arrow Overlay -->
+    <div class="download-arrow-overlay" id="downloadArrowOverlay">
+        <div class="arrow-instruction-container">
+            <div class="arrow-message-box">
+                <div class="message-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/>
+                    </svg>
+                </div>
+                <div class="message-text">
+                    <span class="message-title">Download Our App!</span>
+                    <span class="message-subtitle">Get the best experience</span>
+                </div>
+            </div>
+            <div class="animated-arrow">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Download Arrow Overlay Styles */
+        .download-arrow-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0;
+            animation: fadeInOverlay 0.3s ease-out forwards, fadeOutOverlay 0.5s ease-in 1.5s forwards;
+        }
+        
+        .arrow-instruction-container {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .arrow-message-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 2px solid #ff0000;
+            border-radius: 12px;
+            padding: 12px 18px;
+            box-shadow: 0 8px 32px rgba(255, 0, 0, 0.3), 0 0 20px rgba(255, 0, 0, 0.2);
+            animation: slideInLeft 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        
+        .message-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulseIcon 1s ease-in-out infinite;
+        }
+        
+        .message-icon svg {
+            width: 22px;
+            height: 22px;
+            color: white;
+        }
+        
+        .message-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .message-title {
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .message-subtitle {
+            color: #aaaaaa;
+            font-size: 11px;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .animated-arrow {
+            display: flex;
+            align-items: center;
+            animation: bounceArrow 0.6s ease-in-out infinite;
+        }
+        
+        .animated-arrow svg {
+            width: 32px;
+            height: 32px;
+            color: #ff0000;
+            filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.6));
+        }
+        
+        /* Animations */
+        @keyframes fadeInOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeOutOverlay {
+            from { opacity: 1; }
+            to { opacity: 0; visibility: hidden; }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes bounceArrow {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(8px); }
+        }
+        
+        @keyframes pulseIcon {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 20px 5px rgba(255, 0, 0, 0.2); }
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .arrow-instruction-container {
+                top: 60px;
+                right: 10px;
+                gap: 6px;
+            }
+            
+            .arrow-message-box {
+                padding: 10px 14px;
+                gap: 10px;
+                border-radius: 10px;
+            }
+            
+            .message-icon {
+                width: 32px;
+                height: 32px;
+                border-radius: 8px;
+            }
+            
+            .message-icon svg {
+                width: 18px;
+                height: 18px;
+            }
+            
+            .message-title {
+                font-size: 12px;
+            }
+            
+            .message-subtitle {
+                font-size: 10px;
+            }
+            
+            .animated-arrow svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 400px) {
+            .arrow-message-box {
+                padding: 8px 10px;
+                gap: 8px;
+            }
+            
+            .message-icon {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .message-icon svg {
+                width: 16px;
+                height: 16px;
+            }
+            
+            .message-title {
+                font-size: 11px;
+            }
+            
+            .message-subtitle {
+                display: none;
+            }
+            
+            .animated-arrow svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    </style>
+
+    <script>
+        // Auto-remove the overlay after animation completes (2 seconds)
+        document.addEventListener('DOMContentLoaded', function() {
+            const overlay = document.getElementById('downloadArrowOverlay');
+            if (overlay) {
+                // Check if user has seen the overlay before (optional - show only once per session)
+                if (!sessionStorage.getItem('downloadArrowShown')) {
+                    sessionStorage.setItem('downloadArrowShown', 'true');
+                    
+                    // Remove overlay from DOM after 2.5 seconds (animation duration + buffer)
+                    setTimeout(function() {
+                        overlay.remove();
+                    }, 2500);
+                } else {
+                    // Already shown this session, remove immediately
+                    overlay.remove();
+                }
+            }
+        });
+    </script>
 </body>
 </html>
