@@ -513,26 +513,51 @@ body {
         display: none;
     }
     
-    /* Fixed Mobile Header Layout - Elements pushed to opposite sides */
+    /* Mobile Header Layout - Logo LEFT, Download RIGHT with space between */
     .yt-header-container {
-        padding: 0 12px;
+        padding: 0 10px;
+        display: flex;
         justify-content: space-between;
+        align-items: center;
+        width: 100%;
     }
     
     .yt-header-start {
-        gap: 6px;
         flex: 0 0 auto;
+        gap: 4px;
+        max-width: 45%;
     }
     
     .yt-header-end {
-        gap: 8px;
         flex: 0 0 auto;
-        margin-left: auto;
+        gap: 4px;
+        max-width: 50%;
     }
     
     .menu-button {
-        width: 36px;
-        height: 36px;
+        width: 32px;
+        height: 32px;
+        padding: 4px;
+    }
+    
+    /* Make logo text smaller on mobile to fit */
+    .yt-header-start .logo-text {
+        font-size: 14px;
+    }
+    
+    /* Make download button more compact on mobile */
+    .yt-header-end .download-app-btn {
+        min-width: auto;
+        padding: 6px 10px;
+    }
+    
+    .yt-header-end .download-text {
+        font-size: 10px;
+    }
+    
+    .yt-header-end .download-icon {
+        width: 14px;
+        height: 14px;
     }
     
     .yt-logo {
