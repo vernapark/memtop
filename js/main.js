@@ -1,16 +1,16 @@
-// Premium Video Streaming - YouTube Style with Mobile Fix
+﻿// Premium Video Streaming - YouTube Style with Mobile Fix
 // THUMBNAIL FIX: Better thumbnail handling from Cloudinary
 
 const categoryIcons = {
-    '18+': '🔞',
-    'adult': '🔞',
-    'entertainment': '🎬',
-    'education': '📚',
-    'music': '🎵',
-    'sports': '⚽',
-    'news': '📰',
-    'technology': '💻',
-    'default': '📺'
+    '18+': 'ðŸ”ž',
+    'adult': 'ðŸ”ž',
+    'entertainment': 'ðŸŽ¬',
+    'education': 'ðŸ“š',
+    'music': 'ðŸŽµ',
+    'sports': 'âš½',
+    'news': 'ðŸ“°',
+    'technology': 'ðŸ’»',
+    'default': 'ðŸ“º'
 };
 
 let allVideos = [];
@@ -36,12 +36,12 @@ async function loadVideos() {
         const data = await response.json();
         allVideos = data.videos || [];
         
-        console.log('✅ Loaded videos from cloud:', allVideos.length);
+        console.log('âœ… Loaded videos from cloud:', allVideos.length);
         
         // Debug: Log first video to see thumbnail structure
         if (allVideos.length > 0) {
-            console.log('📊 Sample video data:', allVideos[0]);
-            console.log('🖼️ Thumbnail field:', allVideos[0].thumbnail);
+            console.log('ðŸ“Š Sample video data:', allVideos[0]);
+            console.log('ðŸ–¼ï¸ Thumbnail field:', allVideos[0].thumbnail);
         }
         
         if (allVideos.length === 0) {
@@ -52,7 +52,7 @@ async function loadVideos() {
         displayVideos(allVideos);
         
     } catch (error) {
-        console.error('❌ Error loading videos:', error);
+        console.error('âŒ Error loading videos:', error);
         showErrorState();
     }
 }
@@ -104,17 +104,17 @@ function createVideoCard(video) {
     // Try multiple possible thumbnail sources
     if (video.thumbnail && video.thumbnail.trim() !== '') {
         thumbnailSrc = video.thumbnail;
-        console.log('✅ Using video.thumbnail:', thumbnailSrc);
+        console.log('âœ… Using video.thumbnail:', thumbnailSrc);
     } else if (video.thumbnailUrl && video.thumbnailUrl.trim() !== '') {
         thumbnailSrc = video.thumbnailUrl;
-        console.log('✅ Using video.thumbnailUrl:', thumbnailSrc);
+        console.log('âœ… Using video.thumbnailUrl:', thumbnailSrc);
     } else if (video.videoUrl) {
         // Generate thumbnail from video URL (Cloudinary can do this)
         thumbnailSrc = generateCloudinaryThumbnail(video.videoUrl);
-        console.log('⚙️ Generated thumbnail from video URL:', thumbnailSrc);
+        console.log('âš™ï¸ Generated thumbnail from video URL:', thumbnailSrc);
     } else {
         thumbnailSrc = generateDefaultThumbnail();
-        console.log('⚠️ Using default thumbnail for:', video.title);
+        console.log('âš ï¸ Using default thumbnail for:', video.title);
     }
     
     const categoryIcon = categoryIcons[video.category?.toLowerCase()] || categoryIcons['default'];
@@ -162,7 +162,7 @@ function generateCloudinaryThumbnail(videoUrl) {
                 thumbUrl = thumbUrl.replace('/upload/', '/upload/so_2.0,f_jpg,q_auto/');
             }
             
-            console.log('🎬 Cloudinary thumbnail generated:', thumbUrl);
+            console.log('ðŸŽ¬ Cloudinary thumbnail generated:', thumbUrl);
             return thumbUrl;
         }
     } catch (e) {
@@ -231,7 +231,7 @@ function formatDate(dateString) {
 
 // Generate default thumbnail
 function generateDefaultThumbnail() {
-    return 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="180"%3E%3Crect fill="%230f0f0f" width="320" height="180"/%3E%3Ctext fill="%23aaaaaa" font-size="24" font-family="Arial" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3E📹%3C/text%3E%3C/svg%3E';
+    return 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="180"%3E%3Crect fill="%230f0f0f" width="320" height="180"/%3E%3Ctext fill="%23aaaaaa" font-size="24" font-family="Arial" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EðŸ“¹%3C/text%3E%3C/svg%3E';
 }
 
 // Escape HTML to prevent XSS
@@ -246,7 +246,7 @@ function escapeHtml(text) {
 // ===================================
 
 function openVideoModal(video) {
-    console.log('🎬 Opening video:', video.title);
+    console.log('ðŸŽ¬ Opening video:', video.title);
     
     const modal = document.getElementById('videoModal');
     const videoElement = document.getElementById('modalVideo');
@@ -254,7 +254,7 @@ function openVideoModal(video) {
     const descElement = document.getElementById('videoDescription');
     
     if (!modal || !videoElement) {
-        console.error('❌ Modal elements not found');
+        console.error('âŒ Modal elements not found');
         return;
     }
     
@@ -279,10 +279,10 @@ function openVideoModal(video) {
         if (playPromise !== undefined) {
             playPromise
                 .then(() => {
-                    console.log('✅ Video playing');
+                    console.log('âœ… Video playing');
                 })
                 .catch(error => {
-                    console.log('⚠️ Autoplay prevented, user must tap play:', error);
+                    console.log('âš ï¸ Autoplay prevented, user must tap play:', error);
                     // This is normal on some mobile browsers - user will tap play button
                 });
         }
@@ -297,7 +297,7 @@ function openVideoModal(video) {
 }
 
 function closeVideoModal() {
-    console.log('🚪 Closing video modal');
+    console.log('ðŸšª Closing video modal');
     
     const modal = document.getElementById('videoModal');
     const videoElement = document.getElementById('modalVideo');
@@ -516,6 +516,6 @@ window.addEventListener('orientationchange', function() {
 });
 
 // Console log for debugging
-console.log('🎬 Premium Video Streaming Initialized (Thumbnail Fix)');
-console.log('📱 Mobile Device:', isMobileDevice());
-console.log('🌐 User Agent:', navigator.userAgent);
+console.log('ðŸŽ¬ Premium Video Streaming Initialized (Thumbnail Fix)');
+console.log('ðŸ“± Mobile Device:', isMobileDevice());
+console.log('ðŸŒ User Agent:', navigator.userAgent);
