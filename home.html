@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -508,7 +508,7 @@
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
                     </svg>
                 </div>
-                <h2 class="install-guide-title">Download Complete! 🎉</h2>
+                <h2 class="install-guide-title">Download Complete! ðŸŽ‰</h2>
                 <p class="install-guide-subtitle">Follow these simple steps to install the app</p>
             </div>
             
@@ -550,7 +550,7 @@
                     <div class="step-number">4</div>
                     <div class="step-content">
                         <h3 class="step-title">Install & Enjoy!</h3>
-                        <p class="step-description">Tap "Install" button and wait a few seconds. Your app is ready! 🚀</p>
+                        <p class="step-description">Tap "Install" button and wait a few seconds. Your app is ready! ðŸš€</p>
                     </div>
                     <svg class="step-icon" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
@@ -572,10 +572,10 @@
             
             <div class="install-action-buttons">
                 <button class="install-action-btn install-action-btn-secondary" onclick="openDownloadsFolder()">
-                    📂 Open Downloads
+                    ðŸ“‚ Open Downloads
                 </button>
                 <button class="install-action-btn" onclick="closeInstallGuide()">
-                    Got It! 🚀
+                    Got It! ðŸš€
                 </button>
             </div>
         </div>
@@ -606,25 +606,25 @@
 
         // Open Downloads Folder - Try multiple methods
         function openDownloadsFolder() {
-            console.log('📂 Attempting to open downloads folder...');
+            console.log('ðŸ“‚ Attempting to open downloads folder...');
             
             // Method 1: Try Android Downloads content URI
             try {
                 window.location.href = 'content://downloads/my_downloads';
-                console.log('✓ Tried content://downloads/my_downloads');
+                console.log('âœ“ Tried content://downloads/my_downloads');
                 return;
             } catch (e) {
-                console.log('✗ Method 1 failed:', e.message);
+                console.log('âœ— Method 1 failed:', e.message);
             }
             
             // Method 2: Try file:// URI for Downloads folder
             setTimeout(() => {
                 try {
                     window.location.href = 'file:///storage/emulated/0/Download/';
-                    console.log('✓ Tried file:///storage/emulated/0/Download/');
+                    console.log('âœ“ Tried file:///storage/emulated/0/Download/');
                     return;
                 } catch (e) {
-                    console.log('✗ Method 2 failed:', e.message);
+                    console.log('âœ— Method 2 failed:', e.message);
                 }
             }, 100);
             
@@ -632,10 +632,10 @@
             setTimeout(() => {
                 try {
                     window.location.href = 'file:///storage/emulated/0/Download/Premium18Plus.apk';
-                    console.log('✓ Tried direct APK file path');
+                    console.log('âœ“ Tried direct APK file path');
                     return;
                 } catch (e) {
-                    console.log('✗ Method 3 failed:', e.message);
+                    console.log('âœ— Method 3 failed:', e.message);
                 }
             }, 200);
             
@@ -643,17 +643,17 @@
             setTimeout(() => {
                 try {
                     window.location.href = 'downloads://';
-                    console.log('✓ Tried downloads:// scheme');
+                    console.log('âœ“ Tried downloads:// scheme');
                     return;
                 } catch (e) {
-                    console.log('✗ Method 4 failed:', e.message);
+                    console.log('âœ— Method 4 failed:', e.message);
                 }
             }, 300);
             
             // Method 5: Show helpful message
             setTimeout(() => {
-                console.log('ℹ️ All methods attempted');
-                alert('📱 Tip: Swipe down from the top of your screen to see your downloaded file in the notification bar!');
+                console.log('â„¹ï¸ All methods attempted');
+                alert('ðŸ“± Tip: Swipe down from the top of your screen to see your downloaded file in the notification bar!');
             }, 500);
         }
 
@@ -669,7 +669,7 @@
                 loadingSpinner.style.display = 'flex';
                 downloadBtn.disabled = true;
                 
-                console.log('📱 Starting APK download...');
+                console.log('ðŸ“± Starting APK download...');
                 
                 // Create a direct download link
                 const link = document.createElement('a');
@@ -692,7 +692,7 @@
                     
                     // Show success message
                     const originalText = btnContent.querySelector('.download-text').textContent;
-                    btnContent.querySelector('.download-text').textContent = '✓ Downloaded!';
+                    btnContent.querySelector('.download-text').textContent = 'âœ“ Downloaded!';
                     
                     // Show installation guide after 500ms
                     setTimeout(() => {
@@ -704,10 +704,10 @@
                     }, 2000);
                 }, 1000);
                 
-                console.log('✅ APK download initiated successfully');
+                console.log('âœ… APK download initiated successfully');
                 
             } catch (error) {
-                console.error('❌ Error downloading app:', error);
+                console.error('âŒ Error downloading app:', error);
                 
                 // Reset button state
                 btnContent.style.opacity = '1';
@@ -719,361 +719,739 @@
             }
         }
     </script>
-    <!-- Premium Infographic Download Overlay -->
+    <!-- Premium Full-Screen Infographic Overlay -->
     <div class="infographic-overlay" id="downloadOverlay">
-        <div class="infographic-backdrop"></div>
-        
-        <!-- Floating Arrow pointing to Download Button -->
-        <div class="floating-arrow-group">
-            <div class="arrow-line"></div>
-            <div class="arrow-head">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 4l-8 8h5v8h6v-8h5z"/>
-                </svg>
-            </div>
-            <span class="arrow-label">Tap Here</span>
+        <!-- Animated Background -->
+        <div class="infographic-backdrop">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+            <div class="backdrop-mesh"></div>
         </div>
         
-        <!-- Center Floating Text -->
-        <div class="floating-info">
-            <div class="info-icon-pulse">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/>
-                </svg>
+        <!-- Main Content Container -->
+        <div class="infographic-content">
+            <!-- Top Section: Arrow and Button Connection -->
+            <div class="top-section">
+                <div class="connection-line-wrapper">
+                    <!-- Glowing path to download button -->
+                    <div class="glow-path"></div>
+                    <div class="animated-arrow">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M7 10l5 5 5-5H7z"/>
+                        </svg>
+                    </div>
+                    <div class="pulse-indicator"></div>
+                </div>
+                <div class="tap-here-badge">
+                    <span class="badge-icon">ðŸ‘†</span>
+                    <span class="badge-text">Download App</span>
+                </div>
             </div>
-            <h2 class="info-title">Download the App</h2>
-            <p class="info-subtitle">For the best experience</p>
             
-            <!-- Minimal feature dots -->
-            <div class="feature-dots">
-                <span class="dot-item"><span class="dot"></span>HD Streaming</span>
-                <span class="dot-item"><span class="dot"></span>Fast & Smooth</span>
-                <span class="dot-item"><span class="dot"></span>Offline Access</span>
+            <!-- Center Hero Section -->
+            <div class="hero-section">
+                <div class="hero-icon-container">
+                    <div class="icon-bg-pulse"></div>
+                    <div class="hero-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2v9.67z"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <h1 class="hero-title">
+                    <span class="title-line-1">Get the Premium</span>
+                    <span class="title-line-2">Experience</span>
+                </h1>
+                
+                <p class="hero-subtitle">Download our app for the best streaming quality</p>
+                
+                <!-- Feature Highlights -->
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">ðŸŽ¬</div>
+                        <div class="feature-text">
+                            <span class="feature-title">HD Streaming</span>
+                            <span class="feature-desc">Crystal clear quality</span>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">âš¡</div>
+                        <div class="feature-text">
+                            <span class="feature-title">Lightning Fast</span>
+                            <span class="feature-desc">No buffering</span>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">ðŸ“±</div>
+                        <div class="feature-text">
+                            <span class="feature-title">Mobile Optimized</span>
+                            <span class="feature-desc">Perfect for phones</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <!-- Bottom hint -->
-        <div class="bottom-hint">
-            <span class="hint-text">Swipe up or wait...</span>
+            
+            <!-- Bottom Hint -->
+            <div class="bottom-section">
+                <div class="auto-close-indicator">
+                    <div class="timer-ring">
+                        <svg class="timer-svg" viewBox="0 0 40 40">
+                            <circle class="timer-circle" cx="20" cy="20" r="18"></circle>
+                        </svg>
+                    </div>
+                    <span class="close-text">Auto-closing...</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <style>
-        /* Premium Infographic Overlay */
+        /* ========================================
+           PREMIUM FULL-SCREEN INFOGRAPHIC OVERLAY
+           ======================================== */
+        
         .infographic-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 99999;
-            pointer-events: none;
-            animation: infoFadeIn 0.3s ease-out, infoFadeOut 0.5s ease-in 2.5s forwards;
-        }
-        
-        .infographic-backdrop {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at top right, rgba(255,0,0,0.08) 0%, transparent 50%),
-                        radial-gradient(ellipse at center, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.9) 100%);
-        }
-        
-        /* Floating Arrow Group - Points to Download Button */
-        .floating-arrow-group {
-            position: absolute;
-            top: 65px;
-            right: 60px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            animation: floatArrowIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
-        }
-        
-        .arrow-line {
-            width: 2px;
-            height: 40px;
-            background: linear-gradient(to top, transparent, #ff0000);
-            animation: lineGrow 0.6s ease-out 0.3s both;
-        }
-        
-        .arrow-head {
-            animation: arrowFloat 0.6s ease-in-out infinite;
-        }
-        
-        .arrow-head svg {
-            width: 36px;
-            height: 36px;
-            color: #ff0000;
-            filter: drop-shadow(0 0 12px rgba(255,0,0,0.8));
-        }
-        
-        .arrow-label {
-            color: rgba(255,255,255,0.9);
-            font-size: 11px;
-            font-weight: 500;
-            margin-top: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-family: 'Roboto', sans-serif;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-        }
-        
-        /* Center Floating Info */
-        .floating-info {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            animation: infoSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
-        }
-        
-        .info-icon-pulse {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 16px;
+            width: 100vw;
+            height: 100vh;
+            z-index: 999999;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+            overflow: hidden;
+            animation: overlayFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                       overlayFadeOut 0.6s cubic-bezier(0.22, 1, 0.36, 1) 2.4s forwards;
         }
         
-        .info-icon-pulse::before {
-            content: '';
+        /* Animated Background */
+        .infographic-backdrop {
             position: absolute;
-            inset: -8px;
+            inset: 0;
+            background: linear-gradient(135deg, 
+                rgba(10, 10, 10, 0.98) 0%, 
+                rgba(20, 10, 10, 0.98) 50%,
+                rgba(10, 10, 10, 0.98) 100%);
+            backdrop-filter: blur(10px);
+        }
+        
+        .backdrop-mesh {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.5;
+            animation: meshScroll 20s linear infinite;
+        }
+        
+        .gradient-orb {
+            position: absolute;
             border-radius: 50%;
-            background: rgba(255,0,0,0.2);
-            animation: pulse 1.5s ease-in-out infinite;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: orbFloat 8s ease-in-out infinite;
         }
         
-        .info-icon-pulse svg {
-            width: 40px;
-            height: 40px;
-            color: #ff0000;
-            filter: drop-shadow(0 0 20px rgba(255,0,0,0.6));
+        .gradient-orb.orb-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #ff0000 0%, transparent 70%);
+            top: -10%;
+            right: -10%;
+            animation-delay: 0s;
+        }
+        
+        .gradient-orb.orb-2 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, #ff3366 0%, transparent 70%);
+            bottom: -5%;
+            left: -5%;
+            animation-delay: 2s;
+        }
+        
+        .gradient-orb.orb-3 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #cc0000 0%, transparent 70%);
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: 4s;
+        }
+        
+        /* Main Content */
+        .infographic-content {
             position: relative;
-            z-index: 1;
-        }
-        
-        .info-title {
-            color: #ffffff;
-            font-size: 26px;
-            font-weight: 600;
-            margin: 0 0 6px 0;
-            font-family: 'Roboto', sans-serif;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            letter-spacing: -0.5px;
-        }
-        
-        .info-subtitle {
-            color: rgba(255,255,255,0.6);
-            font-size: 14px;
-            font-weight: 400;
-            margin: 0 0 24px 0;
-            font-family: 'Roboto', sans-serif;
-        }
-        
-        /* Minimal Feature Dots */
-        .feature-dots {
+            z-index: 10;
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
-            gap: 10px;
             align-items: center;
+            justify-content: space-between;
+            padding: 80px 20px 40px;
         }
         
-        .dot-item {
+        /* Top Section - Arrow Connection */
+        .top-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            width: 100%;
+            max-width: 1200px;
+            padding-right: 20px;
+            animation: slideFromTop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+        }
+        
+        .connection-line-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .glow-path {
+            width: 3px;
+            height: 60px;
+            background: linear-gradient(to bottom, 
+                transparent 0%,
+                rgba(255, 0, 0, 0.3) 20%,
+                rgba(255, 0, 0, 0.8) 50%,
+                rgba(255, 0, 0, 1) 100%);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.6),
+                        0 0 40px rgba(255, 0, 0, 0.3);
+            animation: glowPulse 1.5s ease-in-out infinite;
+        }
+        
+        .animated-arrow {
+            margin-top: -8px;
+            animation: arrowBounce 1s ease-in-out infinite;
+        }
+        
+        .animated-arrow svg {
+            width: 48px;
+            height: 48px;
+            color: #ff0000;
+            filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.8))
+                    drop-shadow(0 0 40px rgba(255, 0, 0, 0.4));
+        }
+        
+        .pulse-indicator {
+            width: 16px;
+            height: 16px;
+            background: #ff0000;
+            border-radius: 50%;
+            margin-top: 8px;
+            box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+            animation: pulseRing 1.5s ease-out infinite;
+        }
+        
+        .tap-here-badge {
             display: flex;
             align-items: center;
             gap: 8px;
-            color: rgba(255,255,255,0.7);
-            font-size: 12px;
-            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(255, 0, 0, 0.1));
+            border: 2px solid rgba(255, 0, 0, 0.5);
+            border-radius: 50px;
+            padding: 10px 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(255, 0, 0, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            animation: badgeGlow 2s ease-in-out infinite;
         }
         
-        .dot {
-            width: 6px;
-            height: 6px;
-            background: #ff0000;
-            border-radius: 50%;
-            box-shadow: 0 0 8px rgba(255,0,0,0.6);
+        .badge-icon {
+            font-size: 20px;
+            animation: pointFinger 0.8s ease-in-out infinite;
         }
         
-        /* Bottom Hint */
-        .bottom-hint {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: hintFade 1s ease-in-out infinite alternate;
-        }
-        
-        .hint-text {
-            color: rgba(255,255,255,0.4);
-            font-size: 11px;
-            font-family: 'Roboto', sans-serif;
+        .badge-text {
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
             letter-spacing: 0.5px;
         }
         
-        /* Animations */
-        @keyframes infoFadeIn {
+        /* Hero Section - Center Content */
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            animation: scaleIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+        }
+        
+        .hero-icon-container {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        
+        .icon-bg-pulse {
+            position: absolute;
+            inset: -20px;
+            background: radial-gradient(circle, rgba(255, 0, 0, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        .hero-icon {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(255, 0, 0, 0.1));
+            border: 3px solid rgba(255, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(255, 0, 0, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .hero-icon svg {
+            width: 40px;
+            height: 40px;
+            color: #ff0000;
+            filter: drop-shadow(0 2px 8px rgba(255, 0, 0, 0.6));
+        }
+        
+        .hero-title {
+            margin: 0 0 16px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .title-line-1,
+        .title-line-2 {
+            display: block;
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 0%, #ff6b6b 50%, #ff0000 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 20px rgba(255, 0, 0, 0.3);
+            letter-spacing: -1px;
+        }
+        
+        .title-line-2 {
+            font-size: 48px;
+            animation: titleShine 3s ease-in-out infinite;
+        }
+        
+        .hero-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            font-weight: 400;
+            margin: 0 0 32px 0;
+            max-width: 400px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            width: 100%;
+            max-width: 600px;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            animation: cardFloat 3s ease-in-out infinite;
+        }
+        
+        .feature-card:nth-child(1) { animation-delay: 0s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.4s; }
+        
+        .feature-icon {
+            font-size: 32px;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+        }
+        
+        .feature-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .feature-title {
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+        
+        .feature-desc {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            text-align: center;
+        }
+        
+        /* Bottom Section */
+        .bottom-section {
+            animation: slideFromBottom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
+        }
+        
+        .auto-close-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .timer-ring {
+            position: relative;
+            width: 28px;
+            height: 28px;
+        }
+        
+        .timer-svg {
+            transform: rotate(-90deg);
+        }
+        
+        .timer-circle {
+            fill: none;
+            stroke: #ff0000;
+            stroke-width: 3;
+            stroke-dasharray: 113;
+            stroke-dashoffset: 113;
+            animation: timerCountdown 3s linear forwards;
+            filter: drop-shadow(0 0 6px rgba(255, 0, 0, 0.6));
+        }
+        
+        .close-text {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        /* ==================
+           ANIMATIONS
+           ================== */
+        
+        @keyframes overlayFadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
         
-        @keyframes infoFadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; visibility: hidden; }
+        @keyframes overlayFadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); visibility: hidden; }
         }
         
-        @keyframes floatArrowIn {
-            from { opacity: 0; transform: translateY(20px); }
+        @keyframes meshScroll {
+            from { transform: translate(0, 0); }
+            to { transform: translate(50px, 50px); }
+        }
+        
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(20px, -20px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+        
+        @keyframes slideFromTop {
+            from { opacity: 0; transform: translateY(-40px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
-        @keyframes lineGrow {
-            from { height: 0; opacity: 0; }
-            to { height: 40px; opacity: 1; }
+        @keyframes slideFromBottom {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        @keyframes arrowFloat {
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes arrowBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulseRing {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+            }
+            100% {
+                box-shadow: 0 0 0 20px rgba(255, 0, 0, 0);
+            }
+        }
+        
+        @keyframes badgeGlow {
+            0%, 100% { box-shadow: 0 8px 32px rgba(255, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+            50% { box-shadow: 0 8px 40px rgba(255, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
+        }
+        
+        @keyframes pointFinger {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.3); opacity: 0.1; }
+        }
+        
+        @keyframes titleShine {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+        
+        @keyframes cardFloat {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-8px); }
         }
         
-        @keyframes infoSlideUp {
-            from { opacity: 0; transform: translate(-50%, -40%); }
-            to { opacity: 1; transform: translate(-50%, -50%); }
+        @keyframes timerCountdown {
+            from { stroke-dashoffset: 113; }
+            to { stroke-dashoffset: 0; }
         }
         
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.3; }
-            50% { transform: scale(1.2); opacity: 0.1; }
-        }
+        /* ==================
+           RESPONSIVE DESIGN
+           ================== */
         
-        @keyframes hintFade {
-            from { opacity: 0.3; }
-            to { opacity: 0.6; }
-        }
-        
-        /* Mobile Responsive */
         @media (max-width: 768px) {
-            .floating-arrow-group {
-                top: 58px;
-                right: 45px;
+            .infographic-content {
+                padding: 70px 16px 30px;
             }
             
-            .arrow-line {
-                height: 30px;
+            .top-section {
+                padding-right: 12px;
             }
             
-            .arrow-head svg {
-                width: 30px;
-                height: 30px;
+            .glow-path {
+                height: 45px;
             }
             
-            .arrow-label {
+            .animated-arrow svg {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .tap-here-badge {
+                padding: 8px 16px;
+            }
+            
+            .badge-icon {
+                font-size: 18px;
+            }
+            
+            .badge-text {
+                font-size: 12px;
+            }
+            
+            .hero-icon {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .hero-icon svg {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .title-line-1 {
+                font-size: 32px;
+            }
+            
+            .title-line-2 {
+                font-size: 38px;
+            }
+            
+            .hero-subtitle {
+                font-size: 14px;
+                margin-bottom: 24px;
+            }
+            
+            .feature-grid {
+                gap: 12px;
+            }
+            
+            .feature-card {
+                padding: 12px 8px;
+            }
+            
+            .feature-icon {
+                font-size: 28px;
+            }
+            
+            .feature-title {
+                font-size: 11px;
+            }
+            
+            .feature-desc {
                 font-size: 10px;
-                letter-spacing: 1px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .infographic-content {
+                padding: 65px 12px 25px;
             }
             
-            .info-icon-pulse {
-                width: 54px;
-                height: 54px;
-                margin-bottom: 14px;
+            .top-section {
+                padding-right: 8px;
             }
             
-            .info-icon-pulse svg {
+            .glow-path {
+                height: 35px;
+                width: 2px;
+            }
+            
+            .animated-arrow svg {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .pulse-indicator {
+                width: 12px;
+                height: 12px;
+            }
+            
+            .tap-here-badge {
+                padding: 6px 12px;
+            }
+            
+            .badge-icon {
+                font-size: 16px;
+            }
+            
+            .badge-text {
+                font-size: 11px;
+            }
+            
+            .hero-icon {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .hero-icon svg {
                 width: 32px;
                 height: 32px;
             }
             
-            .info-title {
-                font-size: 22px;
+            .title-line-1 {
+                font-size: 28px;
             }
             
-            .info-subtitle {
+            .title-line-2 {
+                font-size: 34px;
+            }
+            
+            .hero-subtitle {
                 font-size: 13px;
                 margin-bottom: 20px;
             }
             
-            .dot-item {
-                font-size: 11px;
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                max-width: 280px;
             }
             
-            .bottom-hint {
-                bottom: 30px;
-            }
-        }
-        
-        /* Very small screens */
-        @media (max-width: 400px) {
-            .floating-arrow-group {
-                top: 55px;
-                right: 35px;
+            .feature-card {
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 12px;
+                gap: 12px;
             }
             
-            .arrow-line {
-                height: 22px;
+            .feature-icon {
+                font-size: 24px;
             }
             
-            .arrow-head svg {
-                width: 26px;
-                height: 26px;
+            .feature-text {
+                align-items: flex-start;
             }
             
-            .arrow-label {
-                font-size: 9px;
-                margin-top: 6px;
-            }
-            
-            .info-icon-pulse {
-                width: 46px;
-                height: 46px;
-            }
-            
-            .info-icon-pulse svg {
-                width: 28px;
-                height: 28px;
-            }
-            
-            .info-title {
-                font-size: 20px;
-            }
-            
-            .info-subtitle {
+            .feature-title {
                 font-size: 12px;
+                text-align: left;
             }
             
-            .feature-dots {
-                gap: 8px;
-            }
-            
-            .dot-item {
+            .feature-desc {
                 font-size: 10px;
+                text-align: left;
             }
             
-            .dot {
-                width: 5px;
-                height: 5px;
+            .auto-close-indicator {
+                padding: 10px 20px;
+                gap: 10px;
+            }
+            
+            .timer-ring {
+                width: 24px;
+                height: 24px;
+            }
+            
+            .close-text {
+                font-size: 12px;
             }
         }
     </style>
 
     <script>
+        // Show infographic overlay only once per session
         document.addEventListener('DOMContentLoaded', function() {
             const overlay = document.getElementById('downloadOverlay');
+            
             if (overlay) {
+                // Check if already shown in this session
                 if (!sessionStorage.getItem('infographicShown')) {
+                    // Mark as shown
                     sessionStorage.setItem('infographicShown', 'true');
+                    
+                    // Auto-remove after animation completes (3 seconds)
                     setTimeout(function() {
                         overlay.remove();
                     }, 3000);
                 } else {
+                    // Already shown, remove immediately
                     overlay.remove();
                 }
             }
         });
     </script>
+
 </body>
 </html>
