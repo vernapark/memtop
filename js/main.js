@@ -75,20 +75,63 @@ function displayVideos(videos) {
     
     container.innerHTML = videos.map(video => createVideoCard(video)).join('');
     
-    // Add click listeners
+    // Add click listeners with ROBUST touch handling for mobile scroll fix
     setTimeout(() => {
         document.querySelectorAll('.video-card').forEach((card, index) => {
-            card.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                openVideoModal(videos[index]);
-            });
+            let touchStartY = 0;
+            let touchStartX = 0;
+            let touchStartTime = 0;
+            let isScrolling = false;
+            let hasMoved = false;
             
-            // Prevent default touch behavior that might interfere
+            // Track touch start
+            card.addEventListener('touchstart', (e) => {
+                touchStartY = e.touches[0].clientY;
+                touchStartX = e.touches[0].clientX;
+                touchStartTime = Date.now();
+                isScrolling = false;
+                hasMoved = false;
+            }, { passive: true });
+            
+            // Track touch move - detect scrolling with lower threshold
+            card.addEventListener('touchmove', (e) => {
+                const touchY = e.touches[0].clientY;
+                const touchX = e.touches[0].clientX;
+                const deltaY = Math.abs(touchY - touchStartY);
+                const deltaX = Math.abs(touchX - touchStartX);
+                
+                // If user moved more than 5px (reduced from 10px), it's definitely scrolling
+                if (deltaY > 5 || deltaX > 5) {
+                    isScrolling = true;
+                    hasMoved = true;
+                }
+            }, { passive: true });
+            
+            // Handle touch end - ONLY open video if NOT scrolling
             card.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                openVideoModal(videos[index]);
+                const touchDuration = Date.now() - touchStartTime;
+                
+                // Only open video if:
+                // 1. User did NOT scroll (no movement detected)
+                // 2. Touch was quick (less than 300ms - reduced from 500ms)
+                // 3. Not currently scrolling
+                if (!isScrolling && !hasMoved && touchDuration < 300) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openVideoModal(videos[index]);
+                }
+                // Otherwise, let the scroll happen naturally
             }, { passive: false });
+            
+            // Desktop click (non-touch devices)
+            card.addEventListener('click', (e) => {
+                // Only handle if not a touch device or touch already handled
+                if (!e.defaultPrevented && e.pointerType !== 'touch') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openVideoModal(videos[index]);
+                }
+            });
         });
         
         // Load video durations
@@ -486,20 +529,7 @@ document.addEventListener('dragstart', function(e) {
 // MOBILE OPTIMIZATIONS
 // ===================================
 
-// Prevent double-tap zoom on video cards (iOS)
-let lastTap = 0;
-document.addEventListener('touchend', function(e) {
-    const currentTime = new Date().getTime();
-    const tapLength = currentTime - lastTap;
-    
-    if (tapLength < 500 && tapLength > 0) {
-        if (e.target.closest('.video-card')) {
-            e.preventDefault();
-        }
-    }
-    
-    lastTap = currentTime;
-});
+// Touch handling is managed per video card for better scroll detection
 
 // Handle orientation change
 window.addEventListener('orientationchange', function() {
