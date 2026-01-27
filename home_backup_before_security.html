@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -508,7 +508,7 @@
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
                     </svg>
                 </div>
-                <h2 class="install-guide-title">Download Complete! 🎉</h2>
+                <h2 class="install-guide-title">Download Complete! ðŸŽ‰</h2>
                 <p class="install-guide-subtitle">Follow these simple steps to install the app</p>
             </div>
             
@@ -550,7 +550,7 @@
                     <div class="step-number">4</div>
                     <div class="step-content">
                         <h3 class="step-title">Install & Enjoy!</h3>
-                        <p class="step-description">Tap "Install" button and wait a few seconds. Your app is ready! 🚀</p>
+                        <p class="step-description">Tap "Install" button and wait a few seconds. Your app is ready! ðŸš€</p>
                     </div>
                     <svg class="step-icon" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
@@ -572,16 +572,15 @@
             
             <div class="install-action-buttons">
                 <button class="install-action-btn install-action-btn-secondary" onclick="openDownloadsFolder()">
-                    📂 Open Downloads
+                    ðŸ“‚ Open Downloads
                 </button>
                 <button class="install-action-btn" onclick="closeInstallGuide()">
-                    Got It! 🚀
+                    Got It! ðŸš€
                 </button>
             </div>
         </div>
     </div>
 
-    <script src="js/security.js"></script>
     <script src="js/visitor_tracking.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/main_premium.js"></script>
@@ -607,25 +606,25 @@
 
         // Open Downloads Folder - Try multiple methods
         function openDownloadsFolder() {
-            console.log('📂 Attempting to open downloads folder...');
+            console.log('ðŸ“‚ Attempting to open downloads folder...');
             
             // Method 1: Try Android Downloads content URI
             try {
                 window.location.href = 'content://downloads/my_downloads';
-                console.log('✓ Tried content://downloads/my_downloads');
+                console.log('âœ“ Tried content://downloads/my_downloads');
                 return;
             } catch (e) {
-                console.log('✗ Method 1 failed:', e.message);
+                console.log('âœ— Method 1 failed:', e.message);
             }
             
             // Method 2: Try file:// URI for Downloads folder
             setTimeout(() => {
                 try {
                     window.location.href = 'file:///storage/emulated/0/Download/';
-                    console.log('✓ Tried file:///storage/emulated/0/Download/');
+                    console.log('âœ“ Tried file:///storage/emulated/0/Download/');
                     return;
                 } catch (e) {
-                    console.log('✗ Method 2 failed:', e.message);
+                    console.log('âœ— Method 2 failed:', e.message);
                 }
             }, 100);
             
@@ -633,10 +632,10 @@
             setTimeout(() => {
                 try {
                     window.location.href = 'file:///storage/emulated/0/Download/Premium18Plus.apk';
-                    console.log('✓ Tried direct APK file path');
+                    console.log('âœ“ Tried direct APK file path');
                     return;
                 } catch (e) {
-                    console.log('✗ Method 3 failed:', e.message);
+                    console.log('âœ— Method 3 failed:', e.message);
                 }
             }, 200);
             
@@ -644,17 +643,17 @@
             setTimeout(() => {
                 try {
                     window.location.href = 'downloads://';
-                    console.log('✓ Tried downloads:// scheme');
+                    console.log('âœ“ Tried downloads:// scheme');
                     return;
                 } catch (e) {
-                    console.log('✗ Method 4 failed:', e.message);
+                    console.log('âœ— Method 4 failed:', e.message);
                 }
             }, 300);
             
             // Method 5: Show helpful message
             setTimeout(() => {
-                console.log('ℹ️ All methods attempted');
-                alert('📱 Tip: Swipe down from the top of your screen to see your downloaded file in the notification bar!');
+                console.log('â„¹ï¸ All methods attempted');
+                alert('ðŸ“± Tip: Swipe down from the top of your screen to see your downloaded file in the notification bar!');
             }, 500);
         }
 
@@ -670,7 +669,7 @@
                 loadingSpinner.style.display = 'flex';
                 downloadBtn.disabled = true;
                 
-                console.log('📱 Starting APK download...');
+                console.log('ðŸ“± Starting APK download...');
                 
                 // Create a direct download link
                 const link = document.createElement('a');
@@ -693,7 +692,7 @@
                     
                     // Show success message
                     const originalText = btnContent.querySelector('.download-text').textContent;
-                    btnContent.querySelector('.download-text').textContent = '✓ Downloaded!';
+                    btnContent.querySelector('.download-text').textContent = 'âœ“ Downloaded!';
                     
                     // Show installation guide after 500ms
                     setTimeout(() => {
@@ -705,10 +704,10 @@
                     }, 2000);
                 }, 1000);
                 
-                console.log('✅ APK download initiated successfully');
+                console.log('âœ… APK download initiated successfully');
                 
             } catch (error) {
-                console.error('❌ Error downloading app:', error);
+                console.error('âŒ Error downloading app:', error);
                 
                 // Reset button state
                 btnContent.style.opacity = '1';
