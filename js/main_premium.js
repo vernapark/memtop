@@ -69,20 +69,59 @@ function displayVideos(videos) {
     
     container.innerHTML = videos.map(video => createVideoCard(video)).join('');
     
-    // Add click listeners
+    // Add click listeners with proper touch handling
     setTimeout(() => {
         document.querySelectorAll('.video-card').forEach((card, index) => {
-            card.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                openVideoModal(videos[index]);
-            });
+            // Track touch movement to distinguish between tap and scroll
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let touchStartTime = 0;
+            let isTouchMoving = false;
             
-            // Prevent default touch behavior that might interfere
+            // Touch start - record initial position
+            card.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                touchStartTime = Date.now();
+                isTouchMoving = false;
+            }, { passive: true });
+            
+            // Touch move - detect if user is scrolling
+            card.addEventListener('touchmove', (e) => {
+                const touchMoveX = e.touches[0].clientX;
+                const touchMoveY = e.touches[0].clientY;
+                const deltaX = Math.abs(touchMoveX - touchStartX);
+                const deltaY = Math.abs(touchMoveY - touchStartY);
+                
+                // If movement is more than 10px, consider it scrolling
+                if (deltaX > 10 || deltaY > 10) {
+                    isTouchMoving = true;
+                }
+            }, { passive: true });
+            
+            // Touch end - only open video if it was a tap, not a scroll
             card.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                openVideoModal(videos[index]);
+                const touchDuration = Date.now() - touchStartTime;
+                
+                // Only trigger if:
+                // 1. Touch was quick (< 300ms)
+                // 2. No significant movement detected (not scrolling)
+                if (!isTouchMoving && touchDuration < 300) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openVideoModal(videos[index]);
+                }
             }, { passive: false });
+            
+            // Desktop click handler
+            card.addEventListener('click', (e) => {
+                // Only handle click events that aren't from touch
+                if (e.pointerType === 'mouse' || e.pointerType === '') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openVideoModal(videos[index]);
+                }
+            });
         });
         
         // Load video durations
