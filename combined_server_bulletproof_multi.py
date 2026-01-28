@@ -303,7 +303,7 @@ async def handle_telegram_webhook(request):
             else:
                 response = f"🎟️ Active Access Codes ({len(codes)})\n\n"
                 for i, code in enumerate(codes, 1):
-                    response += f"{i}. {code}\n"
+                    response += f"{i}. ```{code}```\n"
                 response += f"\nTotal: {len(codes)} code(s)"
                 await send_message(chat_id, response)
         
