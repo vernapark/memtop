@@ -308,3 +308,12 @@ class E2EVideoHandler:
                 
         except Exception as e:
             print(f"Database delete error: {str(e)}")
+
+
+def register_e2e_routes(app, handler):
+    """"""
+    Register E2E encryption routes with aiohttp app
+    """"""
+    # Routes are registered in combined_server_e2e.py directly
+    # This function exists for compatibility
+    pass
