@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔒 E2E Admin Dashboard - MemTop</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <style>
+        .e2e-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .e2e-banner h2 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+        }
+        
+        .e2e-banner p {
+            margin: 5px 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .e2e-status {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .e2e-status-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+        
+        .e2e-controls-section {
+            background: #f8fafc;
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .key-management {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .key-management button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-export {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-export:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+        
+        .btn-import {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-import:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+        
+        .btn-clear {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-clear:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+        
+        .video-encrypted-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .encryption-warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+        
+        .encryption-warning strong {
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <!-- E2E Encryption Banner -->
+    <div class="e2e-banner">
+        <h2>🔒 End-to-End Encrypted Dashboard</h2>
+        <p>All videos uploaded here are encrypted in your browser before upload</p>
+        <div class="e2e-status">
+            <div class="e2e-status-item">✅ Client-Side Encryption</div>
+            <div class="e2e-status-item">✅ Metadata Stripping</div>
+            <div class="e2e-status-item">✅ Zero-Knowledge Server</div>
+            <div class="e2e-status-item">✅ Secure Key Storage</div>
+        </div>
+    </div>
+
+    <!-- Original Dashboard Content -->
+    <div class="container">
+        <header>
+            <h1>🔒 MemTop Admin - E2E Encrypted</h1>
+            <div class="header-actions">
+                <button onclick="location.href='/home.html'" class="btn-secondary">🏠 Back to Home</button>
+                <button onclick="logout()" class="btn-danger">🚪 Logout</button>
+            </div>
+        </header>
+
+        <!-- E2E Controls Section -->
+        <div class="e2e-controls-section">
+            <h3>🔑 Encryption Key Management</h3>
+            <p style="color: #6b7280; font-size: 14px; margin: 10px 0;">
+                Your encryption keys are stored locally in your browser. Back them up regularly!
+            </p>
+            
+            <div class="key-management">
+                <button class="btn-export" onclick="exportEncryptionKeys()">
+                    💾 Export Keys (Backup)
+                </button>
+                <button class="btn-import" onclick="document.getElementById('importKeyFile').click()">
+                    📥 Import Keys (Restore)
+                </button>
+                <button class="btn-clear" onclick="clearAllKeys()">
+                    🗑️ Clear All Keys
+                </button>
+            </div>
+            
+            <input type="file" id="importKeyFile" accept=".json" style="display: none;" onchange="importEncryptionKeys(this)">
+            
+            <div class="encryption-warning">
+                <strong>⚠️ Important:</strong> If you lose your encryption keys, you will permanently lose access to your encrypted videos. Always keep a backup of your keys in a safe place!
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Videos</h3>
+                <p class="stat-number" id="totalVideos">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>🔒 Encrypted Videos</h3>
+                <p class="stat-number" id="encryptedVideos">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Storage</h3>
+                <p class="stat-number" id="totalStorage">0 MB</p>
+            </div>
+            <div class="stat-card">
+                <h3>Active Viewers</h3>
+                <p class="stat-number" id="activeViewers">0</p>
+            </div>
+        </div>
+
+        <!-- Upload Section -->
+        <section class="upload-section">
+            <h2>📤 Upload New Video (E2E Encrypted)</h2>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="videoFile">Select Video File:</label>
+                    <input type="file" id="videoFile" name="video" accept="video/*" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="videoTitle">Title:</label>
+                    <input type="text" id="videoTitle" name="title" placeholder="Enter video title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="videoDescription">Description:</label>
+                    <textarea id="videoDescription" name="description" placeholder="Enter video description" rows="4"></textarea>
+                </div>
+                
+                <button type="submit" class="btn-primary">🔒 Upload Encrypted Video</button>
+            </form>
+        </section>
+
+        <!-- Video Management Section -->
+        <section class="video-management">
+            <h2>📹 Manage Videos</h2>
+            <div id="videoList" class="video-grid">
+                <p>Loading videos...</p>
+            </div>
+        </section>
+
+        <!-- Active Visitors Section -->
+        <section class="visitors-section">
+            <h2>👥 Active Visitors</h2>
+            <div id="visitorsList">
+                <p>Loading visitors...</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Load E2E Encryption Libraries -->
+    <script src="/js/encryption.js"></script>
+    <script src="/js/metadata_stripper.js"></script>
+    <script src="/js/admin_e2e.js"></script>
+    
+    <!-- Original Admin Scripts -->
+    <script src="/js/admin.js"></script>
+    
+    <script>
+        // Key Management Functions
+        async function exportEncryptionKeys() {
+            if (window.adminE2EUploader) {
+                await window.adminE2EUploader.exportKeys();
+            } else {
+                alert('❌ E2E uploader not initialized');
+            }
+        }
+
+        async function importEncryptionKeys(input) {
+            if (input.files && input.files[0]) {
+                if (window.adminE2EUploader) {
+                    await window.adminE2EUploader.importKeys(input.files[0]);
+                } else {
+                    alert('❌ E2E uploader not initialized');
+                }
+            }
+        }
+
+        async function clearAllKeys() {
+            if (!confirm('⚠️ WARNING: This will delete ALL encryption keys!\n\nYou will lose access to all encrypted videos unless you have a backup.\n\nAre you absolutely sure?')) {
+                return;
+            }
+            
+            if (!confirm('🚨 FINAL WARNING: This action CANNOT be undone!\n\nProceed with clearing all keys?')) {
+                return;
+            }
+            
+            try {
+                const keyManager = new KeyManager();
+                await keyManager.initDB();
+                await keyManager.clearAllKeys();
+                alert('✅ All encryption keys have been cleared.\n\n⚠️ You will no longer be able to decrypt previously uploaded videos!');
+                location.reload();
+            } catch (error) {
+                alert(`❌ Error clearing keys: ${error.message}`);
+            }
+        }
+
+        // Update stats to include encrypted video count
+        async function updateStats() {
+            try {
+                const response = await fetch('/api/videos');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const videos = data.videos || [];
+                    const encryptedCount = videos.filter(v => v.encrypted).length;
+                    
+                    document.getElementById('totalVideos').textContent = videos.length;
+                    document.getElementById('encryptedVideos').textContent = encryptedCount;
+                    
+                    // Calculate total storage
+                    const totalBytes = videos.reduce((sum, v) => sum + (v.size || 0), 0);
+                    const totalMB = (totalBytes / (1024 * 1024)).toFixed(2);
+                    document.getElementById('totalStorage').textContent = totalMB + ' MB';
+                }
+            } catch (error) {
+                console.error('Error updating stats:', error);
+            }
+        }
+
+        // Check E2E status on load
+        async function checkE2EStatus() {
+            try {
+                const response = await fetch('/api/e2e/status');
+                const data = await response.json();
+                
+                if (data.e2e_enabled) {
+                    console.log('✅ E2E Encryption Status:', data);
+                } else {
+                    console.warn('⚠️ E2E Encryption not fully enabled');
+                }
+            } catch (error) {
+                console.error('Error checking E2E status:', error);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+            checkE2EStatus();
+            
+            // Update stats every 30 seconds
+            setInterval(updateStats, 30000);
+        });
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.clear();
+                location.href = '/admin/login.html';
+            }
+        }
+    </script>
+</body>
+</html>

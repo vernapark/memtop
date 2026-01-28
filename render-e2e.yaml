@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: memtop-e2e-encrypted
+    runtime: python
+    runtimeVersion: "3.11"
+    plan: free
+    branch: main
+    rootDir: .
+    buildCommand: pip install -r requirements.txt
+    startCommand: python combined_server_e2e.py
+    envVars:
+      - key: BOT_TOKEN
+        value: 8567043675:AAHB7CmPOfsWIHluLLk9hDF-8FBcN4LtOMM
+      - key: AUTHORIZED_CHAT_ID
+        value: 2103408372
+      - key: WEBHOOK_URL
+        value: https://memtop-video-streaming-22xm.onrender.com
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      # E2E Encryption Configuration
+      - key: E2E_ENABLED
+        value: "true"
+      - key: ENCRYPTION_ALGORITHM
+        value: "AES-256-GCM"
+      - key: SERVER_BLIND
+        value: "true"
