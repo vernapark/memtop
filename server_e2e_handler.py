@@ -1,14 +1,14 @@
 """
 Server-side handler for E2E encrypted videos
 Server remains blind to video content - only handles encrypted blobs
+Uses aiohttp (async) framework
 """
 
 import os
 import json
 import time
 import hashlib
-from flask import request, jsonify, send_file
-from werkzeug.utils import secure_filename
+from aiohttp import web
 import cloudinary
 import cloudinary.uploader
 from datetime import datetime
@@ -19,13 +19,8 @@ class E2EVideoHandler:
     Server never sees unencrypted content
     """
     
-    def __init__(self, app=None):
-        self.app = app
+    def __init__(self):
         self.allowed_extensions = {'enc', 'encrypted', 'mp4', 'webm', 'avi', 'mov'}
-        
-    def init_app(self, app):
-        """Initialize with Flask app"""
-        self.app = app
         
     def is_allowed_file(self, filename):
         """Check if file extension is allowed"""
@@ -39,31 +34,40 @@ class E2EVideoHandler:
         unique_string = timestamp + random_data.hex()
         return hashlib.sha256(unique_string.encode()).hexdigest()[:16]
     
-    def handle_encrypted_upload(self):
+    async def handle_encrypted_upload(self, request):
         """
         Handle encrypted video upload
         Server stores encrypted blob without decryption
         """
         try:
-            # Check if request has file
-            if 'video' not in request.files:
-                return jsonify({'error': 'No video file provided'}), 400
+            # Get multipart data
+            reader = await request.multipart()
             
-            video_file = request.files['video']
+            video_file = None
+            encrypted = False
+            metadata = {}
+            title = 'Encrypted Video'
+            description = ''
             
-            if video_file.filename == '':
-                return jsonify({'error': 'No selected file'}), 400
+            # Read form data
+            async for field in reader:
+                if field.name == 'video':
+                    video_file = await field.read()
+                    filename = field.filename
+                elif field.name == 'encrypted':
+                    encrypted = (await field.text()) == 'true'
+                elif field.name == 'metadata':
+                    try:
+                        metadata = json.loads(await field.text())
+                    except:
+                        metadata = {}
+                elif field.name == 'title':
+                    title = await field.text()
+                elif field.name == 'description':
+                    description = await field.text()
             
-            # Get metadata and other form data
-            encrypted = request.form.get('encrypted', 'false') == 'true'
-            metadata_json = request.form.get('metadata', '{}')
-            title = request.form.get('title', 'Encrypted Video')
-            description = request.form.get('description', '')
-            
-            try:
-                metadata = json.loads(metadata_json)
-            except:
-                metadata = {}
+            if not video_file:
+                return web.json_response({'error': 'No video file provided'}, status=400)
             
             # Generate unique video ID
             video_id = self.generate_video_id()
@@ -71,21 +75,25 @@ class E2EVideoHandler:
             # Prepare filename (keep it anonymous)
             if encrypted:
                 filename = f"encrypted_{video_id}.enc"
-            else:
-                filename = secure_filename(video_file.filename)
             
             # Upload to Cloudinary (still encrypted!)
+            # Save to temp file first
+            temp_path = f"/tmp/{filename}"
+            with open(temp_path, 'wb') as f:
+                f.write(video_file)
+            
             cloudinary_response = cloudinary.uploader.upload(
-                video_file,
+                temp_path,
                 resource_type="raw",  # Important: raw upload for encrypted files
                 public_id=f"memtop/encrypted/{video_id}",
                 folder="memtop/encrypted",
                 format="enc",
                 overwrite=True,
-                # Don't transform or process - keep encrypted blob intact
-                transformation=[],
                 tags=['encrypted', 'e2e', 'memtop']
             )
+            
+            # Clean up temp file
+            os.remove(temp_path)
             
             # Store video info in database
             video_info = {
@@ -98,66 +106,66 @@ class E2EVideoHandler:
                 'filename': filename,
                 'upload_timestamp': datetime.now().isoformat(),
                 'size': cloudinary_response.get('bytes', 0),
-                # Store metadata but without sensitive info
                 'original_size': metadata.get('originalSize', 0),
-                'algorithm': metadata.get('algorithm', 'unknown'),
+                'algorithm': metadata.get('algorithm', 'AES-256-GCM'),
             }
             
-            # Save to database (you'll need to integrate with your DB)
+            # Save to database
             self.save_video_to_db(video_info)
             
-            return jsonify({
+            return web.json_response({
                 'success': True,
                 'video_id': video_id,
                 'message': 'Encrypted video uploaded successfully',
                 'encrypted': encrypted,
                 'size': video_info['size']
-            }), 200
+            })
             
         except Exception as e:
             print(f"Upload error: {str(e)}")
-            return jsonify({
+            return web.json_response({
                 'error': 'Upload failed',
                 'message': str(e)
-            }), 500
+            }, status=500)
     
-    def handle_encrypted_download(self, video_id):
+    async def handle_encrypted_download(self, request):
         """
         Serve encrypted video for client-side decryption
         Server just passes through the encrypted blob
         """
         try:
+            video_id = request.match_info.get('video_id')
+            
             # Get video info from database
             video_info = self.get_video_from_db(video_id)
             
             if not video_info:
-                return jsonify({'error': 'Video not found'}), 404
+                return web.json_response({'error': 'Video not found'}, status=404)
             
             # Get encrypted video URL from Cloudinary
             cloudinary_url = video_info.get('cloudinary_url')
             
             if not cloudinary_url:
-                return jsonify({'error': 'Video URL not found'}), 404
+                return web.json_response({'error': 'Video URL not found'}, status=404)
             
             # Return encrypted video info
-            # Client will fetch directly from Cloudinary
-            return jsonify({
+            return web.json_response({
                 'success': True,
                 'video_id': video_id,
                 'url': cloudinary_url,
                 'encrypted': video_info.get('encrypted', True),
                 'size': video_info.get('size', 0),
                 'title': video_info.get('title', 'Encrypted Video')
-            }), 200
+            })
             
         except Exception as e:
             print(f"Download error: {str(e)}")
-            return jsonify({
+            return web.json_response({
                 'error': 'Failed to retrieve video',
                 'message': str(e)
-            }), 500
+            }, status=500)
     
-    def get_encrypted_videos_list(self):
+    async def get_encrypted_videos_list(self, request):
         """
         Get list of encrypted videos
         Returns only non-sensitive metadata
@@ -178,29 +186,31 @@ class E2EVideoHandler:
                     'thumbnail': video.get('thumbnail', '/static/encrypted_thumbnail.png')
                 })
             
-            return jsonify({
+            return web.json_response({
                 'success': True,
                 'videos': safe_videos,
                 'count': len(safe_videos)
-            }), 200
+            })
             
         except Exception as e:
             print(f"List error: {str(e)}")
-            return jsonify({
+            return web.json_response({
                 'error': 'Failed to retrieve videos',
                 'message': str(e)
-            }), 500
+            }, status=500)
     
-    def delete_encrypted_video(self, video_id):
+    async def delete_encrypted_video(self, request):
         """
         Delete encrypted video from storage and database
         """
         try:
+            video_id = request.match_info.get('video_id')
+            
             # Get video info
             video_info = self.get_video_from_db(video_id)
             
             if not video_info:
-                return jsonify({'error': 'Video not found'}), 404
+                return web.json_response({'error': 'Video not found'}, status=404)
             
             # Delete from Cloudinary
             public_id = video_info.get('cloudinary_public_id')
@@ -210,23 +220,21 @@ class E2EVideoHandler:
             # Delete from database
             self.delete_video_from_db(video_id)
             
-            return jsonify({
+            return web.json_response({
                 'success': True,
                 'message': 'Video deleted successfully'
-            }), 200
+            })
             
         except Exception as e:
             print(f"Delete error: {str(e)}")
-            return jsonify({
+            return web.json_response({
                 'error': 'Failed to delete video',
                 'message': str(e)
-            }), 500
+            }, status=500)
     
-    # Database methods (integrate with your existing DB)
+    # Database methods
     def save_video_to_db(self, video_info):
         """Save video info to database"""
-        # TODO: Integrate with your existing database
-        # For now, using simple file storage as fallback
         db_file = 'memtop_encrypted_videos.json'
         
         try:
@@ -300,39 +308,3 @@ class E2EVideoHandler:
                 
         except Exception as e:
             print(f"Database delete error: {str(e)}")
-
-def register_e2e_routes(app, handler):
-    """
-    Register E2E encryption routes
-    """
-    
-    @app.route('/api/upload', methods=['POST'])
-    def upload_video():
-        """Handle video upload (encrypted or regular)"""
-        return handler.handle_encrypted_upload()
-    
-    @app.route('/api/video/<video_id>', methods=['GET'])
-    def get_video(video_id):
-        """Get encrypted video info"""
-        return handler.handle_encrypted_download(video_id)
-    
-    @app.route('/api/videos', methods=['GET'])
-    def list_videos():
-        """List all videos"""
-        return handler.get_encrypted_videos_list()
-    
-    @app.route('/api/video/<video_id>', methods=['DELETE'])
-    def delete_video(video_id):
-        """Delete video"""
-        return handler.delete_encrypted_video(video_id)
-    
-    @app.route('/api/e2e/status', methods=['GET'])
-    def e2e_status():
-        """Check E2E encryption status"""
-        return jsonify({
-            'success': True,
-            'e2e_enabled': True,
-            'encryption_algorithm': 'AES-256-GCM',
-            'server_blind': True,
-            'message': 'E2E encryption active - server cannot decrypt videos'
-        }), 200
