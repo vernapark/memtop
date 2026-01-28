@@ -84,7 +84,7 @@ class E2EVideoHandler:
             
             cloudinary_response = cloudinary.uploader.upload(
                 temp_path,
-                resource_type="raw",  # Important: raw upload for encrypted files
+                resource_type="raw",
                 public_id=f"memtop/encrypted/{video_id}",
                 folder="memtop/encrypted",
                 format="enc",
@@ -95,7 +95,7 @@ class E2EVideoHandler:
             # Clean up temp file
             os.remove(temp_path)
             
-            # Store video info in database
+            # Store video info
             video_info = {
                 'video_id': video_id,
                 'cloudinary_url': cloudinary_response.get('secure_url'),
@@ -110,7 +110,6 @@ class E2EVideoHandler:
                 'algorithm': metadata.get('algorithm', 'AES-256-GCM'),
             }
             
-            # Save to database
             self.save_video_to_db(video_info)
             
             return web.json_response({
@@ -129,26 +128,19 @@ class E2EVideoHandler:
             }, status=500)
     
     async def handle_encrypted_download(self, request):
-        """
-        Serve encrypted video for client-side decryption
-        Server just passes through the encrypted blob
-        """
+        """Serve encrypted video for client-side decryption"""
         try:
             video_id = request.match_info.get('video_id')
-            
-            # Get video info from database
             video_info = self.get_video_from_db(video_id)
             
             if not video_info:
                 return web.json_response({'error': 'Video not found'}, status=404)
             
-            # Get encrypted video URL from Cloudinary
             cloudinary_url = video_info.get('cloudinary_url')
             
             if not cloudinary_url:
                 return web.json_response({'error': 'Video URL not found'}, status=404)
             
-            # Return encrypted video info
             return web.json_response({
                 'success': True,
                 'video_id': video_id,
@@ -166,14 +158,10 @@ class E2EVideoHandler:
             }, status=500)
     
     async def get_encrypted_videos_list(self, request):
-        """
-        Get list of encrypted videos
-        Returns only non-sensitive metadata
-        """
+        """Get list of encrypted videos"""
         try:
             videos = self.get_all_videos_from_db()
             
-            # Filter to only return safe metadata
             safe_videos = []
             for video in videos:
                 safe_videos.append({
@@ -200,24 +188,18 @@ class E2EVideoHandler:
             }, status=500)
     
     async def delete_encrypted_video(self, request):
-        """
-        Delete encrypted video from storage and database
-        """
+        """Delete encrypted video"""
         try:
             video_id = request.match_info.get('video_id')
-            
-            # Get video info
             video_info = self.get_video_from_db(video_id)
             
             if not video_info:
                 return web.json_response({'error': 'Video not found'}, status=404)
             
-            # Delete from Cloudinary
             public_id = video_info.get('cloudinary_public_id')
             if public_id:
                 cloudinary.uploader.destroy(public_id, resource_type="raw")
             
-            # Delete from database
             self.delete_video_from_db(video_id)
             
             return web.json_response({
@@ -232,7 +214,6 @@ class E2EVideoHandler:
                 'message': str(e)
             }, status=500)
     
-    # Database methods
     def save_video_to_db(self, video_info):
         """Save video info to database"""
         db_file = 'memtop_encrypted_videos.json'
@@ -311,9 +292,7 @@ class E2EVideoHandler:
 
 
 def register_e2e_routes(app, handler):
-    """"""
-    Register E2E encryption routes with aiohttp app
-    """"""
+    """Register E2E encryption routes with aiohttp app"""
     # Routes are registered in combined_server_e2e.py directly
     # This function exists for compatibility
     pass
