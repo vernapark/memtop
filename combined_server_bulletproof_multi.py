@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
-🛡️ BULLETPROOF COMBINED SERVER WITH MULTI-CLOUDINARY SUPPORT + FULL TELEGRAM BOT
+ðŸ›¡ï¸ BULLETPROOF COMBINED SERVER WITH MULTI-CLOUDINARY SUPPORT + FULL TELEGRAM BOT
 - Supports multiple Cloudinary accounts for increased storage
 - Full Telegram bot with all commands (createkey, generatecode, etc.)
 - Videos stored permanently in Cloudinary
@@ -56,7 +56,7 @@ def load_cloudinary_accounts():
                 data = json.load(f)
                 accounts = data.get('accounts', [])
                 if accounts:
-                    logger.info(f"✅ Loaded {len(accounts)} Cloudinary accounts from {CLOUDINARY_ACCOUNTS_FILE}")
+                    logger.info(f"âœ… Loaded {len(accounts)} Cloudinary accounts from {CLOUDINARY_ACCOUNTS_FILE}")
                     return accounts
         except Exception as e:
             logger.warning(f"Could not load {CLOUDINARY_ACCOUNTS_FILE}: {e}")
@@ -67,7 +67,7 @@ def load_cloudinary_accounts():
     api_secret = os.getenv('CLOUDINARY_API_SECRET')
     
     if cloud_name and api_key and api_secret:
-        logger.info("✅ Using single Cloudinary account from environment variables")
+        logger.info("âœ… Using single Cloudinary account from environment variables")
         return [{
             "name": "Primary Account",
             "cloud_name": cloud_name,
@@ -92,7 +92,7 @@ def select_account_for_upload():
         raise Exception("No active Cloudinary accounts available")
     
     selected = random.choice(accounts)
-    logger.info(f"📤 Selected account: {selected.get('name', 'Unnamed')} for upload")
+    logger.info(f"ðŸ“¤ Selected account: {selected.get('name', 'Unnamed')} for upload")
     return selected
 
 
@@ -120,7 +120,7 @@ def validate_cloudinary_config():
     
     if not accounts:
         logger.error("=" * 70)
-        logger.error("❌ CRITICAL ERROR: NO CLOUDINARY ACCOUNTS CONFIGURED!")
+        logger.error("âŒ CRITICAL ERROR: NO CLOUDINARY ACCOUNTS CONFIGURED!")
         logger.error("=" * 70)
         logger.error("You need to configure at least one Cloudinary account.")
         logger.error("")
@@ -136,14 +136,14 @@ def validate_cloudinary_config():
     
     if not active_accounts:
         logger.error("=" * 70)
-        logger.error("❌ ERROR: NO ACTIVE CLOUDINARY ACCOUNTS!")
+        logger.error("âŒ ERROR: NO ACTIVE CLOUDINARY ACCOUNTS!")
         logger.error("=" * 70)
         logger.error(f"Found {len(accounts)} account(s) but none are active.")
         logger.error("Set 'active': true for at least one account.")
         logger.error("=" * 70)
         return False
     
-    logger.info(f"✅ Cloudinary configured with {len(active_accounts)} active account(s)")
+    logger.info(f"âœ… Cloudinary configured with {len(active_accounts)} active account(s)")
     for acc in active_accounts:
         logger.info(f"   - {acc.get('name', 'Unnamed')}: {acc['cloud_name']}")
     
@@ -234,7 +234,7 @@ async def handle_telegram_webhook(request):
         # Handle commands
         if text == '/start':
             response = (
-                "🤖 Admin Key Manager Bot\n\n"
+                "ðŸ¤– Admin Key Manager Bot\n\n"
                 "Admin Key Commands:\n"
                 "/createkey - Generate new admin access key\n"
                 "/currentkey - View current admin key\n\n"
@@ -248,7 +248,7 @@ async def handle_telegram_webhook(request):
         
         elif text == '/help':
             response = (
-                "📚 Complete Help Guide\n\n"
+                "ðŸ“š Complete Help Guide\n\n"
                 "The admin key is used to access the admin panel.\n"
                 "Access codes allow users to enter the website.\n\n"
                 "Commands:\n"
@@ -270,17 +270,17 @@ async def handle_telegram_webhook(request):
                 "created_by": username
             }
             save_key_storage(key_data)
-            
-            response = f"🔑 New Admin Key Generated!\n\nKey: {new_key}\n\nCreated: {timestamp}\nBy: @{username}\n\n🔒 Keep this key secure!"
+            response = f"🔑 New Admin Key Generated!\n\nKey:\n```\n{new_key}\n```\n\nCreated: {timestamp}\nBy: @{username}\n\n🔒 Keep this key secure!"
+            response = f"ðŸ”‘ New Admin Key Generated!\n\nKey: {new_key}\n\nCreated: {timestamp}\nBy: @{username}\n\nðŸ”’ Keep this key secure!"
             await send_message(chat_id, response)
         
         elif text == '/currentkey':
             key_data = load_key_storage()
             
             if not key_data.get('current_key'):
-                await send_message(chat_id, "❌ No admin key exists yet.\nUse /createkey to generate one.")
-            else:
-                response = f"🔑 Current Admin Key\n\nKey: {key_data['current_key']}\n\nCreated: {key_data.get('created_at', 'Unknown')}\nBy: @{key_data.get('created_by', 'Unknown')}"
+                await send_message(chat_id, "âŒ No admin key exists yet.\nUse /createkey to generate one.")
+                response = f"🔑 Current Admin Key\n\nKey:\n```\n{key_data['current_key']}\n```\n\nCreated: {key_data.get('created_at', 'Unknown')}\nBy: @{key_data.get('created_by', 'Unknown')}"
+                response = f"ðŸ”‘ Current Admin Key\n\nKey: {key_data['current_key']}\n\nCreated: {key_data.get('created_at', 'Unknown')}\nBy: @{key_data.get('created_by', 'Unknown')}"
                 await send_message(chat_id, response)
         
         elif text == '/generatecode':
@@ -290,8 +290,8 @@ async def handle_telegram_webhook(request):
             codes_data = load_access_codes()
             codes_data['access_codes'].append(new_code)
             save_access_codes(codes_data)
-            
-            response = f"🎟️ User Access Code Generated!\n\nCode: {new_code}\n\nCreated: {timestamp}\nTotal Active Codes: {len(codes_data['access_codes'])}\n\n📤 Share this code with users."
+            response = f"🎟️ User Access Code Generated!\n\nCode:\n```\n{new_code}\n```\n\nCreated: {timestamp}\nTotal Active Codes: {len(codes_data['access_codes'])}\n\n📤 Share this code with users."
+            response = f"ðŸŽŸï¸ User Access Code Generated!\n\nCode: {new_code}\n\nCreated: {timestamp}\nTotal Active Codes: {len(codes_data['access_codes'])}\n\nðŸ“¤ Share this code with users."
             await send_message(chat_id, response)
         
         elif text == '/listcodes':
@@ -299,9 +299,9 @@ async def handle_telegram_webhook(request):
             codes = codes_data.get('access_codes', [])
             
             if not codes:
-                await send_message(chat_id, "❌ No active access codes.\nUse /generatecode to create one.")
+                await send_message(chat_id, "âŒ No active access codes.\nUse /generatecode to create one.")
             else:
-                response = f"🎟️ Active Access Codes ({len(codes)})\n\n"
+                response = f"ðŸŽŸï¸ Active Access Codes ({len(codes)})\n\n"
                 for i, code in enumerate(codes, 1):
                     response += f"{i}. ```{code}```\n"
                 response += f"\nTotal: {len(codes)} code(s)"
@@ -322,9 +322,9 @@ async def handle_telegram_webhook(request):
                     codes_data['access_codes'] = codes
                     save_access_codes(codes_data)
                     
-                    await send_message(chat_id, f"✅ Access code revoked!\n\nRemoved: {code_to_revoke}\nRemaining Codes: {len(codes)}")
+                    await send_message(chat_id, f"âœ… Access code revoked!\n\nRemoved: {code_to_revoke}\nRemaining Codes: {len(codes)}")
                 else:
-                    await send_message(chat_id, f"❌ Code not found: {code_to_revoke}")
+                    await send_message(chat_id, f"âŒ Code not found: {code_to_revoke}")
         
         return web.Response(text="OK")
         
@@ -370,7 +370,7 @@ async def upload_video_to_cloudinary(request):
         if not video_file:
             return web.json_response({"error": "No video file provided"}, status=400)
         
-        logger.info(f"📤 Uploading to {account.get('name')}: {video_data.get('videoTitle', 'Untitled')}")
+        logger.info(f"ðŸ“¤ Uploading to {account.get('name')}: {video_data.get('videoTitle', 'Untitled')}")
         
         # Upload thumbnail if provided
         thumbnail_url = None
@@ -411,7 +411,7 @@ async def upload_video_to_cloudinary(request):
             "cloudinary_cloud_name": account['cloud_name']
         }
         
-        logger.info(f"✅ Video uploaded to {account.get('name')}: {video_metadata['id']}")
+        logger.info(f"âœ… Video uploaded to {account.get('name')}: {video_metadata['id']}")
         
         return web.json_response({
             "success": True,
@@ -420,7 +420,7 @@ async def upload_video_to_cloudinary(request):
         })
         
     except Exception as e:
-        logger.error(f"❌ Upload error: {e}", exc_info=True)
+        logger.error(f"âŒ Upload error: {e}", exc_info=True)
         return web.json_response({"error": str(e)}, status=500)
 
 async def get_videos_from_cloudinary(request):
@@ -474,10 +474,10 @@ async def get_videos_from_cloudinary(request):
                     account_videos += 1
                 
                 account_stats[account_name] = account_videos
-                logger.info(f"✅ Loaded {account_videos} videos from {account_name}")
+                logger.info(f"âœ… Loaded {account_videos} videos from {account_name}")
                 
             except Exception as e:
-                logger.error(f"❌ Error loading from {account.get('name')}: {e}")
+                logger.error(f"âŒ Error loading from {account.get('name')}: {e}")
         
         # Sort by upload date (newest first)
         all_videos.sort(key=lambda x: x.get('uploadDate', ''), reverse=True)
@@ -494,7 +494,7 @@ async def get_videos_from_cloudinary(request):
         return web.json_response(response_data)
         
     except Exception as e:
-        logger.error(f"❌ Error getting videos: {e}", exc_info=True)
+        logger.error(f"âŒ Error getting videos: {e}", exc_info=True)
         return web.json_response({"error": str(e)}, status=500)
 
 async def delete_video_from_cloudinary(request):
@@ -527,7 +527,7 @@ async def delete_video_from_cloudinary(request):
             active = get_active_accounts()
             if active:
                 account = active[0]
-                logger.warning(f"⚠️ Cloud name not found, using {account.get('name')}")
+                logger.warning(f"âš ï¸ Cloud name not found, using {account.get('name')}")
         
         if not account:
             return web.json_response({"error": "No account found for deletion"}, status=404)
@@ -537,7 +537,7 @@ async def delete_video_from_cloudinary(request):
         # Delete video
         cloudinary.uploader.destroy(video_id, resource_type="video")
         
-        logger.info(f"✅ Video deleted from {account.get('name')}: {video_id}")
+        logger.info(f"âœ… Video deleted from {account.get('name')}: {video_id}")
         
         return web.json_response({
             "success": True,
@@ -545,7 +545,7 @@ async def delete_video_from_cloudinary(request):
         })
         
     except Exception as e:
-        logger.error(f"❌ Delete error: {e}", exc_info=True)
+        logger.error(f"âŒ Delete error: {e}", exc_info=True)
         return web.json_response({"error": str(e)}, status=500)
 
 # ============================================================================
@@ -730,7 +730,7 @@ async def health_check(request):
 async def set_telegram_webhook():
     """Set Telegram webhook on startup"""
     if not WEBHOOK_URL:
-        logger.warning("⚠️ WEBHOOK_URL not set - bot will not work!")
+        logger.warning("âš ï¸ WEBHOOK_URL not set - bot will not work!")
         return
     
     import aiohttp
@@ -742,35 +742,35 @@ async def set_telegram_webhook():
         async with session.post(url, json=data) as resp:
             result = await resp.json()
             if result.get('ok'):
-                logger.info(f"✅ Telegram webhook set to: {webhook_url}")
+                logger.info(f"âœ… Telegram webhook set to: {webhook_url}")
             else:
-                logger.error(f"❌ Failed to set webhook: {result}")
+                logger.error(f"âŒ Failed to set webhook: {result}")
 
 async def startup(app):
     """Run on startup"""
     initialize_files()
     await set_telegram_webhook()
     logger.info("=" * 70)
-    logger.info("🛡️ BULLETPROOF SERVER + MULTI-CLOUDINARY + TELEGRAM BOT")
+    logger.info("ðŸ›¡ï¸ BULLETPROOF SERVER + MULTI-CLOUDINARY + TELEGRAM BOT")
     logger.info("=" * 70)
     
     if CLOUDINARY_ENABLED:
         accounts = get_active_accounts()
-        logger.info(f"✅ {len(accounts)} Cloudinary account(s) active")
+        logger.info(f"âœ… {len(accounts)} Cloudinary account(s) active")
         for acc in accounts:
             logger.info(f"   - {acc.get('name')}: {acc['cloud_name']}")
-        logger.info("✅ Videos stored permanently in cloud")
-        logger.info("✅ Automatic load balancing across accounts")
+        logger.info("âœ… Videos stored permanently in cloud")
+        logger.info("âœ… Automatic load balancing across accounts")
     else:
-        logger.warning("⚠️ CLOUDINARY NOT CONFIGURED")
-        logger.warning("⚠️ VIDEO UPLOADS DISABLED")
+        logger.warning("âš ï¸ CLOUDINARY NOT CONFIGURED")
+        logger.warning("âš ï¸ VIDEO UPLOADS DISABLED")
     
-    logger.info("✅ Telegram bot: @pluseight_bot (webhook mode)")
+    logger.info("âœ… Telegram bot: @pluseight_bot (webhook mode)")
     logger.info("=" * 70)
 
 def main():
     print("=" * 70)
-    print("🛡️ BULLETPROOF SERVER + MULTI-CLOUDINARY + TELEGRAM BOT")
+    print("ðŸ›¡ï¸ BULLETPROOF SERVER + MULTI-CLOUDINARY + TELEGRAM BOT")
     print("=" * 70)
     print(f"Port: {PORT}")
     print(f"Webhook URL: {WEBHOOK_URL}")
@@ -778,13 +778,13 @@ def main():
     
     if CLOUDINARY_ENABLED:
         accounts = get_active_accounts()
-        print(f"Cloudinary: ✅ {len(accounts)} account(s) configured")
+        print(f"Cloudinary: âœ… {len(accounts)} account(s) configured")
         for acc in accounts:
             print(f"  - {acc.get('name')}: {acc['cloud_name']}")
-        print("Video Storage: ✅ PERMANENT (multi-account)")
+        print("Video Storage: âœ… PERMANENT (multi-account)")
     else:
-        print("Cloudinary: ❌ NOT CONFIGURED")
-        print("Video Storage: ❌ DISABLED")
+        print("Cloudinary: âŒ NOT CONFIGURED")
+        print("Video Storage: âŒ DISABLED")
     
     print("=" * 70)
     
@@ -817,7 +817,7 @@ def main():
     
     app.on_startup.append(startup)
     
-    logger.info("🚀 Starting bulletproof server with multi-cloudinary and telegram bot...")
+    logger.info("ðŸš€ Starting bulletproof server with multi-cloudinary and telegram bot...")
     web.run_app(app, host=HOST, port=PORT)
 
 if __name__ == '__main__':
