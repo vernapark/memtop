@@ -1021,3 +1021,14 @@ html {
     }
     
 
+
+/* Additional styles for security fix */
+.upload-icon {
+    opacity: 0.5;
+}
+
+.upload-hint {
+    font-size: 14px;
+    color: #666;
+    margin-top: 10px;
+}

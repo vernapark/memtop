@@ -326,6 +326,43 @@ function setupModalEventListeners() {
             return false;
         }
     });
+    
+    // Select file button handler
+    const selectFileBtn = document.getElementById('selectFileBtn');
+    if (selectFileBtn) {
+        selectFileBtn.addEventListener('click', function() {
+            document.getElementById('videoInput').click();
+        });
+    }
+    
+    // Upload video button handler
+    const uploadVideoBtn = document.getElementById('uploadVideoBtn');
+    if (uploadVideoBtn) {
+        uploadVideoBtn.addEventListener('click', uploadVideo);
+    }
+    
+    // Delete video button handler
+    const deleteVideoBtn = document.getElementById('deleteVideoBtn');
+    if (deleteVideoBtn) {
+        deleteVideoBtn.addEventListener('click', deleteCurrentVideo);
+    }
+    
+    // Close modal buttons
+    document.querySelectorAll('.close-modal').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+                document.body.style.touchAction = '';
+                
+                // Clear video if in video modal
+                if (modal.id === 'videoModal') {
+                    closeVideoModal();
+                }
+            }
+        });
+    });
 }
 
 // Detect mobile device

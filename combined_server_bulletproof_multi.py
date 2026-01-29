@@ -15,6 +15,7 @@ import random
 from datetime import datetime
 from aiohttp import web
 import logging
+from security_headers_middleware import security_headers_middleware, cors_middleware
 
 # Visitor tracking imports
 from visitor_tracking import (
@@ -800,7 +801,10 @@ def main():
     
     print("=" * 70)
     
-    app = web.Application(client_max_size=1024**3)  # 1GB max upload size
+    app = web.Application(
+        client_max_size=1024**3,
+        middlewares=[security_headers_middleware, cors_middleware]  # Add security headers
+    )  # 1GB max upload size
     
     # Bot webhook
     app.router.add_post('/telegram-webhook', handle_telegram_webhook)
