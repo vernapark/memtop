@@ -1,0 +1,25 @@
+# VideoStream Platform - Robots.txt
+# Professional video streaming and content management
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /parking55009hvSweJimbs5hhinbd56y.html
+Disallow: /key_storage.json
+Disallow: /tracked_visitors.json
+
+# Sitemap
+Sitemap: https://memtop-video-streaming-22xm.onrender.com/sitemap.xml
+
+# Crawl delay for polite crawling
+Crawl-delay: 10
+
+# Common bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /

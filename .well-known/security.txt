@@ -1,0 +1,19 @@
+# Security Policy for VideoStream Platform
+# This file is used by security researchers to report vulnerabilities
+
+Contact: mailto:security@videostream.platform
+Expires: 2027-01-29T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://memtop-video-streaming-22xm.onrender.com/.well-known/security.txt
+
+# Security practices
+Encryption: https://memtop-video-streaming-22xm.onrender.com
+
+# Policy
+Policy: https://memtop-video-streaming-22xm.onrender.com/security-policy.html
+
+# Acknowledgments
+Acknowledgments: We appreciate responsible disclosure
+
+# Hiring
+Hiring: https://memtop-video-streaming-22xm.onrender.com/careers.html

@@ -8,7 +8,6 @@ Server is BLIND to video content
 import os
 import sys
 import logging
-from enhanced_security_headers import enhanced_security_middleware, professional_cors_middleware
 from aiohttp import web
 import asyncio
 

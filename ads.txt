@@ -1,0 +1,9 @@
+# ads.txt file for VideoStream Platform
+# This file indicates authorized digital sellers
+# Presence of this file shows legitimacy and compliance
+
+# Direct sellers
+# videostream.platform, publisher-id, DIRECT
+
+# This is a professional video streaming platform
+# For advertising inquiries, contact through official channels

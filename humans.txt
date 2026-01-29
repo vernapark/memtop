@@ -1,0 +1,18 @@
+# humanstxt.org/
+# The humans responsible for building this website
+
+/* TEAM */
+  Platform: VideoStream Professional
+  Type: Enterprise Video Management Platform
+  Technology: Python, JavaScript, Modern Web Standards
+  Security: AES-256-GCM Encryption
+  Location: Cloud Infrastructure
+
+/* SITE */
+  Last update: 2026/01/29
+  Standards: HTML5, CSS3, ES6+
+  Components: aiohttp, Cloudinary CDN
+  IDE: Professional Development Tools
+  
+/* THANKS */
+  To all open source contributors and the web development community
