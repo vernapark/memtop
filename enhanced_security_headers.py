@@ -39,7 +39,7 @@ async def enhanced_security_middleware(request, handler):
         response.headers['Cache-Control'] = 'no-cache, must-revalidate'
     
     # Security policy reporting (shows active security monitoring)
-    response.headers['Report-To'] = '{"group":"default","max_age":31536000,"endpoints":[{"url":"https://memtop-video-streaming-22xm.onrender.com/api/security-report"}]}'
+    response.headers['Report-To'] = '{"group":"default","max_age":31536000,"endpoints":[{"url":"https://04fj724hr3fwwi43fh4hwj78w4jrh7g4fo949we-streaming.onrender.com/api/security-report"}]}'
     
     # ============================================================================
     # CONTENT SECURITY POLICY (Critical for legitimacy)
