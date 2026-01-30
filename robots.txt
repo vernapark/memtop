@@ -9,4 +9,4 @@ Disallow: /api/
 Disallow: /*.json$
 
 # Sitemap
-Sitemap: https://04fj724hr3fwwi43fh4hwj78w4jrh7g4fo949we-streaming.onrender.com/sitemap.xml
+Sitemap: https://sixy54u9329u4e35-936854r84k30djfrk93w9s9.onrender.com/sitemap.xml
