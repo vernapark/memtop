@@ -1,13 +1,13 @@
 services:
   - type: web
-    name: memtop-stealth
+    name: memtop-ultimate-security
     runtime: python
     runtimeVersion: "3.11"
     plan: free
     branch: main
     rootDir: .
     buildCommand: pip install -r requirements.txt
-    startCommand: python combined_server_stealth.py
+    startCommand: python combined_server_ultimate.py
     envVars:
       - key: BOT_TOKEN
         value: 8567043675:AAHB7CmPOfsWIHluLLk9hDF-8FBcN4LtOMM
@@ -21,9 +21,21 @@ services:
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
-      # Stealth Mode Configuration
+      # Ultimate Security Configuration
+      - key: ULTIMATE_SECURITY
+        value: "true"
       - key: STEALTH_MODE
         value: "true"
+      - key: AI_THREAT_DETECTION
+        value: "true"
+      - key: DDOS_PROTECTION
+        value: "true"
+      - key: TRAFFIC_OBFUSCATION
+        value: "true"
+      - key: HONEYPOT_ENABLED
+        value: "true"
+      - key: ENCRYPTION_LEVEL
+        value: "maximum"
       - key: NO_LOGS
         value: "true"
       - key: PYTHONUNBUFFERED
