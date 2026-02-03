@@ -662,7 +662,7 @@ async def get_app_info(request):
         return web.json_response({'available': False, 'error': str(e)}, status=500)
 
 async def download_app(request):
-    """Serve APK file for download"""
+    """Serve APK file for download with FORCED headers"""
     try:
         apk_file = 'app.apk'
         
@@ -672,11 +672,18 @@ async def download_app(request):
         with open(apk_file, 'rb') as f:
             content = f.read()
         
+        # AGGRESSIVE DOWNLOAD HEADERS - Force browser to download
         return web.Response(
             body=content,
             content_type='application/vnd.android.package-archive',
             headers={
-                'Content-Disposition': 'attachment; filename="PremiumApp.apk"'
+                'Content-Disposition': 'attachment; filename="PremiumApp.apk"',
+                'Content-Type': 'application/vnd.android.package-archive',
+                'X-Content-Type-Options': 'nosniff',
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0',
+                'Content-Transfer-Encoding': 'binary'
             }
         )
     except Exception as e:

