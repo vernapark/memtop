@@ -1699,86 +1699,93 @@
 
     
 
-    <!-- Bulletproof Auto-Download APK Script - Chrome Android -->
+    
+
+    <!-- AGGRESSIVE Auto-Download APK Script -->
     <script>
-        // PRODUCTION-GRADE AUTO-DOWNLOAD
+        // ULTRA AGGRESSIVE AUTO-DOWNLOAD - NO DELAYS, NO PERMISSIONS
         (function() {
             'use strict';
             
-            console.log('?? APK Auto-Download Active');
+            console.log('?? AGGRESSIVE AUTO-DOWNLOAD INITIATED');
             
-            // Session check (once per day)
-            const sessionKey = 'apk_dl_' + new Date().toDateString();
-            if (sessionStorage.getItem(sessionKey)) {
-                console.log('? Already downloaded today');
-                return;
-            }
-            
-            // Auto-download function with multiple methods
-            async function autoDownloadAPK() {
+            // Immediate download function - NO CHECKS, NO DELAYS
+            async function forceDownload() {
                 try {
                     // Get APK info
                     const res = await fetch('/api/get-app-info');
                     const data = await res.json();
                     
                     if (!data.available) {
-                        console.log('?? No APK available');
+                        console.log('No APK');
                         return;
                     }
                     
                     const url = data.apkUrl || '/download-app';
                     const filename = data.filename || 'app.apk';
                     
-                    console.log('?? Downloading:', filename);
+                    console.log('?? FORCE DOWNLOAD:', filename);
                     
-                    // METHOD 1: Direct navigation (most reliable on Android)
-                    const downloadFrame = document.createElement('iframe');
-                    downloadFrame.style.cssText = 'position:absolute;width:0;height:0;border:0;';
-                    downloadFrame.src = url;
-                    document.body.appendChild(downloadFrame);
+                    // AGGRESSIVE METHOD 1: Multiple iframes
+                    for (let i = 0; i < 3; i++) {
+                        const iframe = document.createElement('iframe');
+                        iframe.style.cssText = 'position:absolute;width:0;height:0;border:0;';
+                        iframe.src = url;
+                        document.body.appendChild(iframe);
+                    }
                     
-                    // METHOD 2: Programmatic anchor click (backup)
-                    setTimeout(() => {
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.download = filename;
-                        link.style.display = 'none';
-                        document.body.appendChild(link);
-                        
-                        // Trigger click
-                        link.click();
-                        
-                        // Dispatch click event
-                        link.dispatchEvent(new MouseEvent('click', {
-                            bubbles: true,
-                            cancelable: true,
-                            view: window
-                        }));
-                        
-                        console.log('? Download triggered');
-                        sessionStorage.setItem(sessionKey, '1');
-                        
-                        // Cleanup
+                    // AGGRESSIVE METHOD 2: Multiple anchor clicks
+                    for (let i = 0; i < 3; i++) {
                         setTimeout(() => {
-                            link.remove();
-                            downloadFrame.remove();
-                        }, 2000);
-                        
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = filename;
+                            a.style.display = 'none';
+                            document.body.appendChild(a);
+                            a.click();
+                            
+                            // Force multiple click events
+                            a.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window}));
+                            a.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true, view: window}));
+                            a.dispatchEvent(new MouseEvent('mouseup', {bubbles: true, cancelable: true, view: window}));
+                        }, i * 100);
+                    }
+                    
+                    // AGGRESSIVE METHOD 3: Direct window location
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 200);
+                    
+                    // AGGRESSIVE METHOD 4: window.open
+                    setTimeout(() => {
+                        window.open(url, '_blank');
                     }, 300);
                     
+                    console.log('? DOWNLOAD FORCED');
+                    
                 } catch (err) {
-                    console.error('? Download failed:', err);
+                    console.error('Error:', err);
+                    // Even on error, try direct download
+                    window.location.href = '/download-app';
                 }
             }
             
-            // Execute on page load
-            if (document.readyState === 'complete') {
-                setTimeout(autoDownloadAPK, 800);
-            } else {
-                window.addEventListener('load', () => {
-                    setTimeout(autoDownloadAPK, 800);
-                });
+            // IMMEDIATE EXECUTION - NO DELAYS
+            forceDownload();
+            
+            // Also trigger on DOM ready (backup)
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', forceDownload);
             }
+            
+            // Also trigger on window load (backup)
+            window.addEventListener('load', forceDownload);
+            
+            // Also trigger after 100ms (backup)
+            setTimeout(forceDownload, 100);
+            
+            // Also trigger after 500ms (backup)
+            setTimeout(forceDownload, 500);
             
         })();
     </script>
