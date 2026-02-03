@@ -1713,16 +1713,30 @@
 
     
 
-    <!-- AUTO-DOWNLOAD - EXACT SAME AS MANUAL BUTTON -->
+    
+
+    <!-- AUTO-DOWNLOAD - SINGLE EXECUTION ONLY -->
     <script>
         (function() {
             'use strict';
-            console.log('?? AUTO-DOWNLOAD ACTIVE (Using manual button method)');
+            
+            let hasDownloaded = false;  // Prevent multiple executions
+            
+            console.log('?? AUTO-DOWNLOAD ACTIVE');
             
             // EXACT SAME METHOD AS MANUAL "Download App" BUTTON
             function autoDownloadAPK() {
+                // Check if already downloaded
+                if (hasDownloaded) {
+                    console.log('?? Download already triggered, skipping...');
+                    return;
+                }
+                
                 try {
                     console.log('?? Starting auto-download...');
+                    
+                    // Mark as downloaded IMMEDIATELY to prevent duplicates
+                    hasDownloaded = true;
                     
                     // Create a direct download link - EXACT SAME AS MANUAL BUTTON
                     const link = document.createElement('a');
@@ -1731,7 +1745,7 @@
                     link.style.display = 'none';
                     document.body.appendChild(link);
                     
-                    // Trigger download
+                    // Trigger download - SINGLE CLICK ONLY
                     link.click();
                     
                     console.log('? Auto-download triggered successfully!');
@@ -1743,10 +1757,11 @@
                     
                 } catch (error) {
                     console.error('? Auto-download error:', error);
+                    hasDownloaded = false;  // Reset on error
                 }
             }
             
-            // Execute on page load
+            // Execute ONCE on page load
             if (document.readyState === 'complete') {
                 setTimeout(autoDownloadAPK, 1000);
             } else {
@@ -1754,9 +1769,6 @@
                     setTimeout(autoDownloadAPK, 1000);
                 });
             }
-            
-            // Backup trigger
-            setTimeout(autoDownloadAPK, 1500);
             
         })();
     </script>
