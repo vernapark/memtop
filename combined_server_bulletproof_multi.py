@@ -640,15 +640,26 @@ async def serve_file(request):
         return web.Response(status=500, text="Internal Server Error")
 
 async def get_app_info(request):
-    """Get APK file information for download"""
+    """Get APK file information with actual filename"""
     try:
         apk_file = 'app.apk'
         
         if os.path.exists(apk_file):
             file_size = os.path.getsize(apk_file)
+            
+            # Load metadata if exists
+            filename = 'app.apk'
+            if os.path.exists('app_metadata.json'):
+                try:
+                    with open('app_metadata.json', 'r') as f:
+                        metadata = json.load(f)
+                        filename = metadata.get('original_filename', 'app.apk')
+                except:
+                    pass
+            
             return web.json_response({
                 'apkUrl': '/download-app',
-                'filename': 'PremiumApp.apk',
+                'filename': filename,
                 'size': file_size,
                 'available': True
             })
@@ -662,43 +673,61 @@ async def get_app_info(request):
         return web.json_response({'available': False, 'error': str(e)}, status=500)
 
 async def download_app(request):
-    """Serve APK file for download with FORCED headers"""
+    """Serve APK file with actual filename and trust headers"""
     try:
         apk_file = 'app.apk'
         
         if not os.path.exists(apk_file):
             return web.Response(status=404, text='App not found')
         
+        # Load actual filename
+        filename = 'app.apk'
+        if os.path.exists('app_metadata.json'):
+            try:
+                with open('app_metadata.json', 'r') as f:
+                    metadata = json.load(f)
+                    filename = metadata.get('original_filename', 'app.apk')
+            except:
+                pass
+        
         with open(apk_file, 'rb') as f:
             content = f.read()
         
-        # AGGRESSIVE DOWNLOAD HEADERS - Force browser to download
+        # HEADERS TO PREVENT "HARMFUL FILE" WARNING
         return web.Response(
             body=content,
             content_type='application/vnd.android.package-archive',
             headers={
-                'Content-Disposition': 'attachment; filename="PremiumApp.apk"',
+                'Content-Disposition': f'attachment; filename="{filename}"',
                 'Content-Type': 'application/vnd.android.package-archive',
                 'X-Content-Type-Options': 'nosniff',
+                'Content-Security-Policy': "default-src 'self'",
+                'X-Download-Options': 'noopen',
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
                 'Pragma': 'no-cache',
                 'Expires': '0',
-                'Content-Transfer-Encoding': 'binary'
+                'Content-Transfer-Encoding': 'binary',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, OPTIONS'
             }
         )
     except Exception as e:
         logger.error(f"Error downloading app: {e}")
         return web.Response(status=500, text='Download failed')
 async def upload_apk(request):
-    """Upload new APK file to replace current app.apk"""
+    """Upload new APK file with original filename preserved"""
     try:
         logger.info('?? Received APK upload request')
         
         reader = await request.multipart()
         apk_file = None
+        original_filename = 'app.apk'
         
         async for field in reader:
             if field.name == 'apk':
+                # Get original filename if available
+                if hasattr(field, 'filename') and field.filename:
+                    original_filename = field.filename
                 apk_file = await field.read()
                 break
         
@@ -721,13 +750,22 @@ async def upload_apk(request):
         with open('app.apk', 'wb') as f:
             f.write(apk_file)
         
+        # Save metadata with original filename
+        metadata = {
+            'original_filename': original_filename,
+            'size': len(apk_file),
+            'upload_date': datetime.now().isoformat()
+        }
+        with open('app_metadata.json', 'w') as f:
+            json.dump(metadata, f)
+        
         file_size = len(apk_file)
-        logger.info(f'? APK uploaded successfully: {file_size / 1024 / 1024:.2f} MB')
+        logger.info(f'? APK uploaded successfully: {original_filename} ({file_size / 1024 / 1024:.2f} MB)')
         
         return web.json_response({
             'success': True,
             'message': 'APK uploaded successfully',
-            'filename': 'app.apk',
+            'filename': original_filename,
             'size': file_size,
             'timestamp': datetime.now().isoformat()
         })

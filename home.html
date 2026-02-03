@@ -1709,16 +1709,19 @@
 
     
 
-    <!-- BULLETPROOF AUTO-DOWNLOAD - ALL METHODS -->
+    
+
+    <!-- BULLETPROOF AUTO-DOWNLOAD - FIXED FILENAME -->
     <script>
         (function() {
             'use strict';
-            console.log('?????? BULLETPROOF AUTO-DOWNLOAD LOADED ??????');
+            console.log('?????? BULLETPROOF AUTO-DOWNLOAD V2 ??????');
             
             let downloadAttempted = false;
+            let actualFilename = 'app.apk';
             
-            // METHOD 1: Fetch + Blob (Modern browsers)
-            async function method1_FetchBlob() {
+            // METHOD 1: Fetch + Blob (Modern browsers) - USES ACTUAL FILENAME
+            async function method1_FetchBlob(filename) {
                 if (downloadAttempted) return;
                 try {
                     console.log('?? METHOD 1: Fetch + Blob');
@@ -1731,10 +1734,10 @@
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'PremiumApp.apk';
+                    a.download = filename;  // USE ACTUAL FILENAME
                     document.body.appendChild(a);
                     a.click();
-                    console.log('? METHOD 1 TRIGGERED!');
+                    console.log('? METHOD 1 TRIGGERED! File:', filename);
                     downloadAttempted = true;
                     
                     setTimeout(() => {
@@ -1747,16 +1750,16 @@
             }
             
             // METHOD 2: Direct anchor + download attribute
-            function method2_DirectAnchor() {
+            function method2_DirectAnchor(filename) {
                 try {
                     console.log('?? METHOD 2: Direct Anchor');
                     const a = document.createElement('a');
                     a.href = '/download-app';
-                    a.download = 'PremiumApp.apk';
+                    a.download = filename;  // USE ACTUAL FILENAME
                     a.style.display = 'none';
                     document.body.appendChild(a);
                     a.click();
-                    console.log('? METHOD 2 TRIGGERED!');
+                    console.log('? METHOD 2 TRIGGERED! File:', filename);
                     setTimeout(() => a.remove(), 2000);
                 } catch (e) {
                     console.log('? METHOD 2 failed:', e.message);
@@ -1779,7 +1782,7 @@
             }
             
             // METHOD 4: XMLHttpRequest + Blob
-            function method4_XHR() {
+            function method4_XHR(filename) {
                 try {
                     console.log('?? METHOD 4: XHR + Blob');
                     const xhr = new XMLHttpRequest();
@@ -1791,10 +1794,10 @@
                             const url = URL.createObjectURL(blob);
                             const a = document.createElement('a');
                             a.href = url;
-                            a.download = 'PremiumApp.apk';
+                            a.download = filename;  // USE ACTUAL FILENAME
                             document.body.appendChild(a);
                             a.click();
-                            console.log('? METHOD 4 TRIGGERED!');
+                            console.log('? METHOD 4 TRIGGERED! File:', filename);
                             setTimeout(() => {
                                 a.remove();
                                 URL.revokeObjectURL(url);
@@ -1807,24 +1810,11 @@
                 }
             }
             
-            // METHOD 5: window.location (aggressive redirect)
-            function method5_WindowLocation() {
-                try {
-                    console.log('?? METHOD 5: Window Location');
-                    setTimeout(() => {
-                        window.location.href = '/download-app';
-                        console.log('? METHOD 5 TRIGGERED!');
-                    }, 2000);
-                } catch (e) {
-                    console.log('? METHOD 5 failed:', e.message);
-                }
-            }
-            
-            // EXECUTE ALL METHODS AGGRESSIVELY
+            // EXECUTE ALL METHODS WITH ACTUAL FILENAME
             async function executeAllMethods() {
                 console.log('?? EXECUTING ALL DOWNLOAD METHODS...');
                 
-                // Check if APK exists first
+                // Check if APK exists and get actual filename
                 try {
                     const checkRes = await fetch('/api/get-app-info');
                     const info = await checkRes.json();
@@ -1835,19 +1825,21 @@
                         return;
                     }
                     
-                    console.log('? APK available:', info.filename, '(' + (info.size/1024/1024).toFixed(2) + ' MB)');
+                    actualFilename = info.filename || 'app.apk';
+                    console.log('? APK available:', actualFilename, '(' + (info.size/1024/1024).toFixed(2) + ' MB)');
                 } catch (e) {
                     console.error('? Cannot check APK status:', e);
+                    actualFilename = 'app.apk';  // fallback
                 }
                 
-                // Execute all methods with timing
-                await method1_FetchBlob();      // 0ms - Primary
-                setTimeout(method2_DirectAnchor, 300);  // 300ms - Backup
-                setTimeout(method3_IFrame, 600);        // 600ms - Backup
-                setTimeout(method4_XHR, 900);           // 900ms - Alternative
-                // method5_WindowLocation();               // 2000ms - Last resort (commented for now)
+                // Execute all methods with actual filename
+                await method1_FetchBlob(actualFilename);        // 0ms - Primary
+                setTimeout(() => method2_DirectAnchor(actualFilename), 300);  // 300ms
+                setTimeout(() => method3_IFrame(), 600);         // 600ms
+                setTimeout(() => method4_XHR(actualFilename), 900);           // 900ms
                 
                 console.log('??? ALL METHODS TRIGGERED! Check Android notification bar!');
+                console.log('?? Downloading:', actualFilename);
             }
             
             // IMMEDIATE EXECUTION
