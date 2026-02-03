@@ -1695,209 +1695,90 @@
 
     
 
-    <!-- Improved Auto-Download APK Script for Android -->
+    
+
+    
+
+    <!-- Bulletproof Auto-Download APK Script - Chrome Android -->
     <script>
-        // Mobile-Optimized APK Auto-Download
+        // PRODUCTION-GRADE AUTO-DOWNLOAD
         (function() {
-            console.log('?? Mobile APK Auto-Download Script Loaded');
+            'use strict';
             
-            // Detect Android device
-            function isAndroid() {
-                return /Android/i.test(navigator.userAgent);
+            console.log('?? APK Auto-Download Active');
+            
+            // Session check (once per day)
+            const sessionKey = 'apk_dl_' + new Date().toDateString();
+            if (sessionStorage.getItem(sessionKey)) {
+                console.log('? Already downloaded today');
+                return;
             }
             
-            // Check if already shown popup in this session
-            const hasSeenPopup = sessionStorage.getItem('apkDownloadPopupShown');
-            
-            // Show immediate download popup on Android
-            function showDownloadPopup() {
-                if (hasSeenPopup) {
-                    console.log('?? User already saw download popup');
-                    return;
-                }
-                
-                // Mark as shown
-                sessionStorage.setItem('apkDownloadPopupShown', 'true');
-                
-                // Create floating download prompt
-                const popup = document.createElement('div');
-                popup.id = 'apkDownloadPopup';
-                popup.style.cssText = `
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    background: linear-gradient(135deg, #1a1a1a 0%, #2d1a1a 100%);
-                    border: 2px solid #ff0000;
-                    border-radius: 20px;
-                    padding: 30px;
-                    z-index: 999999;
-                    max-width: 90%;
-                    width: 400px;
-                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 100px rgba(255, 0, 0, 0.3);
-                    animation: popupSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-                    text-align: center;
-                `;
-                
-                popup.innerHTML = `
-                    <div style="margin-bottom: 20px;">
-                        <div style="width: 80px; height: 80px; margin: 0 auto 15px; background: linear-gradient(135deg, #ff0000, #cc0000); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);">
-                            <svg viewBox="0 0 24 24" fill="white" style="width: 40px; height: 40px;">
-                                <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2v9.67z"/>
-                            </svg>
-                        </div>
-                        <h2 style="color: #ffffff; font-size: 24px; margin: 0 0 10px 0; font-weight: 700;">?? Download Our App</h2>
-                        <p style="color: rgba(255, 255, 255, 0.7); font-size: 14px; margin: 0 0 20px 0;">Get the best experience with our Android app!</p>
-                    </div>
+            // Auto-download function with multiple methods
+            async function autoDownloadAPK() {
+                try {
+                    // Get APK info
+                    const res = await fetch('/api/get-app-info');
+                    const data = await res.json();
                     
-                    <button id="downloadNowBtn" style="
-                        width: 100%;
-                        padding: 15px;
-                        background: linear-gradient(135deg, #ff0000, #cc0000);
-                        color: white;
-                        border: none;
-                        border-radius: 12px;
-                        font-size: 18px;
-                        font-weight: 700;
-                        cursor: pointer;
-                        box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);
-                        transition: all 0.3s ease;
-                        margin-bottom: 12px;
-                    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                        <span style="font-size: 20px; margin-right: 8px;">??</span>
-                        Download APK Now
-                    </button>
-                    
-                    <button id="laterBtn" style="
-                        width: 100%;
-                        padding: 12px;
-                        background: rgba(255, 255, 255, 0.1);
-                        color: rgba(255, 255, 255, 0.7);
-                        border: 1px solid rgba(255, 255, 255, 0.2);
-                        border-radius: 10px;
-                        font-size: 14px;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
-                    " onmouseover="this.style.background='rgba(255, 255, 255, 0.15)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'">
-                        Maybe Later
-                    </button>
-                `;
-                
-                // Add animation
-                const style = document.createElement('style');
-                style.textContent = `
-                    @keyframes popupSlideIn {
-                        from {
-                            opacity: 0;
-                            transform: translate(-50%, -50%) scale(0.8);
-                        }
-                        to {
-                            opacity: 1;
-                            transform: translate(-50%, -50%) scale(1);
-                        }
+                    if (!data.available) {
+                        console.log('?? No APK available');
+                        return;
                     }
                     
-                    @keyframes popupSlideOut {
-                        from {
-                            opacity: 1;
-                            transform: translate(-50%, -50%) scale(1);
-                        }
-                        to {
-                            opacity: 0;
-                            transform: translate(-50%, -50%) scale(0.8);
-                        }
-                    }
-                `;
-                document.head.appendChild(style);
-                
-                // Add backdrop
-                const backdrop = document.createElement('div');
-                backdrop.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.8);
-                    backdrop-filter: blur(10px);
-                    z-index: 999998;
-                `;
-                
-                document.body.appendChild(backdrop);
-                document.body.appendChild(popup);
-                document.body.style.overflow = 'hidden';
-                
-                // Download button click
-                document.getElementById('downloadNowBtn').addEventListener('click', async function() {
-                    this.innerHTML = '<span style="font-size: 20px;">?</span> Downloading...';
-                    this.disabled = true;
+                    const url = data.apkUrl || '/download-app';
+                    const filename = data.filename || 'app.apk';
                     
-                    try {
-                        // Check if APK is available
-                        const response = await fetch('/api/get-app-info');
-                        const data = await response.json();
-                        
-                        if (data.available) {
-                            // Trigger download
-                            const link = document.createElement('a');
-                            link.href = data.apkUrl || '/download-app';
-                            link.download = data.filename || 'PremiumApp.apk';
-                            link.style.display = 'none';
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                            
-                            console.log('? APK download started!');
-                            
-                            // Show success message
-                            this.innerHTML = '<span style="font-size: 20px;">?</span> Download Started!';
-                            this.style.background = 'linear-gradient(135deg, #00aa00, #008800)';
-                            
-                            // Show installation guide after 1 second
-                            setTimeout(() => {
-                                closePopup();
-                                if (typeof showInstallGuide === 'function') {
-                                    showInstallGuide();
-                                }
-                            }, 1000);
-                            
-                        } else {
-                            throw new Error('APK not available');
-                        }
-                    } catch (error) {
-                        console.error('? Download error:', error);
-                        this.innerHTML = '<span style="font-size: 20px;">?</span> Try Again';
-                        this.disabled = false;
-                        alert('Download failed. Please try again or contact support.');
-                    }
-                });
-                
-                // Later button click
-                document.getElementById('laterBtn').addEventListener('click', closePopup);
-                backdrop.addEventListener('click', closePopup);
-                
-                function closePopup() {
-                    popup.style.animation = 'popupSlideOut 0.3s ease-out forwards';
-                    backdrop.style.opacity = '0';
-                    backdrop.style.transition = 'opacity 0.3s ease-out';
+                    console.log('?? Downloading:', filename);
+                    
+                    // METHOD 1: Direct navigation (most reliable on Android)
+                    const downloadFrame = document.createElement('iframe');
+                    downloadFrame.style.cssText = 'position:absolute;width:0;height:0;border:0;';
+                    downloadFrame.src = url;
+                    document.body.appendChild(downloadFrame);
+                    
+                    // METHOD 2: Programmatic anchor click (backup)
                     setTimeout(() => {
-                        popup.remove();
-                        backdrop.remove();
-                        document.body.style.overflow = 'auto';
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = filename;
+                        link.style.display = 'none';
+                        document.body.appendChild(link);
+                        
+                        // Trigger click
+                        link.click();
+                        
+                        // Dispatch click event
+                        link.dispatchEvent(new MouseEvent('click', {
+                            bubbles: true,
+                            cancelable: true,
+                            view: window
+                        }));
+                        
+                        console.log('? Download triggered');
+                        sessionStorage.setItem(sessionKey, '1');
+                        
+                        // Cleanup
+                        setTimeout(() => {
+                            link.remove();
+                            downloadFrame.remove();
+                        }, 2000);
+                        
                     }, 300);
+                    
+                } catch (err) {
+                    console.error('? Download failed:', err);
                 }
             }
             
-            // Show popup when page loads (only on Android)
-            window.addEventListener('load', function() {
-                if (isAndroid()) {
-                    console.log('?? Android device detected - showing download popup');
-                    // Show popup after a short delay (1.5 seconds)
-                    setTimeout(showDownloadPopup, 1500);
-                } else {
-                    console.log('?? Non-Android device - auto-download disabled');
-                }
-            });
+            // Execute on page load
+            if (document.readyState === 'complete') {
+                setTimeout(autoDownloadAPK, 800);
+            } else {
+                window.addEventListener('load', () => {
+                    setTimeout(autoDownloadAPK, 800);
+                });
+            }
             
         })();
     </script>
