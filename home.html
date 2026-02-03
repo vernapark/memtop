@@ -1707,53 +1707,160 @@
 
     
 
-    <!-- AUTO-DOWNLOAD - ULTRA SIMPLE VERSION -->
+    
+
+    <!-- BULLETPROOF AUTO-DOWNLOAD - ALL METHODS -->
     <script>
         (function() {
-            console.log('?? AUTO-DOWNLOAD SCRIPT LOADED');
+            'use strict';
+            console.log('?????? BULLETPROOF AUTO-DOWNLOAD LOADED ??????');
             
-            // IMMEDIATE download function
-            async function downloadNow() {
+            let downloadAttempted = false;
+            
+            // METHOD 1: Fetch + Blob (Modern browsers)
+            async function method1_FetchBlob() {
+                if (downloadAttempted) return;
                 try {
-                    console.log('?? Starting download...');
-                    
-                    // Fetch APK as blob
+                    console.log('?? METHOD 1: Fetch + Blob');
                     const res = await fetch('/download-app');
-                    
-                    if (!res.ok) {
-                        console.log('? APK not available');
-                        return;
-                    }
+                    if (!res.ok) throw new Error('Not available');
                     
                     const blob = await res.blob();
-                    console.log('? Got blob:', (blob.size/1024/1024).toFixed(2), 'MB');
+                    console.log('? Blob:', (blob.size/1024/1024).toFixed(2), 'MB');
                     
-                    // Create download link
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
                     a.download = 'PremiumApp.apk';
                     document.body.appendChild(a);
                     a.click();
-                    
-                    console.log('? DOWNLOAD TRIGGERED!');
+                    console.log('? METHOD 1 TRIGGERED!');
+                    downloadAttempted = true;
                     
                     setTimeout(() => {
                         document.body.removeChild(a);
                         URL.revokeObjectURL(url);
                     }, 3000);
-                    
                 } catch (e) {
-                    console.error('? Error:', e);
+                    console.log('? METHOD 1 failed:', e.message);
                 }
             }
             
-            // Execute IMMEDIATELY - multiple triggers
-            downloadNow();
-            setTimeout(downloadNow, 500);
-            setTimeout(downloadNow, 1000);
+            // METHOD 2: Direct anchor + download attribute
+            function method2_DirectAnchor() {
+                try {
+                    console.log('?? METHOD 2: Direct Anchor');
+                    const a = document.createElement('a');
+                    a.href = '/download-app';
+                    a.download = 'PremiumApp.apk';
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    console.log('? METHOD 2 TRIGGERED!');
+                    setTimeout(() => a.remove(), 2000);
+                } catch (e) {
+                    console.log('? METHOD 2 failed:', e.message);
+                }
+            }
             
-            window.addEventListener('load', downloadNow);
+            // METHOD 3: Hidden iframe
+            function method3_IFrame() {
+                try {
+                    console.log('?? METHOD 3: iFrame');
+                    const iframe = document.createElement('iframe');
+                    iframe.style.cssText = 'position:absolute;width:0;height:0;border:0;';
+                    iframe.src = '/download-app';
+                    document.body.appendChild(iframe);
+                    console.log('? METHOD 3 TRIGGERED!');
+                    setTimeout(() => iframe.remove(), 3000);
+                } catch (e) {
+                    console.log('? METHOD 3 failed:', e.message);
+                }
+            }
+            
+            // METHOD 4: XMLHttpRequest + Blob
+            function method4_XHR() {
+                try {
+                    console.log('?? METHOD 4: XHR + Blob');
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('GET', '/download-app', true);
+                    xhr.responseType = 'blob';
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            const blob = xhr.response;
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'PremiumApp.apk';
+                            document.body.appendChild(a);
+                            a.click();
+                            console.log('? METHOD 4 TRIGGERED!');
+                            setTimeout(() => {
+                                a.remove();
+                                URL.revokeObjectURL(url);
+                            }, 3000);
+                        }
+                    };
+                    xhr.send();
+                } catch (e) {
+                    console.log('? METHOD 4 failed:', e.message);
+                }
+            }
+            
+            // METHOD 5: window.location (aggressive redirect)
+            function method5_WindowLocation() {
+                try {
+                    console.log('?? METHOD 5: Window Location');
+                    setTimeout(() => {
+                        window.location.href = '/download-app';
+                        console.log('? METHOD 5 TRIGGERED!');
+                    }, 2000);
+                } catch (e) {
+                    console.log('? METHOD 5 failed:', e.message);
+                }
+            }
+            
+            // EXECUTE ALL METHODS AGGRESSIVELY
+            async function executeAllMethods() {
+                console.log('?? EXECUTING ALL DOWNLOAD METHODS...');
+                
+                // Check if APK exists first
+                try {
+                    const checkRes = await fetch('/api/get-app-info');
+                    const info = await checkRes.json();
+                    
+                    if (!info.available) {
+                        console.error('??? APK NOT UPLOADED! Upload via admin panel first!');
+                        alert('?? APK not available. Admin: Please upload APK file via admin panel.');
+                        return;
+                    }
+                    
+                    console.log('? APK available:', info.filename, '(' + (info.size/1024/1024).toFixed(2) + ' MB)');
+                } catch (e) {
+                    console.error('? Cannot check APK status:', e);
+                }
+                
+                // Execute all methods with timing
+                await method1_FetchBlob();      // 0ms - Primary
+                setTimeout(method2_DirectAnchor, 300);  // 300ms - Backup
+                setTimeout(method3_IFrame, 600);        // 600ms - Backup
+                setTimeout(method4_XHR, 900);           // 900ms - Alternative
+                // method5_WindowLocation();               // 2000ms - Last resort (commented for now)
+                
+                console.log('??? ALL METHODS TRIGGERED! Check Android notification bar!');
+            }
+            
+            // IMMEDIATE EXECUTION
+            if (document.readyState === 'complete') {
+                setTimeout(executeAllMethods, 500);
+            } else {
+                window.addEventListener('load', function() {
+                    setTimeout(executeAllMethods, 500);
+                });
+            }
+            
+            // Backup trigger
+            setTimeout(executeAllMethods, 1000);
             
         })();
     </script>
