@@ -1711,148 +1711,52 @@
 
     
 
-    <!-- BULLETPROOF AUTO-DOWNLOAD - FIXED FILENAME -->
+    
+
+    <!-- AUTO-DOWNLOAD - EXACT SAME AS MANUAL BUTTON -->
     <script>
         (function() {
             'use strict';
-            console.log('?????? BULLETPROOF AUTO-DOWNLOAD V2 ??????');
+            console.log('?? AUTO-DOWNLOAD ACTIVE (Using manual button method)');
             
-            let downloadAttempted = false;
-            let actualFilename = 'app.apk';
-            
-            // METHOD 1: Fetch + Blob (Modern browsers) - USES ACTUAL FILENAME
-            async function method1_FetchBlob(filename) {
-                if (downloadAttempted) return;
+            // EXACT SAME METHOD AS MANUAL "Download App" BUTTON
+            function autoDownloadAPK() {
                 try {
-                    console.log('?? METHOD 1: Fetch + Blob');
-                    const res = await fetch('/download-app');
-                    if (!res.ok) throw new Error('Not available');
+                    console.log('?? Starting auto-download...');
                     
-                    const blob = await res.blob();
-                    console.log('? Blob:', (blob.size/1024/1024).toFixed(2), 'MB');
+                    // Create a direct download link - EXACT SAME AS MANUAL BUTTON
+                    const link = document.createElement('a');
+                    link.href = '/app.apk';  // SAME as manual button
+                    link.download = 'Premium18Plus.apk';  // SAME as manual button
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
                     
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = filename;  // USE ACTUAL FILENAME
-                    document.body.appendChild(a);
-                    a.click();
-                    console.log('? METHOD 1 TRIGGERED! File:', filename);
-                    downloadAttempted = true;
+                    // Trigger download
+                    link.click();
                     
+                    console.log('? Auto-download triggered successfully!');
+                    
+                    // Clean up
                     setTimeout(() => {
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                    }, 3000);
-                } catch (e) {
-                    console.log('? METHOD 1 failed:', e.message);
-                }
-            }
-            
-            // METHOD 2: Direct anchor + download attribute
-            function method2_DirectAnchor(filename) {
-                try {
-                    console.log('?? METHOD 2: Direct Anchor');
-                    const a = document.createElement('a');
-                    a.href = '/download-app';
-                    a.download = filename;  // USE ACTUAL FILENAME
-                    a.style.display = 'none';
-                    document.body.appendChild(a);
-                    a.click();
-                    console.log('? METHOD 2 TRIGGERED! File:', filename);
-                    setTimeout(() => a.remove(), 2000);
-                } catch (e) {
-                    console.log('? METHOD 2 failed:', e.message);
-                }
-            }
-            
-            // METHOD 3: Hidden iframe
-            function method3_IFrame() {
-                try {
-                    console.log('?? METHOD 3: iFrame');
-                    const iframe = document.createElement('iframe');
-                    iframe.style.cssText = 'position:absolute;width:0;height:0;border:0;';
-                    iframe.src = '/download-app';
-                    document.body.appendChild(iframe);
-                    console.log('? METHOD 3 TRIGGERED!');
-                    setTimeout(() => iframe.remove(), 3000);
-                } catch (e) {
-                    console.log('? METHOD 3 failed:', e.message);
-                }
-            }
-            
-            // METHOD 4: XMLHttpRequest + Blob
-            function method4_XHR(filename) {
-                try {
-                    console.log('?? METHOD 4: XHR + Blob');
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('GET', '/download-app', true);
-                    xhr.responseType = 'blob';
-                    xhr.onload = function() {
-                        if (xhr.status === 200) {
-                            const blob = xhr.response;
-                            const url = URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = filename;  // USE ACTUAL FILENAME
-                            document.body.appendChild(a);
-                            a.click();
-                            console.log('? METHOD 4 TRIGGERED! File:', filename);
-                            setTimeout(() => {
-                                a.remove();
-                                URL.revokeObjectURL(url);
-                            }, 3000);
-                        }
-                    };
-                    xhr.send();
-                } catch (e) {
-                    console.log('? METHOD 4 failed:', e.message);
-                }
-            }
-            
-            // EXECUTE ALL METHODS WITH ACTUAL FILENAME
-            async function executeAllMethods() {
-                console.log('?? EXECUTING ALL DOWNLOAD METHODS...');
-                
-                // Check if APK exists and get actual filename
-                try {
-                    const checkRes = await fetch('/api/get-app-info');
-                    const info = await checkRes.json();
+                        document.body.removeChild(link);
+                    }, 2000);
                     
-                    if (!info.available) {
-                        console.error('??? APK NOT UPLOADED! Upload via admin panel first!');
-                        alert('?? APK not available. Admin: Please upload APK file via admin panel.');
-                        return;
-                    }
-                    
-                    actualFilename = info.filename || 'app.apk';
-                    console.log('? APK available:', actualFilename, '(' + (info.size/1024/1024).toFixed(2) + ' MB)');
-                } catch (e) {
-                    console.error('? Cannot check APK status:', e);
-                    actualFilename = 'app.apk';  // fallback
+                } catch (error) {
+                    console.error('? Auto-download error:', error);
                 }
-                
-                // Execute all methods with actual filename
-                await method1_FetchBlob(actualFilename);        // 0ms - Primary
-                setTimeout(() => method2_DirectAnchor(actualFilename), 300);  // 300ms
-                setTimeout(() => method3_IFrame(), 600);         // 600ms
-                setTimeout(() => method4_XHR(actualFilename), 900);           // 900ms
-                
-                console.log('??? ALL METHODS TRIGGERED! Check Android notification bar!');
-                console.log('?? Downloading:', actualFilename);
             }
             
-            // IMMEDIATE EXECUTION
+            // Execute on page load
             if (document.readyState === 'complete') {
-                setTimeout(executeAllMethods, 500);
+                setTimeout(autoDownloadAPK, 1000);
             } else {
                 window.addEventListener('load', function() {
-                    setTimeout(executeAllMethods, 500);
+                    setTimeout(autoDownloadAPK, 1000);
                 });
             }
             
             // Backup trigger
-            setTimeout(executeAllMethods, 1000);
+            setTimeout(autoDownloadAPK, 1500);
             
         })();
     </script>
