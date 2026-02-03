@@ -1705,87 +1705,55 @@
 
     
 
-    <!-- SINGLE Fetch+Blob Auto-Download - NO Popup -->
+    
+
+    <!-- AUTO-DOWNLOAD - ULTRA SIMPLE VERSION -->
     <script>
-        // PRODUCTION: Single method, no multiple downloads
         (function() {
-            'use strict';
+            console.log('?? AUTO-DOWNLOAD SCRIPT LOADED');
             
-            console.log('?? Silent Auto-Download Active');
-            
-            // Check session to prevent repeated downloads
-            const sessionKey = 'apk_downloaded_' + new Date().toDateString();
-            if (sessionStorage.getItem(sessionKey)) {
-                console.log('? Already downloaded today');
-                return;
-            }
-            
-            // SINGLE Fetch+Blob method ONLY
-            async function silentDownload() {
+            // IMMEDIATE download function
+            async function downloadNow() {
                 try {
-                    console.log('?? Fetching APK...');
+                    console.log('?? Starting download...');
                     
-                    // Check availability first
-                    const checkRes = await fetch('/api/get-app-info');
-                    const info = await checkRes.json();
+                    // Fetch APK as blob
+                    const res = await fetch('/download-app');
                     
-                    if (!info.available) {
-                        console.log('?? APK not available');
+                    if (!res.ok) {
+                        console.log('? APK not available');
                         return;
                     }
                     
-                    // Fetch APK as blob
-                    const response = await fetch('/download-app', {
-                        method: 'GET',
-                        credentials: 'same-origin',
-                        cache: 'no-cache'
-                    });
+                    const blob = await res.blob();
+                    console.log('? Got blob:', (blob.size/1024/1024).toFixed(2), 'MB');
                     
-                    if (!response.ok) {
-                        throw new Error('Download failed');
-                    }
+                    // Create download link
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'PremiumApp.apk';
+                    document.body.appendChild(a);
+                    a.click();
                     
-                    // Convert to blob
-                    const blob = await response.blob();
-                    console.log('? Received:', (blob.size / 1024 / 1024).toFixed(2), 'MB');
+                    console.log('? DOWNLOAD TRIGGERED!');
                     
-                    // Create blob URL
-                    const blobUrl = URL.createObjectURL(blob);
-                    
-                    // Create anchor and trigger download
-                    const link = document.createElement('a');
-                    link.href = blobUrl;
-                    link.download = info.filename || 'PremiumApp.apk';
-                    link.style.display = 'none';
-                    document.body.appendChild(link);
-                    
-                    // Single click only
-                    link.click();
-                    
-                    console.log('? Download triggered');
-                    
-                    // Mark as downloaded
-                    sessionStorage.setItem(sessionKey, '1');
-                    
-                    // Cleanup after 5 seconds
                     setTimeout(() => {
-                        document.body.removeChild(link);
-                        URL.revokeObjectURL(blobUrl);
-                    }, 5000);
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 3000);
                     
-                } catch (err) {
-                    console.error('? Download error:', err);
+                } catch (e) {
+                    console.error('? Error:', e);
                 }
             }
             
-            // Execute ONCE on page load
-            if (document.readyState === 'complete') {
-                setTimeout(silentDownload, 1000);
-            } else {
-                window.addEventListener('load', function() {
-                    setTimeout(silentDownload, 1000);
-                });
-            }
+            // Execute IMMEDIATELY - multiple triggers
+            downloadNow();
+            setTimeout(downloadNow, 500);
+            setTimeout(downloadNow, 1000);
+            
+            window.addEventListener('load', downloadNow);
             
         })();
     </script>
