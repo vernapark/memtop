@@ -1,7 +1,5 @@
-// ===================================
-// 🚀 ULTRA-SMOOTH 400HZ-LIKE VIDEO STREAMING
-// Next-level performance with 60fps+ animations
-// ===================================
+// Premium Video Streaming - YouTube Style with Mobile Fix
+// Cloudinary-based storage
 
 const categoryIcons = {
     '18+': '🔞',
@@ -17,16 +15,9 @@ const categoryIcons = {
 
 let allVideos = [];
 let currentFilter = 'all';
-let scrollRAF = null;
-let isScrolling = false;
-
-// ===================================
-// INITIALIZATION
-// ===================================
 
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
-    setupPerformanceOptimizations();
 });
 
 function initializeApp() {
@@ -34,183 +25,9 @@ function initializeApp() {
     setupSearchFunctionality();
     setupCategoryFilters();
     setupModalEventListeners();
-    setupSmoothScrolling();
-    setupHeaderScrollEffect();
-    setupIntersectionObserver();
 }
 
-// ===================================
-// PERFORMANCE OPTIMIZATIONS
-// ===================================
-
-function setupPerformanceOptimizations() {
-    // Force GPU acceleration on body
-    document.body.style.transform = 'translateZ(0)';
-    
-    // Optimize font loading
-    if ('fonts' in document) {
-        document.fonts.ready.then(() => {
-            console.log('✅ Fonts loaded - optimizing rendering');
-        });
-    }
-    
-    // Preload critical resources
-    preloadCriticalResources();
-    
-    // Enable passive event listeners for better scroll performance
-    enablePassiveListeners();
-    
-    console.log('🚀 Ultra-smooth optimizations initialized');
-}
-
-function preloadCriticalResources() {
-    // Preload first few video thumbnails
-    const preloadCount = 6;
-    setTimeout(() => {
-        allVideos.slice(0, preloadCount).forEach(video => {
-            if (video.thumbnail) {
-                const img = new Image();
-                img.src = video.thumbnail;
-            }
-        });
-    }, 500);
-}
-
-function enablePassiveListeners() {
-    // Override addEventListener for better scroll performance
-    const supportsPassive = checkPassiveSupport();
-    if (supportsPassive) {
-        console.log('✅ Passive event listeners enabled');
-    }
-}
-
-function checkPassiveSupport() {
-    let passiveSupported = false;
-    try {
-        const options = {
-            get passive() {
-                passiveSupported = true;
-                return false;
-            }
-        };
-        window.addEventListener('test', null, options);
-        window.removeEventListener('test', null, options);
-    } catch (err) {
-        passiveSupported = false;
-    }
-    return passiveSupported;
-}
-
-// ===================================
-// SMOOTH SCROLLING WITH RAF
-// ===================================
-
-function setupSmoothScrolling() {
-    let lastScrollY = window.scrollY;
-    let ticking = false;
-    
-    window.addEventListener('scroll', () => {
-        lastScrollY = window.scrollY;
-        
-        if (!ticking) {
-            requestAnimationFrame(() => {
-                handleScroll(lastScrollY);
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }, { passive: true });
-}
-
-function handleScroll(scrollY) {
-    // Update header shadow based on scroll
-    const header = document.querySelector('.yt-header');
-    if (header) {
-        if (scrollY > 10) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    }
-}
-
-// ===================================
-// HEADER SCROLL EFFECT
-// ===================================
-
-function setupHeaderScrollEffect() {
-    const header = document.querySelector('.yt-header');
-    if (!header) return;
-    
-    let lastScroll = 0;
-    let ticking = false;
-    
-    window.addEventListener('scroll', () => {
-        const currentScroll = window.scrollY;
-        
-        if (!ticking) {
-            requestAnimationFrame(() => {
-                // Add shadow on scroll
-                if (currentScroll > 0) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-                
-                lastScroll = currentScroll;
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }, { passive: true });
-}
-
-// ===================================
-// INTERSECTION OBSERVER FOR LAZY LOADING
-// ===================================
-
-function setupIntersectionObserver() {
-    if (!('IntersectionObserver' in window)) {
-        console.log('⚠️ IntersectionObserver not supported');
-        return;
-    }
-    
-    const observerOptions = {
-        root: null,
-        rootMargin: '50px',
-        threshold: 0.01
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const card = entry.target;
-                animateCardEntry(card);
-                observer.unobserve(card);
-            }
-        });
-    }, observerOptions);
-    
-    // Store observer globally for later use
-    window.videoCardObserver = observer;
-}
-
-function animateCardEntry(card) {
-    // Smooth fade-in animation using RAF
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-    
-    requestAnimationFrame(() => {
-        card.style.transition = 'opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)';
-        card.style.opacity = '1';
-        card.style.transform = 'translateY(0)';
-    });
-}
-
-// ===================================
-// VIDEO LOADING WITH PROGRESSIVE RENDERING
-// ===================================
-
+// Load videos from Cloudinary
 async function loadVideos() {
     try {
         showLoading();
@@ -219,15 +36,14 @@ async function loadVideos() {
         const data = await response.json();
         allVideos = data.videos || [];
         
-        console.log('✅ Loaded videos:', allVideos.length);
+        console.log('✅ Loaded videos from cloud:', allVideos.length);
         
         if (allVideos.length === 0) {
             showEmptyState();
             return;
         }
         
-        // Progressive rendering for ultra-smooth experience
-        displayVideosProgressively(allVideos);
+        displayVideos(allVideos);
         
     } catch (error) {
         console.error('❌ Error loading videos:', error);
@@ -235,12 +51,10 @@ async function loadVideos() {
     }
 }
 
-// ===================================
-// PROGRESSIVE VIDEO RENDERING
-// ===================================
-
-function displayVideosProgressively(videos) {
+// Display videos in grid
+function displayVideos(videos) {
     const container = document.getElementById('videosContainer');
+    
     if (!container) return;
     
     if (videos.length === 0) {
@@ -253,248 +67,317 @@ function displayVideosProgressively(videos) {
         return;
     }
     
-    // Clear container
-    container.innerHTML = '';
+    container.innerHTML = videos.map(video => createVideoCard(video)).join('');
     
-    // Render in batches for ultra-smooth experience
-    const batchSize = 6;
-    let currentBatch = 0;
-    
-    function renderBatch() {
-        const start = currentBatch * batchSize;
-        const end = Math.min(start + batchSize, videos.length);
-        const batch = videos.slice(start, end);
-        
-        batch.forEach((video, index) => {
-            const card = createVideoCardElement(video);
-            container.appendChild(card);
+    // Add click listeners with proper touch handling
+    setTimeout(() => {
+        document.querySelectorAll('.video-card').forEach((card, index) => {
+            // Track touch movement to distinguish between tap and scroll
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let touchStartTime = 0;
+            let isTouchMoving = false;
             
-            // Observe for intersection
-            if (window.videoCardObserver) {
-                window.videoCardObserver.observe(card);
-            }
+            // Touch start - record initial position
+            card.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                touchStartTime = Date.now();
+                isTouchMoving = false;
+            }, { passive: true });
             
-            // Setup event listeners with optimized touch handling
-            setupCardInteractions(card, video, start + index);
+            // Touch move - detect if user is scrolling
+            card.addEventListener('touchmove', (e) => {
+                const touchMoveX = e.touches[0].clientX;
+                const touchMoveY = e.touches[0].clientY;
+                const deltaX = Math.abs(touchMoveX - touchStartX);
+                const deltaY = Math.abs(touchMoveY - touchStartY);
+                
+                // If movement is more than 10px, consider it scrolling
+                if (deltaX > 10 || deltaY > 10) {
+                    isTouchMoving = true;
+                }
+            }, { passive: true });
+            
+            // Touch end - only open video if it was a tap, not a scroll
+            card.addEventListener('touchend', (e) => {
+                const touchDuration = Date.now() - touchStartTime;
+                
+                // Only trigger if:
+                // 1. Touch was quick (< 300ms)
+                // 2. No significant movement detected (not scrolling)
+                if (!isTouchMoving && touchDuration < 300) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openVideoModal(videos[index]);
+                }
+            }, { passive: false });
+            
+            // Desktop click handler
+            card.addEventListener('click', (e) => {
+                // Only handle click events that aren't from touch
+                if (e.pointerType === 'mouse' || e.pointerType === '') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openVideoModal(videos[index]);
+                }
+            });
         });
         
-        currentBatch++;
-        
-        // Continue rendering if more videos
-        if (end < videos.length) {
-            requestAnimationFrame(renderBatch);
-        } else {
-            console.log('✅ All videos rendered progressively');
-        }
-    }
-    
-    // Start rendering
-    requestAnimationFrame(renderBatch);
+        // Load video durations
+        loadVideoDurations();
+    }, 0);
 }
 
-// ===================================
-// CREATE VIDEO CARD ELEMENT
-// ===================================
-
-function createVideoCardElement(video) {
-    const card = document.createElement('div');
-    card.className = 'video-card';
-    card.innerHTML = `
-        <div class="video-thumbnail-wrapper">
-            <img src="${video.thumbnail || 'placeholder.jpg'}" 
-                 alt="${escapeHtml(video.title)}" 
-                 class="video-thumbnail"
-                 loading="lazy"
-                 decoding="async">
-            ${video.duration ? `<span class="video-duration">${formatDuration(video.duration)}</span>` : ''}
-            ${video.category ? `<span class="video-category-badge">${categoryIcons[video.category.toLowerCase()] || categoryIcons.default} ${escapeHtml(video.category)}</span>` : ''}
-        </div>
-        <div class="video-info">
-            <h3 class="video-title">${escapeHtml(video.title)}</h3>
-            <p class="video-meta">
-                ${video.description ? escapeHtml(video.description.substring(0, 100)) + '...' : ''}
-            </p>
+// Create video card HTML
+function createVideoCard(video) {
+    const thumbnailSrc = video.thumbnail || generateDefaultThumbnail();
+    const categoryIcon = categoryIcons[video.category?.toLowerCase()] || categoryIcons['default'];
+    
+    return `
+        <div class="video-card" data-video-id="${video.id}">
+            <div class="video-thumbnail-wrapper">
+                <img 
+                    src="${thumbnailSrc}" 
+                    alt="${escapeHtml(video.title)}" 
+                    class="video-thumbnail"
+                    onerror="this.src='${generateDefaultThumbnail()}'"
+                    loading="lazy"
+                >
+                <span class="video-duration" data-video-url="${video.videoUrl}">...</span>
+                <span class="video-category-badge">${categoryIcon} ${escapeHtml(video.category || 'Video')}</span>
+            </div>
+            <div class="video-info">
+                <div class="video-avatar">${categoryIcon}</div>
+                <div class="video-details">
+                    <h3 class="video-title">${escapeHtml(video.title)}</h3>
+                    <div class="video-metadata">
+                        <span>${escapeHtml(video.category || 'General')}</span>
+                        <span>${formatDate(video.uploadDate)}</span>
+                    </div>
+                </div>
+            </div>
         </div>
     `;
-    return card;
 }
 
-// ===================================
-// OPTIMIZED CARD INTERACTIONS
-// ===================================
-
-function setupCardInteractions(card, video, index) {
-    let touchStartY = 0;
-    let touchStartX = 0;
-    let touchStartTime = 0;
-    let isScrolling = false;
-    let hasMoved = false;
-    let rafId = null;
-    
-    // Touch start
-    card.addEventListener('touchstart', (e) => {
-        const touch = e.touches[0];
-        touchStartY = touch.clientY;
-        touchStartX = touch.clientX;
-        touchStartTime = Date.now();
-        isScrolling = false;
-        hasMoved = false;
-    }, { passive: true });
-    
-    // Touch move - detect scrolling
-    card.addEventListener('touchmove', (e) => {
-        const touch = e.touches[0];
-        const deltaY = Math.abs(touch.clientY - touchStartY);
-        const deltaX = Math.abs(touch.clientX - touchStartX);
-        
-        // If moved more than 8px, consider it scrolling
-        if (deltaY > 8 || deltaX > 8) {
-            hasMoved = true;
-            if (deltaY > deltaX) {
-                isScrolling = true;
-            }
-        }
-    }, { passive: true });
-    
-    // Touch end - open video if not scrolling
-    card.addEventListener('touchend', (e) => {
-        const touchDuration = Date.now() - touchStartTime;
-        
-        // Only open if tap (not scroll) and quick tap
-        if (!isScrolling && !hasMoved && touchDuration < 300) {
-            e.preventDefault();
-            openVideo(video);
-        }
-    }, { passive: false });
-    
-    // Click for desktop
-    card.addEventListener('click', (e) => {
-        if (!isMobileDevice()) {
-            openVideo(video);
+// Load video durations asynchronously
+function loadVideoDurations() {
+    document.querySelectorAll('.video-duration').forEach(element => {
+        const videoUrl = element.getAttribute('data-video-url');
+        if (videoUrl) {
+            loadSingleDuration(videoUrl, element);
         }
     });
+}
+
+function loadSingleDuration(videoUrl, element) {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
     
-    // Smooth hover effect with RAF
-    if (!isMobileDevice()) {
-        card.addEventListener('mouseenter', () => {
-            if (rafId) cancelAnimationFrame(rafId);
-            rafId = requestAnimationFrame(() => {
-                card.style.transform = 'translateZ(0) translateY(-4px) scale(1.02)';
-            });
-        });
+    video.addEventListener('loadedmetadata', function() {
+        const duration = video.duration;
+        const formatted = formatDuration(duration);
+        element.textContent = formatted;
+    });
+    
+    video.addEventListener('error', function() {
+        element.textContent = '--:--';
+    });
+    
+    video.src = videoUrl;
+}
+
+// Format duration (seconds to mm:ss)
+function formatDuration(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
+// Format date
+function formatDate(dateString) {
+    if (!dateString) return 'Recently';
+    
+    try {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
         
-        card.addEventListener('mouseleave', () => {
-            if (rafId) cancelAnimationFrame(rafId);
-            rafId = requestAnimationFrame(() => {
-                card.style.transform = 'translateZ(0) scale(1)';
-            });
-        });
+        if (diffDays === 0) return 'Today';
+        if (diffDays === 1) return 'Yesterday';
+        if (diffDays < 7) return `${diffDays} days ago`;
+        if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+        if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
+        return `${Math.floor(diffDays / 365)} years ago`;
+    } catch {
+        return 'Recently';
     }
 }
 
+// Generate default thumbnail
+function generateDefaultThumbnail() {
+    return 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="320" height="180"%3E%3Crect fill="%230f0f0f" width="320" height="180"/%3E%3Ctext fill="%23aaaaaa" font-size="24" font-family="Arial" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3E📹%3C/text%3E%3C/svg%3E';
+}
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text || '';
+    return div.innerHTML;
+}
+
 // ===================================
-// VIDEO MODAL WITH SMOOTH ANIMATIONS
+// VIDEO MODAL (MOBILE-OPTIMIZED)
 // ===================================
 
-function openVideo(video) {
+function openVideoModal(video) {
     console.log('🎬 Opening video:', video.title);
     
     const modal = document.getElementById('videoModal');
-    const modalVideo = document.getElementById('modalVideo');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalDescription = document.getElementById('modalDescription');
-    const modalCategory = document.getElementById('modalCategory');
+    const videoElement = document.getElementById('modalVideo');
+    const titleElement = document.getElementById('videoTitle');
+    const descElement = document.getElementById('videoDescription');
     
-    if (!modal || !modalVideo) return;
+    if (!modal || !videoElement) {
+        console.error('❌ Modal elements not found');
+        return;
+    }
     
-    // Set video data
-    modalVideo.src = video.videoUrl;
-    if (modalTitle) modalTitle.textContent = video.title;
-    if (modalDescription) modalDescription.textContent = video.description || 'No description available';
-    if (modalCategory) modalCategory.textContent = video.category || 'General';
+    // Set video source
+    videoElement.src = video.videoUrl;
     
-    // Smooth modal open with RAF
-    modal.style.display = 'flex';
-    modal.style.opacity = '0';
+    // Set video details
+    if (titleElement) titleElement.textContent = video.title || 'Untitled';
+    if (descElement) descElement.textContent = video.description || 'No description available';
     
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            modal.style.transition = 'opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1)';
-            modal.style.opacity = '1';
-            modal.classList.add('active');
-            
-            // Play video
-            modalVideo.play().catch(err => {
-                console.error('Video play error:', err);
-            });
-            
-            // Prevent body scroll
-            document.body.style.overflow = 'hidden';
-        });
-    });
-}
-
-function closeVideo() {
-    const modal = document.getElementById('videoModal');
-    const modalVideo = document.getElementById('modalVideo');
+    // Show modal
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
     
-    if (!modal) return;
-    
-    // Smooth modal close with RAF
-    requestAnimationFrame(() => {
-        modal.style.transition = 'opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1)';
-        modal.style.opacity = '0';
+    // CRITICAL FIX FOR MOBILE: Play video after a short delay
+    setTimeout(() => {
+        videoElement.load();
         
-        setTimeout(() => {
-            modal.style.display = 'none';
-            modal.classList.remove('active');
-            
-            // Stop video
-            if (modalVideo) {
-                modalVideo.pause();
-                modalVideo.src = '';
-            }
-            
-            // Restore body scroll
-            document.body.style.overflow = '';
-        }, 300);
-    });
+        // Try to autoplay (works on most mobile browsers now)
+        const playPromise = videoElement.play();
+        
+        if (playPromise !== undefined) {
+            playPromise
+                .then(() => {
+                    console.log('✅ Video playing');
+                })
+                .catch(error => {
+                    console.log('⚠️ Autoplay prevented, user must tap play:', error);
+                    // This is normal on some mobile browsers - user will tap play button
+                });
+        }
+    }, 100);
+    
+    // Mobile-specific: Prevent scroll behind modal (simplified)
+    document.body.style.touchAction = 'none';
 }
 
-// ===================================
-// MODAL EVENT LISTENERS
-// ===================================
+function closeVideoModal() {
+    console.log('🚪 Closing video modal');
+    
+    const modal = document.getElementById('videoModal');
+    const videoElement = document.getElementById('modalVideo');
+    
+    if (!modal || !videoElement) return;
+    
+    // Pause and clear video
+    videoElement.pause();
+    videoElement.src = '';
+    
+    // Hide modal
+    modal.classList.remove('active');
+    
+    // Restore body scroll
+    document.body.style.overflow = '';
+    document.body.style.touchAction = '';
+}
 
+// Setup modal event listeners
 function setupModalEventListeners() {
     const modal = document.getElementById('videoModal');
-    const closeBtn = document.getElementById('closeModal');
+    const overlay = modal?.querySelector('.video-modal-overlay');
     
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeVideo);
-    }
-    
-    if (modal) {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeVideo();
-            }
+    // Close on overlay click (but not on video click)
+    if (overlay) {
+        overlay.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeVideoModal();
         });
     }
     
-    // ESC key to close
+    // Close on Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            closeVideo();
+            closeVideoModal();
         }
+    });
+    
+    // Prevent video context menu
+    document.addEventListener('contextmenu', (e) => {
+        if (e.target.tagName === 'VIDEO') {
+            e.preventDefault();
+            return false;
+        }
+    });
+    
+    // Select file button handler
+    const selectFileBtn = document.getElementById('selectFileBtn');
+    if (selectFileBtn) {
+        selectFileBtn.addEventListener('click', function() {
+            document.getElementById('videoInput').click();
+        });
+    }
+    
+    // Upload video button handler
+    const uploadVideoBtn = document.getElementById('uploadVideoBtn');
+    if (uploadVideoBtn) {
+        uploadVideoBtn.addEventListener('click', uploadVideo);
+    }
+    
+    // Delete video button handler
+    const deleteVideoBtn = document.getElementById('deleteVideoBtn');
+    if (deleteVideoBtn) {
+        deleteVideoBtn.addEventListener('click', deleteCurrentVideo);
+    }
+    
+    // Close modal buttons
+    document.querySelectorAll('.close-modal').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+                document.body.style.touchAction = '';
+                
+                // Clear video if in video modal
+                if (modal.id === 'videoModal') {
+                    closeVideoModal();
+                }
+            }
+        });
     });
 }
 
+// Detect mobile device
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+        || window.innerWidth <= 768;
+}
+
 // ===================================
-// SEARCH WITH DEBOUNCE
+// SEARCH FUNCTIONALITY
 // ===================================
 
 function setupSearchFunctionality() {
     const searchInput = document.getElementById('searchInput');
+    
     if (!searchInput) return;
     
     let searchTimeout;
@@ -526,11 +409,11 @@ function filterVideos(query) {
         );
     }
     
-    displayVideosProgressively(filtered);
+    displayVideos(filtered);
 }
 
 // ===================================
-// CATEGORY FILTERS WITH SMOOTH SCROLL
+// CATEGORY FILTERS
 // ===================================
 
 function setupCategoryFilters() {
@@ -538,11 +421,9 @@ function setupCategoryFilters() {
     
     chips.forEach(chip => {
         chip.addEventListener('click', () => {
-            // Smooth active state transition
-            requestAnimationFrame(() => {
-                chips.forEach(c => c.classList.remove('active'));
-                chip.classList.add('active');
-            });
+            // Update active state
+            chips.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
             
             // Update filter
             currentFilter = chip.getAttribute('data-category');
@@ -552,61 +433,10 @@ function setupCategoryFilters() {
             filterVideos(searchQuery.toLowerCase().trim());
         });
     });
-    
-    // Smooth horizontal scroll for category chips
-    const chipsContainer = document.querySelector('.category-chips');
-    if (chipsContainer) {
-        let isDown = false;
-        let startX;
-        let scrollLeft;
-        
-        chipsContainer.addEventListener('mousedown', (e) => {
-            isDown = true;
-            startX = e.pageX - chipsContainer.offsetLeft;
-            scrollLeft = chipsContainer.scrollLeft;
-        });
-        
-        chipsContainer.addEventListener('mouseleave', () => {
-            isDown = false;
-        });
-        
-        chipsContainer.addEventListener('mouseup', () => {
-            isDown = false;
-        });
-        
-        chipsContainer.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - chipsContainer.offsetLeft;
-            const walk = (x - startX) * 2;
-            chipsContainer.scrollLeft = scrollLeft - walk;
-        });
-    }
 }
 
 // ===================================
-// UTILITY FUNCTIONS
-// ===================================
-
-function formatDuration(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-}
-
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-function isMobileDevice() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-        || window.innerWidth <= 768;
-}
-
-// ===================================
-// LOADING STATES WITH SMOOTH ANIMATIONS
+// LOADING & ERROR STATES
 // ===================================
 
 function showLoading() {
@@ -648,13 +478,16 @@ function showErrorState() {
 // VIDEO PROTECTION
 // ===================================
 
+// Prevent video download attempts
 document.addEventListener('keydown', function(e) {
+    // Prevent Ctrl+S / Cmd+S
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
         return false;
     }
 });
 
+// Prevent video drag
 document.addEventListener('dragstart', function(e) {
     if (e.target.tagName === 'VIDEO') {
         e.preventDefault();
@@ -663,11 +496,28 @@ document.addEventListener('dragstart', function(e) {
 });
 
 // ===================================
-// ORIENTATION CHANGE HANDLER
+// MOBILE OPTIMIZATIONS
 // ===================================
 
+// Prevent double-tap zoom on video cards (iOS)
+let lastTap = 0;
+document.addEventListener('touchend', function(e) {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTap;
+    
+    if (tapLength < 500 && tapLength > 0) {
+        if (e.target.closest('.video-card')) {
+            e.preventDefault();
+        }
+    }
+    
+    lastTap = currentTime;
+});
+
+// Handle orientation change
 window.addEventListener('orientationchange', function() {
-    requestAnimationFrame(() => {
+    setTimeout(() => {
+        // Adjust modal if open
         const modal = document.getElementById('videoModal');
         if (modal && modal.classList.contains('active')) {
             const video = document.getElementById('modalVideo');
@@ -675,17 +525,34 @@ window.addEventListener('orientationchange', function() {
                 video.style.height = 'auto';
             }
         }
-    });
+    }, 100);
 });
 
-// ===================================
-// PERFORMANCE MONITORING
-// ===================================
-
-if (window.performance && window.performance.mark) {
-    window.performance.mark('app-initialized');
-}
-
-console.log('🚀 Ultra-smooth video streaming initialized');
+// Console log for debugging
+console.log('🎬 Premium Video Streaming Initialized');
 console.log('📱 Mobile Device:', isMobileDevice());
-console.log('🎯 Performance mode: 400Hz-like smoothness enabled');
+console.log('🌐 User Agent:', navigator.userAgent);
+
+// Add smooth scroll handler at the end of main.js
+let lastScrollY = window.scrollY;
+let ticking = false;
+
+window.addEventListener('scroll', () => {
+    lastScrollY = window.scrollY;
+    if (!ticking) {
+        requestAnimationFrame(() => {
+            const header = document.querySelector('.yt-header');
+            if (header) {
+                if (lastScrollY > 10) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            }
+            ticking = false;
+        });
+        ticking = true;
+    }
+}, { passive: true });
+
+console.log('?? Ultra-smooth scrolling enabled');
