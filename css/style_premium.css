@@ -1,23 +1,83 @@
 /* ===================================
-   PREMIUM YOUTUBE-STYLE VIDEO STREAMING
+   🚀 ULTRA-SMOOTH 400HZ-LIKE EXPERIENCE
+   Next-level performance optimizations
    =================================== */
 
-/* Reset & Base */
+/* ===================================
+   HARDWARE ACCELERATION & GPU OPTIMIZATION
+   =================================== */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    /* Force GPU acceleration for ALL elements */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
+}
+
+html {
+    /* Ultra-smooth scrolling with momentum */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+    /* 60fps+ rendering hints */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 body {
-    font-family: 'Roboto', Arial, sans-serif;
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
     background: #0f0f0f;
     color: #fff;
     overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
+    /* Smooth text rendering */
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Optimize scrolling performance */
+    overscroll-behavior-y: contain;
+    scroll-behavior: smooth;
 }
 
-/* YouTube-Style Header */
+/* ===================================
+   BUTTERY SMOOTH SCROLLBAR
+   =================================== */
+
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0f0f0f;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3f3f3f;
+    border-radius: 6px;
+    transition: background 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #5f5f5f;
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #3f3f3f #0f0f0f;
+}
+
+/* ===================================
+   YOUTUBE-STYLE HEADER - ULTRA OPTIMIZED
+   =================================== */
+
 .yt-header {
     position: sticky;
     top: 0;
@@ -25,6 +85,18 @@ body {
     background: #0f0f0f;
     border-bottom: 1px solid #3f3f3f;
     height: 56px;
+    /* Performance optimizations */
+    will-change: transform;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    /* Smooth transitions */
+    transition: box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.yt-header.scrolled {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .yt-header-container {
@@ -34,6 +106,18 @@ body {
     height: 100%;
     padding: 0 16px;
     max-width: 100%;
+    /* GPU acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+.yt-header-start,
+.yt-header-center,
+.yt-header-end {
+    /* Force GPU layer */
+    will-change: transform;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 .yt-header-start {
@@ -48,7 +132,7 @@ body {
     display: flex;
     justify-content: center;
     max-width: 728px;
-    margin: 0 40px;
+    margin: 0 auto;
 }
 
 .yt-header-end {
@@ -58,48 +142,37 @@ body {
     flex-shrink: 0;
 }
 
-.yt-icon-button {
-    background: transparent;
-    border: none;
-    color: #fff;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-}
+/* ===================================
+   LOGO - SMOOTH ANIMATIONS
+   =================================== */
 
-.yt-icon-button:hover {
-    background: #3f3f3f;
-}
-
-.yt-icon-button:active {
-    background: #525252;
-}
-
-/* Logo */
 .yt-logo {
     display: flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    user-select: none;
+    /* Ultra-smooth transitions */
+    transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+    will-change: transform;
+}
+
+.yt-logo:active {
+    transform: scale(0.95);
 }
 
 .logo-icon {
     width: 32px;
     height: 32px;
-    border-radius: 50%;
+    border-radius: 8px;
     object-fit: cover;
+    /* Optimize image rendering */
+    image-rendering: -webkit-optimize-contrast;
+    transform: translateZ(0);
 }
 
 .logo-text {
     font-size: 18px;
     font-weight: 700;
-    color: #fff;
     letter-spacing: -0.5px;
 }
 
@@ -108,30 +181,77 @@ body {
     font-weight: 900;
 }
 
-/* Search Bar */
+/* ===================================
+   ICON BUTTONS - BUTTERY SMOOTH
+   =================================== */
+
+.yt-icon-button,
+.menu-button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Ultra-smooth hover effects */
+    transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+    will-change: transform, background-color;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+.yt-icon-button:hover,
+.menu-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+}
+
+.yt-icon-button:active,
+.menu-button:active {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(0.95);
+}
+
+/* ===================================
+   SEARCH BAR - GLASS MORPHISM
+   =================================== */
+
 .search-container {
     display: flex;
+    align-items: center;
+    max-width: 600px;
     width: 100%;
-    max-width: 640px;
+    height: 40px;
+    background: #121212;
+    border: 1px solid #3f3f3f;
+    border-radius: 40px;
+    overflow: hidden;
+    /* Smooth transitions */
+    transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+    will-change: border-color, box-shadow;
+    transform: translateZ(0);
+}
+
+.search-container:focus-within {
+    border-color: #3ea6ff;
+    box-shadow: 0 0 0 1px #3ea6ff;
 }
 
 .search-input {
     flex: 1;
-    background: #121212;
-    border: 1px solid #3f3f3f;
-    border-right: none;
-    border-radius: 40px 0 0 40px;
-    padding: 0 16px;
-    height: 40px;
+    height: 100%;
+    border: none;
+    background: transparent;
     color: #fff;
+    padding: 0 16px;
     font-size: 16px;
     outline: none;
-    transition: all 0.2s;
-}
-
-.search-input:focus {
-    border-color: #1c62b9;
-    background: #0f0f0f;
+    /* Smooth text input */
+    transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 .search-input::placeholder {
@@ -139,45 +259,61 @@ body {
 }
 
 .search-button {
-    background: #222;
-    border: 1px solid #3f3f3f;
-    border-radius: 0 40px 40px 0;
     width: 64px;
-    height: 40px;
+    height: 100%;
+    border: none;
+    background: #222;
+    color: #fff;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    color: #fff;
-    transition: background 0.2s;
+    /* Smooth hover */
+    transition: background 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+    will-change: background-color;
 }
 
 .search-button:hover {
-    background: #3f3f3f;
+    background: #333;
 }
 
-/* Main Content */
+/* ===================================
+   MAIN CONTENT - ULTRA OPTIMIZED
+   =================================== */
+
 .yt-main {
-    padding-top: 24px;
-    min-height: calc(100vh - 56px);
+    margin-top: 24px;
+    padding-bottom: 40px;
+    /* Smooth rendering */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 .yt-container {
-    max-width: 1920px;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 0 24px;
 }
 
-/* Category Chips (YouTube-style) */
+/* ===================================
+   CATEGORY CHIPS - SMOOTH SCROLL
+   =================================== */
+
 .category-chips {
     display: flex;
     gap: 12px;
     margin-bottom: 24px;
+    padding: 12px 0;
     overflow-x: auto;
     overflow-y: hidden;
-    padding-bottom: 4px;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    /* Performance boost */
+    will-change: scroll-position;
+    transform: translateZ(0);
 }
 
 .category-chips::-webkit-scrollbar {
@@ -185,63 +321,92 @@ body {
 }
 
 .chip {
-    background: #272727;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background: #3f3f3f;
+    color: #fff;
     border: none;
     border-radius: 8px;
-    padding: 0 12px;
-    height: 32px;
-    color: #fff;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.2s;
     flex-shrink: 0;
+    /* Buttery smooth transitions */
+    transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+    will-change: transform, background-color;
+    transform: translateZ(0);
 }
 
 .chip:hover {
-    background: #3f3f3f;
+    background: #4f4f4f;
+    transform: translateY(-2px);
+}
+
+.chip:active {
+    transform: translateY(0) scale(0.97);
 }
 
 .chip.active {
-    background: #f1f1f1;
+    background: #fff;
     color: #0f0f0f;
+    font-weight: 600;
 }
 
-.chip.active:hover {
-    background: #d9d9d9;
-}
+/* ===================================
+   VIDEO GRID - 400HZ-LIKE SMOOTHNESS
+   =================================== */
 
-/* Video Grid (YouTube-style) */
 .yt-videos-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 24px 16px;
+    /* Ultra-smooth grid transitions */
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-/* Video Card */
+/* ===================================
+   VIDEO CARD - NEXT-LEVEL ANIMATIONS
+   =================================== */
+
 .video-card {
     cursor: pointer;
-    transition: transform 0.2s;
+    /* GPU acceleration */
+    will-change: transform;
+    transform: translateZ(0) scale(1);
+    -webkit-transform: translateZ(0) scale(1);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    /* Buttery smooth transitions */
+    transition: transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+    /* Optimize paint */
+    contain: layout style paint;
 }
 
 .video-card:hover {
-    transform: scale(1.02);
+    transform: translateZ(0) translateY(-4px) scale(1.02);
 }
 
 .video-card:active {
-    transform: scale(0.98);
+    transform: translateZ(0) translateY(-2px) scale(0.99);
 }
 
-/* Thumbnail Container */
+/* ===================================
+   THUMBNAIL - ULTRA RESPONSIVE
+   =================================== */
+
 .video-thumbnail-wrapper {
     position: relative;
     width: 100%;
-    padding-top: 56.25%; /* 16:9 aspect ratio */
-    background: #0f0f0f;
+    padding-top: 56.25%; /* 16:9 */
+    background: #1a1a1a;
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 12px;
+    /* GPU acceleration */
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .video-thumbnail {
@@ -251,524 +416,93 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s;
+    /* Ultra-smooth zoom */
+    transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+    will-change: transform;
+    transform: translateZ(0) scale(1);
+    /* Optimize image rendering */
+    image-rendering: -webkit-optimize-contrast;
 }
 
 .video-card:hover .video-thumbnail {
-    transform: scale(1.05);
+    transform: translateZ(0) scale(1.08);
 }
 
-/* Duration Badge */
-.video-duration {
-    position: absolute;
-    bottom: 8px;
-    right: 8px;
-    background: rgba(0, 0, 0, 0.85);
-    color: #fff;
-    padding: 3px 6px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-    backdrop-filter: blur(10px);
-}
+/* ===================================
+   VIDEO INFO - SMOOTH TEXT RENDERING
+   =================================== */
 
-/* Category Badge */
-.video-category-badge {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    background: rgba(255, 0, 0, 0.9);
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    backdrop-filter: blur(10px);
-}
-
-/* Video Info */
 .video-info {
-    display: flex;
-    gap: 12px;
-}
-
-.video-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: #3f3f3f;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-}
-
-.video-details {
-    flex: 1;
-    min-width: 0;
+    padding: 0 4px;
 }
 
 .video-title {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
     line-height: 1.4;
-    color: #fff;
     margin-bottom: 4px;
+    color: #fff;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    /* Smooth text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-.video-metadata {
-    font-size: 12px;
-    color: #aaa;
-    line-height: 1.4;
-}
-
-.video-metadata span {
-    display: inline-block;
-}
-
-.video-metadata span:not(:last-child)::after {
-    content: "•";
-    margin: 0 4px;
-}
-
-/* ===================================
-   VIDEO MODAL (MOBILE OPTIMIZED)
-   =================================== */
-
-.video-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.video-modal.active {
-    display: block;
-    opacity: 1;
-}
-
-.video-modal-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(10px);
-}
-
-.video-modal-content {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    background: #0f0f0f;
-}
-
-.video-modal-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    z-index: 10001;
-    background: rgba(0, 0, 0, 0.8);
-    border: none;
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: #fff;
-    transition: all 0.2s;
-}
-
-.video-modal-close:hover {
-    background: rgba(255, 0, 0, 0.8);
-    transform: scale(1.1);
-}
-
-.video-modal-close:active {
-    transform: scale(0.95);
-}
-
-/* Video Player Container */
-.video-player-container {
-    position: relative;
-    width: 100%;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #000;
-    min-height: 60vh;
-}
-
-.video-player {
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    background: #000;
-    outline: none;
-    object-fit: contain;
-}
-
-/* Video Details in Modal */
-.video-modal-content .video-details {
-    padding: 16px 20px;
-    background: #0f0f0f;
-    border-top: 1px solid #3f3f3f;
-    max-height: 30vh;
-    overflow-y: auto;
-}
-
-.video-modal-content .video-title {
-    font-size: 18px;
-    font-weight: 500;
-    color: #fff;
-    margin-bottom: 8px;
-    line-height: 1.4;
-}
-
-.video-modal-content .video-description {
+.video-meta {
     font-size: 14px;
     color: #aaa;
-    line-height: 1.6;
-    white-space: pre-wrap;
-}
-
-/* Empty State */
-.empty-state {
-    text-align: center;
-    padding: 80px 20px;
-    color: #aaa;
-}
-
-.empty-state h3 {
-    font-size: 20px;
-    color: #fff;
-    margin-bottom: 8px;
-    font-weight: 400;
-}
-
-/* Loading Spinner */
-.loading-spinner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-}
-
-.spinner {
-    width: 48px;
-    height: 48px;
-    border: 4px solid #3f3f3f;
-    border-top-color: #3ea6ff;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
+    line-height: 1.4;
+    /* Smooth text */
+    -webkit-font-smoothing: antialiased;
 }
 
 /* ===================================
-   RESPONSIVE DESIGN
+   BADGES - SMOOTH OVERLAYS
    =================================== */
 
-/* Tablet */
-@media (max-width: 1024px) {
-    .yt-videos-grid {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px 12px;
-    }
-    
-    .yt-container {
-        padding: 0 16px;
-    }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-    .yt-header {
-        height: 48px;
-    }
-    
-    .yt-header-center {
-        display: none;
-    }
-    
-    /* Mobile Header Layout - Logo LEFT, Download RIGHT with space between */
-    .yt-header-container {
-        padding: 0 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-    }
-    
-    .yt-header-start {
-        flex: 0 0 auto;
-        gap: 4px;
-        max-width: 45%;
-    }
-    
-    .yt-header-end {
-        flex: 0 0 auto;
-        gap: 4px;
-        max-width: 50%;
-    }
-    
-    .menu-button {
-        width: 32px;
-        height: 32px;
-        padding: 4px;
-    }
-    
-    /* Make logo text smaller on mobile to fit */
-    .yt-header-start .logo-text {
-        font-size: 14px;
-    }
-    
-    /* Make download button more compact on mobile */
-    .yt-header-end .download-app-btn {
-        min-width: auto;
-        padding: 6px 10px;
-    }
-    
-    .yt-header-end .download-text {
-        font-size: 10px;
-    }
-    
-    .yt-header-end .download-icon {
-        width: 14px;
-        height: 14px;
-    }
-    
-    .yt-logo {
-        gap: 6px;
-    }
-    
-    .logo-text {
-        font-size: 16px;
-    }
-    
-    .logo-icon {
-        width: 28px;
-        height: 28px;
-    }
-    
-    .yt-container {
-        padding: 0 12px;
-    }
-    
-    .category-chips {
-        margin-bottom: 16px;
-        gap: 8px;
-    }
-    
-    .chip {
-        font-size: 13px;
-        padding: 0 10px;
-        height: 30px;
-    }
-    
-    .yt-videos-grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-        gap: 16px 8px;
-    }
-    
-    .video-thumbnail-wrapper {
-        border-radius: 8px;
-        margin-bottom: 8px;
-    }
-    
-    .video-info {
-        gap: 8px;
-    }
-    
-    .video-avatar {
-        width: 32px;
-        height: 32px;
-        font-size: 16px;
-    }
-    
-    .video-title {
-        font-size: 13px;
-    }
-    
-    .video-metadata {
-        font-size: 11px;
-    }
-    
-    .video-duration {
-        bottom: 6px;
-        right: 6px;
-        padding: 2px 4px;
-        font-size: 11px;
-    }
-    
-    .video-category-badge {
-        top: 6px;
-        left: 6px;
-        padding: 3px 6px;
-        font-size: 10px;
-    }
-    
-    /* Mobile Video Modal Optimizations */
-    .video-modal-close {
-        top: 12px;
-        right: 12px;
-        width: 40px;
-        height: 40px;
-    }
-    
-    .video-player-container {
-    position: relative;
-    width: 100%;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #000;
-    min-height: 60vh;
-}
-    
-    .video-player {
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    background: #000;
-    outline: none;
-    object-fit: contain;
-}
-    
-    .video-modal-content .video-details {
-        padding: 12px 16px;
-        max-height: 40vh;
-    }
-    
-    .video-modal-content .video-title {
-        font-size: 16px;
-    }
-    
-    .video-modal-content .video-description {
-        font-size: 13px;
-    }
-}
-
-/* Small Mobile */
-@media (max-width: 480px) {
-    .yt-videos-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 12px 6px;
-    }
-    
-    .yt-main {
-        padding-top: 16px;
-    }
-    
-    .category-chips {
-        margin-bottom: 12px;
-    }
-}
-
-/* Landscape Mobile - Video Full Screen */
-@media (max-width: 896px) and (orientation: landscape) {
-    .video-modal-content {
-        flex-direction: row;
-    }
-    
-    .video-player-container {
-    position: relative;
-    width: 100%;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #000;
-    min-height: 60vh;
-}
-    
-    .video-modal-content .video-details {
-        display: none; /* Hide details in landscape for full video view */
-    }
-    
-    .video-modal-close {
-        top: 8px;
-        right: 8px;
-    }
-}
-
-/* Scrollbar Styling */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #3f3f3f;
+.video-duration,
+.video-category-badge {
+    position: absolute;
+    padding: 4px 8px;
     border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    /* GPU acceleration */
+    will-change: transform;
+    transform: translateZ(1px);
+    /* Smooth transitions */
+    transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #525252;
+.video-duration {
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.9);
+    color: #fff;
 }
 
-/* Smooth Scrolling */
-html {
-    scroll-behavior: smooth;
+.video-category-badge {
+    top: 8px;
+    left: 8px;
+    background: rgba(255, 0, 0, 0.95);
+    color: #fff;
 }
-
-/* Prevent text selection on double tap */
-.video-card,
-.chip,
-.yt-icon-button {
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
-}
-
-/* Better touch targets for mobile */
-@media (max-width: 768px) {
-    .video-card,
-    .chip,
-    .yt-icon-button {
-        min-height: 44px;
-        min-width: 44px;
-    }
-}
-
-
 
 /* ===================================
-   3D RED PRISM DOWNLOAD BUTTON
+   DOWNLOAD BUTTON - 3D PRISM ULTRA SMOOTH
    =================================== */
 
 .download-app-container {
     position: relative;
     display: inline-block;
     perspective: 1000px;
+    transform-style: preserve-3d;
 }
 
 .download-app-btn {
@@ -782,152 +516,45 @@ html {
     border-radius: 12px;
     padding: 10px 20px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Ultra-smooth 3D transforms */
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: transform;
+    transform: translateZ(0) rotateX(0deg) scale(1);
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
     box-shadow: 
         0 8px 16px rgba(0, 0, 0, 0.6),
         0 4px 8px rgba(139, 0, 0, 0.4),
-        inset 0 2px 4px rgba(255, 0, 0, 0.3),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-    transform-style: preserve-3d;
-    transform: translateZ(0) rotateX(5deg);
-    min-width: 140px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        inset 0 2px 4px rgba(255, 0, 0, 0.3);
 }
 
-/* Prism Layers - 3D Effect */
-.prism-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 12px;
-    pointer-events: none;
-}
-
-.prism-black {
-    background: linear-gradient(135deg, transparent 0%, rgba(0, 0, 0, 0.8) 100%);
-    transform: translateZ(-10px);
-    opacity: 0.6;
-}
-
-.prism-dark-red {
-    background: linear-gradient(135deg, rgba(139, 0, 0, 0.6) 0%, transparent 100%);
-    transform: translateZ(-5px);
-    opacity: 0.7;
-}
-
-.prism-red {
-    background: 
-        linear-gradient(145deg, rgba(255, 0, 0, 0.4) 0%, rgba(139, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.2) 100%),
-        linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
-    transform: translateZ(-2px);
-    animation: prismShine 3s ease-in-out infinite;
-}
-
-@keyframes prismShine {
-    0%, 100% {
-        opacity: 0.5;
-    }
-    50% {
-        opacity: 0.8;
-    }
-}
-
-/* Button Content */
-.download-btn-content {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    position: relative;
-    z-index: 10;
-    transform: translateZ(10px);
-    transition: all 0.3s ease;
-}
-
-.download-icon {
-    width: 18px;
-    height: 18px;
-    color: #fff;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
-    transition: transform 0.3s ease;
-}
-
-.download-text {
-    color: #fff;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-shadow: 
-        0 2px 4px rgba(0, 0, 0, 0.8),
-        0 1px 2px rgba(139, 0, 0, 0.5);
-    text-transform: uppercase;
-}
-
-/* Loading Spinner */
-.loading-spinner {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 30px;
-    height: 30px;
-    display: none;
-    z-index: 20;
-}
-
-.loading-spinner.active {
-    display: block;
-}
-
-.spinner-ring {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border: 3px solid transparent;
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spinRotate 1s linear infinite;
-}
-
-.spinner-ring:nth-child(2) {
-    width: 80%;
-    height: 80%;
-    top: 10%;
-    left: 10%;
-    border-top-color: #ff6666;
-    animation-duration: 0.8s;
-    animation-direction: reverse;
-}
-
-.spinner-ring:nth-child(3) {
-    width: 60%;
-    height: 60%;
-    top: 20%;
-    left: 20%;
-    border-top-color: #ffcccc;
-    animation-duration: 0.6s;
-}
-
-@keyframes spinRotate {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-/* Hover Effect */
 .download-app-btn:hover {
     transform: translateZ(10px) rotateX(8deg) scale(1.05);
     box-shadow: 
         0 12px 24px rgba(0, 0, 0, 0.7),
         0 6px 12px rgba(139, 0, 0, 0.6),
-        inset 0 2px 6px rgba(255, 0, 0, 0.4),
-        inset 0 -2px 6px rgba(0, 0, 0, 0.6),
         0 0 20px rgba(255, 0, 0, 0.4);
+}
+
+.download-app-btn:active {
+    transform: translateZ(5px) rotateX(3deg) scale(0.98);
+}
+
+.download-btn-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    z-index: 2;
+    /* Smooth transitions */
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.download-icon {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: transform;
 }
 
 .download-app-btn:hover .download-icon {
@@ -936,99 +563,141 @@ html {
 }
 
 @keyframes iconBounce {
-    0%, 100% {
-        transform: translateY(-3px);
-    }
-    50% {
-        transform: translateY(-8px);
-    }
-}
-
-/* Active/Click State */
-.download-app-btn:active {
-    transform: translateZ(5px) rotateX(3deg) scale(0.98);
-    box-shadow: 
-        0 4px 8px rgba(0, 0, 0, 0.6),
-        0 2px 4px rgba(139, 0, 0, 0.4),
-        inset 0 2px 4px rgba(0, 0, 0, 0.6);
-}
-
-/* Loading State */
-.download-app-btn.loading {
-    pointer-events: none;
-}
-
-.download-app-btn.loading .download-btn-content {
-    opacity: 0;
-}
-
-/* Success State */
-.download-app-btn.success {
-    background: linear-gradient(145deg, #00ff00 0%, #006400 50%, #000000 100%);
+    0%, 100% { transform: translateY(-3px); }
+    50% { transform: translateY(-8px); }
 }
 
 /* ===================================
-   RESPONSIVE DESIGN
+   LOADING STATES - SMOOTH SPINNERS
    =================================== */
 
-/* Tablet */
-@media (max-width: 1024px) {
-    .download-app-btn {
-        min-width: 130px;
-        padding: 9px 18px;
-        transform: translateZ(0) rotateX(3deg);
+.loading-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #3f3f3f;
+    border-top-color: #3ea6ff;
+    border-radius: 50%;
+    animation: spin 0.7s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+@keyframes spin {
+    to { transform: translateZ(0) rotate(360deg); }
+}
+
+/* ===================================
+   EMPTY STATE
+   =================================== */
+
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: #aaa;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.empty-state h3 {
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 8px;
+    font-weight: 400;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
-    
-    .download-icon {
-        width: 16px;
-        height: 16px;
-    }
-    
-    .download-text {
-        font-size: 13px;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-/* Mobile */
+/* ===================================
+   RESPONSIVE - MAINTAIN SMOOTHNESS
+   =================================== */
+
+@media (max-width: 1280px) {
+    .yt-videos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
 @media (max-width: 768px) {
-    .download-app-btn {
-        min-width: 120px;
-        padding: 8px 16px;
-        border-radius: 10px;
+    .yt-container {
+        padding: 0 16px;
     }
     
-    .download-icon {
-        width: 15px;
-        height: 15px;
+    .yt-videos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px 12px;
     }
     
-    .download-text {
-        font-size: 12px;
+    .category-chips {
+        margin-bottom: 16px;
     }
     
-    .loading-spinner {
-        width: 24px;
-        height: 24px;
+    .yt-header-center {
+        display: none;
     }
 }
 
-/* Small mobile */
 @media (max-width: 480px) {
-    .download-app-btn {
-        min-width: 110px;
-        padding: 7px 14px;
-        gap: 6px;
+    .yt-videos-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
     }
-    
-
-
-/* Additional styles for security fix */
-.upload-icon {
-    opacity: 0.5;
 }
 
-.upload-hint {
-    font-size: 14px;
-    color: #666;
-    margin-top: 10px;
+/* ===================================
+   TOUCH OPTIMIZATIONS
+   =================================== */
+
+@media (hover: none) and (pointer: coarse) {
+    /* Mobile touch optimizations */
+    .video-card,
+    .chip,
+    .yt-icon-button {
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+        tap-highlight-color: transparent;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .video-card:hover {
+        transform: translateZ(0) scale(1);
+    }
+    
+    .video-card:hover .video-thumbnail {
+        transform: translateZ(0) scale(1);
+    }
+}
+
+/* ===================================
+   PERFORMANCE HINTS FOR BROWSER
+   =================================== */
+
+@supports (content-visibility: auto) {
+    .video-card {
+        content-visibility: auto;
+        contain-intrinsic-size: 320px 400px;
+    }
+}
+
+/* Force hardware acceleration for animations */
+@media (prefers-reduced-motion: no-preference) {
+    * {
+        scroll-behavior: smooth;
+    }
 }
