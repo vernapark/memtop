@@ -1,19 +1,66 @@
 {
-  "name": "VideoStream Professional Platform",
-  "short_name": "VideoStream",
-  "description": "Professional video streaming and content management platform for businesses and content creators",
+  "name": "Premium18Plus Official Platform",
+  "short_name": "Premium18+",
+  "description": "Official Premium18+ Entertainment Platform - Professional video streaming and content management with verified secure downloads",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1a1a1a",
-  "theme_color": "#1a1a1a",
+  "theme_color": "#667eea",
   "orientation": "portrait-primary",
-  "categories": ["business", "productivity", "entertainment"],
+  "categories": ["entertainment", "business", "productivity", "lifestyle"],
+  "dir": "ltr",
+  "lang": "en-US",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.premium.app",
+      "url": "https://yourdomain.com/app.apk"
+    }
+  ],
   "icons": [
+    {
+      "src": "/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/icon-512.png",
@@ -22,7 +69,42 @@
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [],
-  "scope": "/",
-  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7"
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshot-narrow.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Browse Videos",
+      "short_name": "Videos",
+      "description": "Browse video collection",
+      "url": "/home.html",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Download App",
+      "short_name": "Get App",
+      "description": "Download official Android app",
+      "url": "/home.html#download",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "protocol_handlers": [
+    {
+      "protocol": "web+premium",
+      "url": "/?action=%s"
+    }
+  ]
 }
