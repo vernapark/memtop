@@ -977,81 +977,69 @@ html {
     max-width: 100%;
 }
 /* ===================================
-   ULTRA-SMOOTH 400HZ ADDITIONS
-   Add these to existing CSS for smooth performance
+   SMOOTH ANIMATIONS - NO LAG VERSION
+   Lightweight, fast, beautiful
    =================================== */
 
-/* GPU Acceleration for smooth scrolling */
-html {
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+/* Video Modal - Smooth Zoom Animation */
+.video-modal {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-body {
-    overscroll-behavior-y: contain;
+.video-modal.active .modal-content {
+    animation: smoothZoomIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Smooth animations with GPU */
+@keyframes smoothZoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Smooth video card hover */
 .video-card {
-    will-change: transform;
-    transition: transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 .video-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-8px);
 }
 
+/* Smooth thumbnail zoom */
 .video-thumbnail {
-    will-change: transform;
     transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-.yt-icon-button,
-.menu-button,
-.chip {
-    transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+.video-card:hover .video-thumbnail {
+    transform: scale(1.05);
 }
 
-.yt-icon-button:hover,
-.menu-button:hover {
-    transform: scale(1.05);
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Smooth chip hover */
+.chip {
+    transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 .chip:hover {
     transform: translateY(-2px);
 }
 
-/* Smooth header scroll effect */
-.yt-header {
-    transition: box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+/* Smooth button transitions */
+.yt-icon-button,
+.menu-button {
+    transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-.yt-header.scrolled {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
-
-/* Smooth modal animations */
-.video-modal {
-    transition: opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-}
-
-/* Smooth scrollbar */
-::-webkit-scrollbar {
-    width: 12px;
-}
-
-::-webkit-scrollbar-track {
-    background: #0f0f0f;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #3f3f3f;
-    border-radius: 6px;
-    transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #5f5f5f;
+.yt-icon-button:hover,
+.menu-button:hover {
+    transform: scale(1.1);
 }
