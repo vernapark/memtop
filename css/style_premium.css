@@ -976,3 +976,82 @@ html {
     width: 100%;
     max-width: 100%;
 }
+/* ===================================
+   ULTRA-SMOOTH 400HZ ADDITIONS
+   Add these to existing CSS for smooth performance
+   =================================== */
+
+/* GPU Acceleration for smooth scrolling */
+html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    overscroll-behavior-y: contain;
+}
+
+/* Smooth animations with GPU */
+.video-card {
+    will-change: transform;
+    transition: transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.video-card:hover {
+    transform: translateY(-4px);
+}
+
+.video-thumbnail {
+    will-change: transform;
+    transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.yt-icon-button,
+.menu-button,
+.chip {
+    transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.yt-icon-button:hover,
+.menu-button:hover {
+    transform: scale(1.05);
+}
+
+.chip:hover {
+    transform: translateY(-2px);
+}
+
+/* Smooth header scroll effect */
+.yt-header {
+    transition: box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.yt-header.scrolled {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Smooth modal animations */
+.video-modal {
+    transition: opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0f0f0f;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3f3f3f;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #5f5f5f;
+}

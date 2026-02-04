@@ -556,3 +556,4 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 console.log('?? Ultra-smooth scrolling enabled');
+
